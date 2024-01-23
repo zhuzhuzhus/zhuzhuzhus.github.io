@@ -278,26 +278,16 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h1 id="系统移植"><a href="#系统移植" class="headerlink" title="系统移植"></a>系统移植</h1><ul>
-<li>Windows下使用OTG烧写系统<ol>
+<li><p>Windows下使用OTG烧写系统</p>
+<ol>
 <li>在Windows使用NXP提供的mfgtool来向开发板烧写系统，需要用先将开发板的USB_OTG链接到电脑上</li>
 <li>mfgtool工具是向板子先下载一个linux系统，然后通过系统完成烧写工作</li>
 </ol>
 </li>
-<li>Ubuntu下通过脚本烧写系统<ol>
+<li><p>Ubuntu下通过脚本烧写系统</p>
+<ol>
 <li>首先向SD卡烧写一个系统，然后使用SD卡启动，启动以后在Linux中执行烧写到EMMC或NAND中</li>
 </ol>
-</li>
-</ul>
-<h2 id="Uboot"><a href="#Uboot" class="headerlink" title="Uboot"></a>Uboot</h2><p>Uboot是一个裸机程序，比较复杂，就是一个bootloader。作用就是用于启动Linux或其他系统，Uboot最主要的工作就是初始化DDR（Linux的运行是运行在DDR里面的），一般linux镜像zimage（uimage）+设备树（.dtb）存放在SD，EMMC,NAND,SPI FLASH等等外置存储区域。</p>
-<p>这里牵扯到一个问题，需要将Linux镜像从外置系统拷贝到DDR中，再去启动，Uboot的主要问题就是为系统的启动做准备，不仅仅能启动Linux，也可以启动其他系统，比如vxworks，Linux不仅仅能通过Uboot启动</p>
-<p>uboot是一个通用bootload，支持多种架构</p>
-<h3 id="正点原子官方uboot编译"><a href="#正点原子官方uboot编译" class="headerlink" title="正点原子官方uboot编译"></a>正点原子官方uboot编译</h3><ol>
-<li><p>编译uboot的时候需要先配置,编译代码如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- distclean</span><br><span class="line">make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- mx6ull_14x14_ddr512_emmc_defconfig</span><br><span class="line">make V=1 ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j12</span><br></pre></td></tr></table></figure>
-
-<p>ARCH&#x3D;arm 设置目标为 arm 架构， CROSS_COMPILE 指定所使用的交叉编译器。  第一条命令相当于“make distclean”，目的是清除工程，一般在第一次编译的时候最好清理一下工程。第二条指令相当于“make mx6ull_14x14_ddr512_emmc_defconfig”，用于配置 uboot，配置文件为 mx6ull_14x14_ddr512_emmc_defconfig。最后一条指令相当于 “make -j12”也就是使用 12 核来编译 uboot。  </p>
-</li>
-<li><p>编译完成以后就会生成一个u-boot.bin必须向u-boot.bin添加头部信息。u-boot编译会通过 .&#x2F;tools&#x2F;mkimage添加头部信息，生成u-boot.imx</p>
         
       
 
@@ -649,6 +639,7 @@
       
         <span id="more"></span>
 
+<h2 id="2024-1-23"><a href="#2024-1-23" class="headerlink" title="2024&#x2F;1&#x2F;23"></a>2024&#x2F;1&#x2F;23</h2><p>今天学习了uboot的目录分析，先是了解了uboot的目录结构和一些比较重要的目录，比如config目录作为默认配置文件目录，board目录，存放不同板子的定制代码等等，同时看了一部分顶层Makefile文件，了解了一些命令输出在Makefile中是怎么实现的，后面继续看顶层Makefile（难啃）</p>
 <h2 id="2024-1-19"><a href="#2024-1-19" class="headerlink" title="2024&#x2F;1&#x2F;19"></a>2024&#x2F;1&#x2F;19</h2><p>今天学习了uboot的一些命令，在学习到网络命令的时候由于主机使用的是无线网而不是以太网连接，所以查看了一些网络环境搭建的教程，教程中需要开发板利用网线直连，所以需要网线，等带网线中………..</p>
 <h2 id="2024-1-18"><a href="#2024-1-18" class="headerlink" title="2024&#x2F;1&#x2F;18"></a>2024&#x2F;1&#x2F;18</h2><p>今天学习了正点原子uboot系统移植的一些基础知识，了解了uboot是用来干嘛的，同时知道了要将系统烧写进板子中有两种方法，1是利用windows下的烧写系统（有NXP官方提供）2是在linux下烧写，在linux下烧写首先要将镜像烧写进SD卡中，在利用sd卡和串口将镜像烧写进系统中。</p>
 <p>同时还对uboot进行了编译，首先是用命令编译，接着发现将命令集合写入shell文件后直接执行shell文件更便捷，最后直接更改Makefile文件在，直接用Makefile文件编译</p>

@@ -8,15 +8,15 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>系统移植篇 | zhuzhuzhu&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="系统移植 Windows下使用OTG烧写系统 在Windows使用NXP提供的mfgtool来向开发板烧写系统，需要用先将开发板的USB_OTG链接到电脑上 mfgtool工具是向板子先下载一个linux系统，然后通过系统完成烧写工作   Ubuntu下通过脚本烧写系统 首先向SD卡烧写一个系统，然后使用SD卡启动，启动以后在Linux中执行烧写到EMMC或NAND中    UbootUboot是">
+  <meta name="description" content="系统移植 Windows下使用OTG烧写系统  在Windows使用NXP提供的mfgtool来向开发板烧写系统，需要用先将开发板的USB_OTG链接到电脑上 mfgtool工具是向板子先下载一个linux系统，然后通过系统完成烧写工作   Ubuntu下通过脚本烧写系统  首先向SD卡烧写一个系统，然后使用SD卡启动，启动以后在Linux中执行烧写到EMMC或NAND中">
 <meta property="og:type" content="article">
 <meta property="og:title" content="系统移植篇">
 <meta property="og:url" content="http://example.com/2024/01/18/%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/index.html">
 <meta property="og:site_name" content="zhuzhuzhu&#39;s blog">
-<meta property="og:description" content="系统移植 Windows下使用OTG烧写系统 在Windows使用NXP提供的mfgtool来向开发板烧写系统，需要用先将开发板的USB_OTG链接到电脑上 mfgtool工具是向板子先下载一个linux系统，然后通过系统完成烧写工作   Ubuntu下通过脚本烧写系统 首先向SD卡烧写一个系统，然后使用SD卡启动，启动以后在Linux中执行烧写到EMMC或NAND中    UbootUboot是">
+<meta property="og:description" content="系统移植 Windows下使用OTG烧写系统  在Windows使用NXP提供的mfgtool来向开发板烧写系统，需要用先将开发板的USB_OTG链接到电脑上 mfgtool工具是向板子先下载一个linux系统，然后通过系统完成烧写工作   Ubuntu下通过脚本烧写系统  首先向SD卡烧写一个系统，然后使用SD卡启动，启动以后在Linux中执行烧写到EMMC或NAND中">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-01-18T13:51:46.000Z">
-<meta property="article:modified_time" content="2024-01-18T13:57:12.480Z">
+<meta property="article:modified_time" content="2024-01-23T12:58:51.253Z">
 <meta property="article:author" content="ZHUJIALE">
 <meta name="twitter:card" content="summary">
   
@@ -184,27 +184,383 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h1 id="系统移植"><a href="#系统移植" class="headerlink" title="系统移植"></a>系统移植</h1><ul>
-<li>Windows下使用OTG烧写系统<ol>
+<li><p>Windows下使用OTG烧写系统</p>
+<ol>
 <li>在Windows使用NXP提供的mfgtool来向开发板烧写系统，需要用先将开发板的USB_OTG链接到电脑上</li>
 <li>mfgtool工具是向板子先下载一个linux系统，然后通过系统完成烧写工作</li>
 </ol>
 </li>
-<li>Ubuntu下通过脚本烧写系统<ol>
+<li><p>Ubuntu下通过脚本烧写系统</p>
+<ol>
 <li>首先向SD卡烧写一个系统，然后使用SD卡启动，启动以后在Linux中执行烧写到EMMC或NAND中</li>
 </ol>
-</li>
+<span id="more"></span></li>
 </ul>
 <h2 id="Uboot"><a href="#Uboot" class="headerlink" title="Uboot"></a>Uboot</h2><p>Uboot是一个裸机程序，比较复杂，就是一个bootloader。作用就是用于启动Linux或其他系统，Uboot最主要的工作就是初始化DDR（Linux的运行是运行在DDR里面的），一般linux镜像zimage（uimage）+设备树（.dtb）存放在SD，EMMC,NAND,SPI FLASH等等外置存储区域。</p>
 <p>这里牵扯到一个问题，需要将Linux镜像从外置系统拷贝到DDR中，再去启动，Uboot的主要问题就是为系统的启动做准备，不仅仅能启动Linux，也可以启动其他系统，比如vxworks，Linux不仅仅能通过Uboot启动</p>
 <p>uboot是一个通用bootload，支持多种架构</p>
-<h3 id="正点原子官方uboot编译"><a href="#正点原子官方uboot编译" class="headerlink" title="正点原子官方uboot编译"></a>正点原子官方uboot编译</h3><ol>
+<ol start="2">
+<li><h3 id="正点原子官方uboot编译"><a href="#正点原子官方uboot编译" class="headerlink" title="正点原子官方uboot编译"></a>正点原子官方uboot编译</h3><ol>
 <li><p>编译uboot的时候需要先配置,编译代码如下：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- distclean</span><br><span class="line">make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- mx6ull_14x14_ddr512_emmc_defconfig</span><br><span class="line">make V=1 ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j12</span><br></pre></td></tr></table></figure>
 
 <p>ARCH&#x3D;arm 设置目标为 arm 架构， CROSS_COMPILE 指定所使用的交叉编译器。  第一条命令相当于“make distclean”，目的是清除工程，一般在第一次编译的时候最好清理一下工程。第二条指令相当于“make mx6ull_14x14_ddr512_emmc_defconfig”，用于配置 uboot，配置文件为 mx6ull_14x14_ddr512_emmc_defconfig。最后一条指令相当于 “make -j12”也就是使用 12 核来编译 uboot。  </p>
 </li>
 <li><p>编译完成以后就会生成一个u-boot.bin必须向u-boot.bin添加头部信息。u-boot编译会通过 .&#x2F;tools&#x2F;mkimage添加头部信息，生成u-boot.imx</p>
-<span id="more"></span></li>
+</li>
+</ol>
+<h2 id="uboot命令"><a href="#uboot命令" class="headerlink" title="uboot命令"></a>uboot命令</h2><ol>
+<li>带有调试性质的开发，uboot都是烧写到sd卡，方便烧写</li>
+</ol>
+<p>&#x3D;&#x3D;命令&#x3D;&#x3D;：</p>
+<ol>
+<li><p>help命令：</p>
+<ul>
+<li>直接输入获取当前uboot可以执行的所有命令</li>
+<li>查看某一个命令帮助信息：？+命令名，例如查看boot命令帮助信息：？ boot</li>
+</ul>
+</li>
+<li><p>信息查询命令：</p>
+<ul>
+<li>bdinfo：打印板子信息</li>
+<li>printenv：查看当前板子的环境变量（重要）</li>
+</ul>
+</li>
+<li><p>setenv：</p>
+<ul>
+<li>设置环境变量语法：setenv [设置的环境变量] [设置的值]</li>
+<li>也可以自定义环境变量，语法同上</li>
+<li>删除环境变量 ，将环境变量的值设为空值,语法：setenv [要删除的值]</li>
+</ul>
+</li>
+<li><p>saveenv：保存环境变量</p>
+</li>
+<li><p>内存操作命令：</p>
+<ol>
+<li>md命令：用于显示内存值，语法：md [.b, .w, .l] address [# of objects]，例：md.b 0x80000000 20：显示从0x80000000开始的32个字节（20是16进制，uboot所有命令都是16进制的）</li>
+<li>nm命令：用于修改指定地址的内存值，语法：nm [.b, .w, .l] address</li>
+<li>mm命令：也是修改地址，使用 mm 修改内存值的时候地址会自增，而使用命令 nm 的话地址不会自增  ，语法同nm</li>
+<li>mw命令：用于使用一个指定的数据填充一段内存，命令格式如下：mw [.b, .w, .l] address value [count]，例子：mw.l 80000000 0A0A0A0A 10</li>
+<li>cp命令：数据拷贝命令，用于将 DRAM 中的数据从一段内存拷贝到另一段内存中，或者把 Nor Flash 中的数据拷贝到 DRAM 中。命令格式如下：cp [.b, .w, .l] source target count ，例： cp.l 80000000 80000100 10</li>
+<li>cmp命令：比较命令，用于比较两段内存的数据是否相等，命令格式如下： cmp [.b, .w, .l] addr1 addr2 count  ，例：cmp.l 80000000 80000100 10</li>
+</ol>
+</li>
+<li><p>网络操作命令：</p>
+<ol>
+<li>ping命令：重点！！！</li>
+<li>nfs：网络文件系统：目的就是为了调试程序，格式：nfs [loadAddress] [[hostIPaddr:]bootfilename]  ，例子：nfs 80800000 192.168.10.100:&#x2F;home&#x2F;alientek&#x2F;experiment&#x2F;IMX6ULL&#x2F;nfs&#x2F;zImage</li>
+</ol>
+<h2 id="EMMC和SD卡操作命令"><a href="#EMMC和SD卡操作命令" class="headerlink" title="EMMC和SD卡操作命令"></a>EMMC和SD卡操作命令</h2></li>
+<li><p>mmc命令：</p>
+<ul>
+<li>mmc info：打印当前选中设备信息 </li>
+<li>mmc rescan：扫描当前可用设备</li>
+<li>mmc list：打印当前可用设备</li>
+<li>mmc dev：选择使用设备，例如mmc dev 0 </li>
+<li>mmc part：列出当前设备分区</li>
+<li>mmc read：读取mmc设备命令，格式：mmc read addr blk# cnt  例：mmc read 80800000 600 10（以600为起始地址开始读，  读10（16进制）个块，每个块为512个字节）</li>
+<li>mmc write：mmc write addr blk# cnt</li>
+</ul>
+</li>
+</ol>
+<h2 id="FAT格式文件系统操作命令"><a href="#FAT格式文件系统操作命令" class="headerlink" title="FAT格式文件系统操作命令"></a>FAT格式文件系统操作命令</h2><p>对于imxu来说sd或者emmc分为三个分区，第一个存放uboot第二个存放Linux zImage .dtb FAT，第三个：系统的跟文件系统 .EXT4</p>
+<ol>
+<li>fatinfo：查看指定MMC分区的文件系统信息，格式：fatinfo <interface>  [&lt;dev[:part]&gt;] 例：fatinfo mmc 1:1</li>
+<li>fatls：用于查询FAT格式设备的目录和文件信息</li>
+<li>fstype：用于查看MMC设备某个分区的v文件格式系统</li>
+<li>fatload：把FAT分区的某个文件读取到DRAM中，例：</li>
+</ol>
+<h2 id="BOOT操作命令"><a href="#BOOT操作命令" class="headerlink" title="BOOT操作命令"></a>BOOT操作命令</h2><ol>
+<li>bootz命令：要先把linux镜像和设备树放到DRAM中，bootz用于启动zImage镜像文件</li>
+<li>bootm命令：和bootz类似，用于启动uImage</li>
+<li>boot命令：用来运行bootcmd环境变量<br>bootcmd：setenv bootcmd ‘tftp 80800000 zImage;tftp 83000000 imx6ull-14x14-emmc-7-800x480-c.dtb;bootz 80800000 - 83000000;’设置好bootcmd置环境变量后直接运行boot即可</li>
+<li>go命令：跳转到指定地址处执行命令</li>
+<li>run命令：运行环境变量中定义的命令  ，就是自己定义在环境变量中的命令</li>
+</ol>
+<h2 id="Uboot源码分析"><a href="#Uboot源码分析" class="headerlink" title="Uboot源码分析"></a>Uboot源码分析</h2><h3 id="uboot源码目录分析"><a href="#uboot源码目录分析" class="headerlink" title="uboot源码目录分析"></a>uboot源码目录分析</h3><p>因为uboot会使用到一些经过编译才会生成的文件，因此我们在分析uboot的时候需要先编译uboot</p>
+<ol>
+<li>arch\arm\cpu\u-boot.lds就是整个uboot的链接脚本</li>
+<li>\board\freescale\mx6ullevk，重点</li>
+<li>configs目录是uboot的默认配置文件目录。此目录都是以_defconfig结尾的，这些配置文件对应不同的板子</li>
+<li>移植uboot的时候重点要关注\board文件夹，\configs文件夹</li>
+<li>当我们执行make xxx_defconfig就会生成.config文件，此文件保存了详细的uboot配置信息</li>
+<li>顶层README非常重要，介绍uboot</li>
+<li>u-boot，这个就是编译出来带elf信息的uboot可执行文件。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名字</th>
+<th>描述</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文件夹</td>
+<td>api</td>
+<td>与硬件无关的 API 函数。</td>
+<td>uboot 自带</td>
+</tr>
+<tr>
+<td>arch</td>
+<td>与架构体系有关的代码。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>board</td>
+<td>不同板子(开发板)的定制代码。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>cmd</td>
+<td>命令相关代码。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>common</td>
+<td>通用代码。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>configs</td>
+<td>配置文件。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>disk</td>
+<td>磁盘分区相关代码</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>doc</td>
+<td>文档。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>drivers</td>
+<td>驱动代码。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>dts</td>
+<td>设备树。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>examples</td>
+<td>示例代码。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>fs</td>
+<td>文件系统。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>include</td>
+<td>头文件。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>lib</td>
+<td>库文件。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Licenses</td>
+<td>许可证相关文件。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>net</td>
+<td>网络相关代码。</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>post</th>
+<th>上电自检程序。</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>scripts</td>
+<td>脚本文件。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>test</td>
+<td>测试代码。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>tools</td>
+<td>工具文件夹。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>文件</td>
+<td>.config</td>
+<td>配置文件，重要的文件。</td>
+<td>编译生成的文件</td>
+</tr>
+<tr>
+<td>.gitignore</td>
+<td>git 工具相关文件。</td>
+<td>uboot 自带</td>
+<td></td>
+</tr>
+<tr>
+<td>.mailmap</td>
+<td>邮件列表。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>.u-boot.xxx.cmd (一系列)</td>
+<td>这是一系列的文件，用于保存着一些命令。</td>
+<td>编译生成的文件</td>
+<td></td>
+</tr>
+<tr>
+<td>config.mk</td>
+<td>某个 Makefile 会调用此文件。</td>
+<td>uboot 自带</td>
+<td></td>
+</tr>
+<tr>
+<td>imxdownload</td>
+<td>正点原子编写的 SD 卡烧写软件。</td>
+<td>正点原子提供</td>
+<td></td>
+</tr>
+<tr>
+<td>Kbuild</td>
+<td>用于生成一些和汇编有关的文件。</td>
+<td>uboot 自带</td>
+<td></td>
+</tr>
+<tr>
+<td>Kconfig</td>
+<td>图形配置界面描述文件。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>MAINTAINERS</td>
+<td>维护者联系方式文件。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>MAKEALL</td>
+<td>一个 shell 脚本文件，帮助编译uboot 的。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Makefile</td>
+<td>主 Makefile，重要文件！</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>mx6ull_alientek_emmc.sh</td>
+<td>上一章编写的编译脚本文件</td>
+<td>上一章编写的。</td>
+<td></td>
+</tr>
+<tr>
+<td>mx6ull_alientek_nand.sh</td>
+<td>上一章编写的编译脚本文件</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>README</td>
+<td>相当于帮助文档。</td>
+<td>uboot 自带</td>
+<td></td>
+</tr>
+<tr>
+<td>snapshot.commint</td>
+<td>？？？</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>System.map</td>
+<td>系统映射文件</td>
+<td>编译出来的文件</td>
+<td></td>
+</tr>
+<tr>
+<td>u-boot</td>
+<td>编译出来的 u-boot 文件。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>u-boot.xxx (一系列)</td>
+<td>生成的一些 u-boot 相关文件，包括u-boot.bin、 u-boot.imx.等</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="Uboot顶层Makefile分析"><a href="#Uboot顶层Makefile分析" class="headerlink" title="Uboot顶层Makefile分析"></a>Uboot顶层Makefile分析</h3><ol>
+<li><p>刚开始是版本号：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">VERSION = 2016</span><br><span class="line">PATCHLEVEL = 03</span><br><span class="line">SUBLEVEL =</span><br><span class="line">EXTRAVERSION =</span><br><span class="line">NAME =</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>MAKEFLAGS变量：是用来传递给子makefile的</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MAKEFLAGS += -rR --include-dir=<span class="variable">$(CURDIR)</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>命令输出：uboot 默认编译是不会在终端中显示完整的命令，都是短命令，  不利于分析 uboot 的编译过程。可以通过设置变量“V&#x3D;1“来实现完整的命令输出， 。实现：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ifeq</span> (<span class="string">&quot;$(origin V)&quot;</span>, <span class="string">&quot;command line&quot;</span>)			<span class="comment">#判断V是否来自命令行</span></span><br><span class="line">  KBUILD_VERBOSE = <span class="variable">$(V)</span>						   <span class="comment">#获取来自命令行的值</span></span><br><span class="line"><span class="keyword">endif</span></span><br><span class="line"><span class="keyword">ifndef</span> KBUILD_VERBOSE</span><br><span class="line">  KBUILD_VERBOSE = 0</span><br><span class="line"><span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ifeq</span> (<span class="variable">$(KBUILD_VERBOSE)</span>,1)						<span class="comment">#如果V=1</span></span><br><span class="line">  quiet =							<span class="comment">#quiet控制输出长短</span></span><br><span class="line">  Q =								<span class="comment">#Q控制是否输出完整命令</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  quiet=quiet_</span><br><span class="line">  Q = @</span><br><span class="line"><span class="keyword">endif</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>静默输出：如果是make -s则静默输出，不输出过程</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># If the user is running make -s (silent mode), suppress echoing of</span></span><br><span class="line"><span class="comment"># commands</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ifneq</span> (<span class="variable">$(<span class="built_in">filter</span> 4.%,<span class="variable">$(MAKE_VERSION)</span>)</span>,)	<span class="comment"># make-4</span></span><br><span class="line"><span class="keyword">ifneq</span> (<span class="variable">$(<span class="built_in">filter</span> %s ,$(<span class="built_in">firstword</span> x<span class="variable">$(MAKEFLAGS)</span>)</span>),)<span class="comment">#如果是make -s 则if成立</span></span><br><span class="line">  quiet=silent_</span><br><span class="line"><span class="keyword">endif</span></span><br><span class="line"><span class="keyword">else</span>					<span class="comment"># make-3.8x</span></span><br><span class="line"><span class="keyword">ifneq</span> (<span class="variable">$(<span class="built_in">filter</span> s% -s%,<span class="variable">$(MAKEFLAGS)</span>)</span>,)</span><br><span class="line">  quiet=silent_</span><br><span class="line"><span class="keyword">endif</span></span><br><span class="line"><span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> quiet Q KBUILD_VERBOSE</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>设置编译结果输出目录：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1) O=</span></span><br><span class="line"><span class="comment"># Use &quot;make O=dir/to/store/output/files/&quot;</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># 2) Set KBUILD_OUTPUT</span></span><br><span class="line"><span class="comment"># Set the environment variable KBUILD_OUTPUT to point to the directory</span></span><br><span class="line"><span class="comment"># where the output files shall be placed.</span></span><br><span class="line"><span class="comment"># export KBUILD_OUTPUT=dir/to/store/output/files/</span></span><br><span class="line"><span class="comment"># make</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># The O= assignment takes precedence over the KBUILD_OUTPUT environment</span></span><br><span class="line"><span class="comment"># variable.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># KBUILD_SRC is set on invocation of make in OBJ directory</span></span><br><span class="line"><span class="comment"># KBUILD_SRC is not intended to be used by the regular user (for now)</span></span><br><span class="line"><span class="keyword">ifeq</span> (<span class="variable">$(KBUILD_SRC)</span>,)</span><br><span class="line"></span><br><span class="line"><span class="comment"># OK, Make called in directory where kernel src resides</span></span><br><span class="line"><span class="comment"># Do we want to locate output files in a separate directory?</span></span><br><span class="line"><span class="keyword">ifeq</span> (<span class="string">&quot;$(origin O)&quot;</span>, <span class="string">&quot;command line&quot;</span>)  <span class="comment">#判断o是否来自命令行</span></span><br><span class="line">  KBUILD_OUTPUT := <span class="variable">$(O)</span></span><br><span class="line"><span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># That&#x27;s our default target when none is given on the command line</span></span><br><span class="line">PHONY := _all</span><br><span class="line"><span class="section">_all:</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Cancel implicit rules on top Makefile</span></span><br><span class="line"><span class="variable">$(CURDIR)</span>/Makefile Makefile: ;</span><br><span class="line"></span><br><span class="line"><span class="keyword">ifneq</span> (<span class="variable">$(KBUILD_OUTPUT)</span>,)     <span class="comment">##判断是否为空</span></span><br><span class="line"><span class="comment"># Invoke a second make in the output directory, passing relevant variables</span></span><br><span class="line"><span class="comment"># check that the output directory actually exists</span></span><br><span class="line">saved-output := <span class="variable">$(KBUILD_OUTPUT)</span></span><br><span class="line">KBUILD_OUTPUT := <span class="variable">$(<span class="built_in">shell</span> mkdir -p <span class="variable">$(KBUILD_OUTPUT)</span> &amp;&amp; cd <span class="variable">$(KBUILD_OUTPUT)</span> \     #跳转到输出目录</span></span><br><span class="line"><span class="variable">								&amp;&amp; /bin/pwd)</span></span><br><span class="line"><span class="variable">$(<span class="built_in">if</span> <span class="variable">$(KBUILD_OUTPUT)</span>,, \</span></span><br><span class="line"><span class="variable">     $(<span class="built_in">error</span> failed to create output directory &quot;$(saved-output)</span><span class="string">&quot;))</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">PHONY += <span class="variable">$(MAKECMDGOALS)</span> sub-make</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">$(filter-out _all sub-make <span class="variable">$(CURDIR)</span>/Makefile, <span class="variable">$(MAKECMDGOALS)</span>) _all: sub-make</span></span><br><span class="line"><span class="string">	@:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">sub-make: FORCE</span></span><br><span class="line"><span class="string">	<span class="variable">$(Q)</span><span class="variable">$(MAKE)</span> -C <span class="variable">$(KBUILD_OUTPUT)</span> KBUILD_SRC=<span class="variable">$(CURDIR)</span> \</span></span><br><span class="line"><span class="string">	-f <span class="variable">$(CURDIR)</span>/Makefile $(filter-out _all sub-make,<span class="variable">$(MAKECMDGOALS)</span>)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># Leave processing to above invocation of make</span></span><br><span class="line"><span class="string">skip-makefile := 1</span></span><br><span class="line"><span class="string">endif # ifneq (<span class="variable">$(KBUILD_OUTPUT)</span>,)</span></span><br><span class="line"><span class="string">endif # ifeq (<span class="variable">$(KBUILD_SRC)</span>,)</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>代码检查</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">      </span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li></li>
+</ol>
+</li>
 </ol>
 
       
@@ -334,7 +690,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D"><span class="toc-number">1.</span> <span class="toc-text">系统移植</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Uboot"><span class="toc-number">1.1.</span> <span class="toc-text">Uboot</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E7%82%B9%E5%8E%9F%E5%AD%90%E5%AE%98%E6%96%B9uboot%E7%BC%96%E8%AF%91"><span class="toc-number">1.1.1.</span> <span class="toc-text">正点原子官方uboot编译</span></a></li></ol></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D"><span class="toc-number">1.</span> <span class="toc-text">系统移植</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Uboot"><span class="toc-number">1.1.</span> <span class="toc-text">Uboot</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E7%82%B9%E5%8E%9F%E5%AD%90%E5%AE%98%E6%96%B9uboot%E7%BC%96%E8%AF%91"><span class="toc-number">1.1.1.</span> <span class="toc-text">正点原子官方uboot编译</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uboot%E5%91%BD%E4%BB%A4"><span class="toc-number">1.2.</span> <span class="toc-text">uboot命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EMMC%E5%92%8CSD%E5%8D%A1%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.</span> <span class="toc-text">EMMC和SD卡操作命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FAT%E6%A0%BC%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4"><span class="toc-number">1.4.</span> <span class="toc-text">FAT格式文件系统操作命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BOOT%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4"><span class="toc-number">1.5.</span> <span class="toc-text">BOOT操作命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Uboot%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">1.6.</span> <span class="toc-text">Uboot源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#uboot%E6%BA%90%E7%A0%81%E7%9B%AE%E5%BD%95%E5%88%86%E6%9E%90"><span class="toc-number">1.6.1.</span> <span class="toc-text">uboot源码目录分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Uboot%E9%A1%B6%E5%B1%82Makefile%E5%88%86%E6%9E%90"><span class="toc-number">1.6.2.</span> <span class="toc-text">Uboot顶层Makefile分析</span></a></li></ol></li></ol></li></ol>
                     </div>
                 </span>
             </div>
