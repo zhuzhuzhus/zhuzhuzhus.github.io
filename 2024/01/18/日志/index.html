@@ -8,15 +8,15 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>日志 | zhuzhuzhu&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="2024&#x2F;1&#x2F;23今天学习了uboot的目录分析，先是了解了uboot的目录结构和一些比较重要的目录，比如config目录作为默认配置文件目录，board目录，存放不同板子的定制代码等等，同时看了一部分顶层Makefile文件，了解了一些命令输出在Makefile中是怎么实现的，后面继续看顶层Makefile（难啃） 2024&#x2F;1&#x2F;19今天学习了uboo">
+  <meta name="description" content="2024&#x2F;1&#x2F;24-25这两天学习了uboot的顶层Makefile文件的，大致了解了顶层Makefile的组成结构和基本原理，但是Makefile太过庞大，同时牵连到子Makefile文件，所以还需要大量的积累才能了解透彻，视频中说不需要太过深入，所以我会在后面的项目中慢慢积累按需学习。 2024&#x2F;1&#x2F;23今天学习了uboot的目录分析，先是了解了ub">
 <meta property="og:type" content="article">
 <meta property="og:title" content="日志">
 <meta property="og:url" content="http://example.com/2024/01/18/%E6%97%A5%E5%BF%97/index.html">
 <meta property="og:site_name" content="zhuzhuzhu&#39;s blog">
-<meta property="og:description" content="2024&#x2F;1&#x2F;23今天学习了uboot的目录分析，先是了解了uboot的目录结构和一些比较重要的目录，比如config目录作为默认配置文件目录，board目录，存放不同板子的定制代码等等，同时看了一部分顶层Makefile文件，了解了一些命令输出在Makefile中是怎么实现的，后面继续看顶层Makefile（难啃） 2024&#x2F;1&#x2F;19今天学习了uboo">
+<meta property="og:description" content="2024&#x2F;1&#x2F;24-25这两天学习了uboot的顶层Makefile文件的，大致了解了顶层Makefile的组成结构和基本原理，但是Makefile太过庞大，同时牵连到子Makefile文件，所以还需要大量的积累才能了解透彻，视频中说不需要太过深入，所以我会在后面的项目中慢慢积累按需学习。 2024&#x2F;1&#x2F;23今天学习了uboot的目录分析，先是了解了ub">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-01-18T13:38:43.000Z">
-<meta property="article:modified_time" content="2024-01-23T12:59:21.890Z">
+<meta property="article:modified_time" content="2024-01-25T14:20:38.138Z">
 <meta property="article:author" content="ZHUJIALE">
 <meta property="article:tag" content="日记">
 <meta name="twitter:card" content="summary">
@@ -182,6 +182,7 @@
       
         <span id="more"></span>
 
+<h2 id="2024-1-24-25"><a href="#2024-1-24-25" class="headerlink" title="2024&#x2F;1&#x2F;24-25"></a>2024&#x2F;1&#x2F;24-25</h2><p>这两天学习了uboot的顶层Makefile文件的，大致了解了顶层Makefile的组成结构和基本原理，但是Makefile太过庞大，同时牵连到子Makefile文件，所以还需要大量的积累才能了解透彻，视频中说不需要太过深入，所以我会在后面的项目中慢慢积累按需学习。</p>
 <h2 id="2024-1-23"><a href="#2024-1-23" class="headerlink" title="2024&#x2F;1&#x2F;23"></a>2024&#x2F;1&#x2F;23</h2><p>今天学习了uboot的目录分析，先是了解了uboot的目录结构和一些比较重要的目录，比如config目录作为默认配置文件目录，board目录，存放不同板子的定制代码等等，同时看了一部分顶层Makefile文件，了解了一些命令输出在Makefile中是怎么实现的，后面继续看顶层Makefile（难啃）</p>
 <h2 id="2024-1-19"><a href="#2024-1-19" class="headerlink" title="2024&#x2F;1&#x2F;19"></a>2024&#x2F;1&#x2F;19</h2><p>今天学习了uboot的一些命令，在学习到网络命令的时候由于主机使用的是无线网而不是以太网连接，所以查看了一些网络环境搭建的教程，教程中需要开发板利用网线直连，所以需要网线，等带网线中………..</p>
 <h2 id="2024-1-18"><a href="#2024-1-18" class="headerlink" title="2024&#x2F;1&#x2F;18"></a>2024&#x2F;1&#x2F;18</h2><p>今天学习了正点原子uboot系统移植的一些基础知识，了解了uboot是用来干嘛的，同时知道了要将系统烧写进板子中有两种方法，1是利用windows下的烧写系统（有NXP官方提供）2是在linux下烧写，在linux下烧写首先要将镜像烧写进SD卡中，在利用sd卡和串口将镜像烧写进系统中。</p>
@@ -330,7 +331,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#2024-1-23"><span class="toc-number">1.</span> <span class="toc-text">2024&#x2F;1&#x2F;23</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2024-1-19"><span class="toc-number">2.</span> <span class="toc-text">2024&#x2F;1&#x2F;19</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2024-1-18"><span class="toc-number">3.</span> <span class="toc-text">2024&#x2F;1&#x2F;18</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#2024-1-24-25"><span class="toc-number">1.</span> <span class="toc-text">2024&#x2F;1&#x2F;24-25</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2024-1-23"><span class="toc-number">2.</span> <span class="toc-text">2024&#x2F;1&#x2F;23</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2024-1-19"><span class="toc-number">3.</span> <span class="toc-text">2024&#x2F;1&#x2F;19</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2024-1-18"><span class="toc-number">4.</span> <span class="toc-text">2024&#x2F;1&#x2F;18</span></a></li></ol>
                     </div>
                 </span>
             </div>
