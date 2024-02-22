@@ -16,7 +16,7 @@
 <meta property="og:description" content="系统移植 Windows下使用OTG烧写系统 在Windows使用NXP提供的mfgtool来向开发板烧写系统，需要用先将开发板的USB_OTG链接到电脑上 mfgtool工具是向板子先下载一个linux系统，然后通过系统完成烧写工作   Ubuntu下通过脚本烧写系统 首先向SD卡烧写一个系统，然后使用SD卡启动，启动以后在Linux中执行烧写到EMMC或NAND中    UbootUboot是">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-01-18T13:51:46.000Z">
-<meta property="article:modified_time" content="2024-02-20T08:05:00.934Z">
+<meta property="article:modified_time" content="2024-02-22T10:36:10.151Z">
 <meta property="article:author" content="ZHUJIALE">
 <meta name="twitter:card" content="summary">
   
@@ -737,6 +737,58 @@
 </ol>
 </li>
 </ol>
+<h2 id="Linux内核"><a href="#Linux内核" class="headerlink" title="Linux内核"></a>Linux内核</h2><p>编译步骤</p>
+<ol>
+<li><p>disclean清理工程</p>
+</li>
+<li><p>make xxx——defconfig 使用默认配置文件配置工程</p>
+</li>
+<li><p>make 编译</p>
+</li>
+<li><p>make menuconfig 打开配置界面进行配置</p>
+</li>
+<li><p>zImage存放在.&#x2F;arch&#x2F;arm&#x2F;boot&#x2F;zImage</p>
+</li>
+<li><p>.dtb存放在.&#x2F;arch&#x2F;arm&#x2F;boot&#x2F;dts&#x2F;*.dtb</p>
+</li>
+</ol>
+<p>&#x3D;&#x3D;源码目录分析&#x3D;&#x3D;</p>
+<ol>
+<li>arch&#x2F;arm&#x2F;boot&#x2F;这个目录，Linux内核编译完成以后，在此目录下生成image zImage</li>
+<li>arch&#x2F;arm&#x2F;boot&#x2F;dts&#x2F;这个目录存放Linux内核所有设备树文件，包括dts编译后对应的.dtb文件</li>
+<li>Documentation\devicetree\bindings 此目录下的文件很重要，设备树绑定信息</li>
+</ol>
+<p><strong>在linux中添加自己的开发板</strong></p>
+<ol>
+<li>一个就是imx6ull_alientek_emmc_defconfig 默认配置文件</li>
+<li>imx6ull-alientek-emmc.dts编译出来就是.dtb文件</li>
+</ol>
+<p>设置板子默认从网络启动：setenv bootcmd ‘tftp 80800000 zImage;tftp 83000000 imx6ull-alientek-emmc.dtb;bootz 80800000 - 83000000’  （&#x3D;&#x3D;bootcmd默认不进入uboot后执行&#x3D;&#x3D;）</p>
+<p>设置根文件系统存放在EMMC的分区2里面： setenv bootargs ‘console&#x3D;ttymxc0,115200 root&#x3D;&#x2F;dev&#x2F;mmcblk1p2 rootwait rw’</p>
+<h2 id="根文件系统的构建"><a href="#根文件系统的构建" class="headerlink" title="根文件系统的构建"></a>根文件系统的构建</h2><p>根文件系统也叫做rootfs，FAT这类文件系统属于Linux的一部分，属于软件代码，根文件系统&#x3D; ‘根’ + ‘文件’ + ‘系统’ 。根文件系统就是一堆的文件，比如软件，配置文件等等，这些文件时Linux运行所必须的，将他们组合在一起就构成了根文件系统。</p>
+<p>根文件系统就是一个“文件夹”此文件夹有很多个文件，这些文件是Linux运行所必须的，但是无法放到内核中，比如命令，库，配置文件等等，所有这些软件需要我们自己构建</p>
+<ol>
+<li>&#x2F;bin 目录看到“bin”大家应该能想到 bin 文件， bin 文件就是可执行文件。所以此目录下存放着系统需要的可执行文件，一般都是一些命令，比如 ls、 mv 等命令。此目录下的命令所有的客户都可以使用。</li>
+<li>&#x2F;dev 目录dev 是 device 的缩写，所以此目录下的文件都是和设备有关的，此目录下的文件都是设备文件。在 Linux 下一切皆文件，即使是硬件设备，也是以文件的形式存在的，比如&#x2F;dev&#x2F;ttymxc0(I.MX6ULL 根目录会有此文件)就表示 I.MX6ULL 的串口 0，我们要想通过串口 0发送或者接收数据就要操作文件&#x2F;dev&#x2F;ttymxc0，通过对文件&#x2F;dev&#x2F;ttymxc0 的读写操作来实现串口0 的数据收发。</li>
+<li>&#x2F;etc 目录此目录下存放着各种配置文件，大家可以进入 Ubuntu 的 etc 目录看一下，里面的配置文件非常多！但是在嵌入式 Linux 下此目录会很简洁。</li>
+<li>&#x2F;lib 目录lib 是 library 的简称，也就是库的意思，因此此目录下存放着 Linux 所必须的库文件。这些库文件是共享库，命令和用户编写的应用程序要使用这些库文件。</li>
+<li>&#x2F;mnt 目录临时挂载目录，一般是空目录，可以在此目录下创建空的子目录，比如&#x2F;mnt&#x2F;sd、 &#x2F;mnt&#x2F;usb，这样就可以将 SD 卡或者 U 盘挂载到&#x2F;mnt&#x2F;sd 或者&#x2F;mnt&#x2F;usb 目录中。</li>
+<li>&#x2F;proc 目录此目录一般是空的，当 Linux 系统启动以后会将此目录作为 proc 文件系统的挂载点， proc是个虚拟文件系统，没有实际的存储设备。 proc 里面的文件都是临时存在的，一般用来存储系统运行信息文件。</li>
+<li>&#x2F;usr 目录要注意， usr 不是 user 的缩写，而是 Unix Software Resource 的缩写，也就是 Unix 操作系统软件资源目录。这里有个小知识点，那就是 Linux 一般被称为类 Unix 操作系统，苹果的 MacOS也是类 Unix 操作系统。关于 Linux 和 Unix 操作系统的渊源大家可以直接在网上找 Linux 的发展历史来看。既然是软件资源目录，因此&#x2F;usr 目录下也存放着很多软件，一般系统安装完成以后此目录占用的空间最多。</li>
+<li>&#x2F;var 目录此目录存放一些可以改变的数据。</li>
+<li>&#x2F;sbin 目录此目录页用户存放一些可执行文件，但是此目录下的文件或者说命令只有管理员才能使用，主要用户系统管理。</li>
+<li>&#x2F;sys 目录系统启动以后此目录作为 sysfs 文件系统的挂载点， sysfs 是一个类似于 proc 文件系统的特殊文件系统， sysfs 也是基于 ram 的文件系统，也就是说它也没有实际的存储设备。此目录是系统设备管理的重要目录，此目录通过一定的组织结构向用户提供详细的内核数据结构信息。&#x2F;opt可选的文件、软件存放区，由用户选择将哪些文件或软件放到此目录中。</li>
+</ol>
+<h3 id="BusyBox构建根文件系统"><a href="#BusyBox构建根文件系统" class="headerlink" title="BusyBox构建根文件系统"></a>BusyBox构建根文件系统</h3><p>构建根文件系统，busybox，还有很多成熟化的根文件系统的构建方式，buildroot，yoctos，构建的根文件系统调试，我们通过nfs网络挂载，也就是根文件系统存放在ubuntu下，开发板启动以后通过nfs服务使用ubuntu下的根文件系统</p>
+<ol>
+<li>修改makefile添加交叉编译器，修改ARCH CROSS_COMPILE</li>
+<li>busy支持中文字符</li>
+<li>配置busybox ：make defconfig</li>
+<li>编译 busybox</li>
+<li>将库文件拷贝过来，库文件就是交叉编译器的库文件</li>
+<li>创建其他文件夹</li>
+<li>设置nfs挂载根文件系统： setenv bootargs ‘console&#x3D;ttymxc0,115200 rw root&#x3D;&#x2F;dev&#x2F;nfs nfsroot&#x3D;192.168.10.100:&#x2F;home&#x2F;alientek&#x2F;experiment&#x2F;IMX6ULL&#x2F;nfs&#x2F;rootfs ip&#x3D;192.168.10.50:192.168.10.100:192.168.10.1:255.255.255.0::eth0:off’</li>
+</ol>
 
       
 
@@ -865,7 +917,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D"><span class="toc-number">1.</span> <span class="toc-text">系统移植</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Uboot"><span class="toc-number">1.1.</span> <span class="toc-text">Uboot</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E7%82%B9%E5%8E%9F%E5%AD%90%E5%AE%98%E6%96%B9uboot%E7%BC%96%E8%AF%91"><span class="toc-number">1.1.1.</span> <span class="toc-text">正点原子官方uboot编译</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uboot%E5%91%BD%E4%BB%A4"><span class="toc-number">1.2.</span> <span class="toc-text">uboot命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EMMC%E5%92%8CSD%E5%8D%A1%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.</span> <span class="toc-text">EMMC和SD卡操作命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FAT%E6%A0%BC%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4"><span class="toc-number">1.4.</span> <span class="toc-text">FAT格式文件系统操作命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BOOT%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4"><span class="toc-number">1.5.</span> <span class="toc-text">BOOT操作命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Uboot%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">1.6.</span> <span class="toc-text">Uboot源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#uboot%E6%BA%90%E7%A0%81%E7%9B%AE%E5%BD%95%E5%88%86%E6%9E%90"><span class="toc-number">1.6.1.</span> <span class="toc-text">uboot源码目录分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Uboot%E9%A1%B6%E5%B1%82Makefile%E5%88%86%E6%9E%90"><span class="toc-number">1.6.2.</span> <span class="toc-text">Uboot顶层Makefile分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uboot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.7.</span> <span class="toc-text">uboot启动流程详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%ACu-boot-lds%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.7.1.</span> <span class="toc-text">链接脚本u-boot.lds详解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uboot%E7%A7%BB%E6%A4%8D%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.8.</span> <span class="toc-text">uboot移植实验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LCD%E9%A9%B1%E5%8A%A8%E7%9A%84%E4%BF%AE%E6%94%B9"><span class="toc-number">1.8.1.</span> <span class="toc-text">LCD驱动的修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E9%A9%B1%E5%8A%A8%E4%BF%AE%E6%94%B9"><span class="toc-number">1.8.2.</span> <span class="toc-text">网络驱动修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#uboot%E5%90%AF%E5%8A%A8Linux%E6%B5%8B%E8%AF%95"><span class="toc-number">1.8.3.</span> <span class="toc-text">uboot启动Linux测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bootcmd%E5%92%8Cbootargs"><span class="toc-number">1.8.4.</span> <span class="toc-text">bootcmd和bootargs</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#uboot-DDR%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">1.8.5.</span> <span class="toc-text">uboot DDR初始化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Uboot%E5%9B%BE%E5%BD%A2%E5%8C%96%E9%85%8D%E7%BD%AE%E7%95%8C%E9%9D%A2"><span class="toc-number">1.9.</span> <span class="toc-text">Uboot图形化配置界面</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D"><span class="toc-number">1.</span> <span class="toc-text">系统移植</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Uboot"><span class="toc-number">1.1.</span> <span class="toc-text">Uboot</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E7%82%B9%E5%8E%9F%E5%AD%90%E5%AE%98%E6%96%B9uboot%E7%BC%96%E8%AF%91"><span class="toc-number">1.1.1.</span> <span class="toc-text">正点原子官方uboot编译</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uboot%E5%91%BD%E4%BB%A4"><span class="toc-number">1.2.</span> <span class="toc-text">uboot命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EMMC%E5%92%8CSD%E5%8D%A1%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.</span> <span class="toc-text">EMMC和SD卡操作命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FAT%E6%A0%BC%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4"><span class="toc-number">1.4.</span> <span class="toc-text">FAT格式文件系统操作命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BOOT%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4"><span class="toc-number">1.5.</span> <span class="toc-text">BOOT操作命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Uboot%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">1.6.</span> <span class="toc-text">Uboot源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#uboot%E6%BA%90%E7%A0%81%E7%9B%AE%E5%BD%95%E5%88%86%E6%9E%90"><span class="toc-number">1.6.1.</span> <span class="toc-text">uboot源码目录分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Uboot%E9%A1%B6%E5%B1%82Makefile%E5%88%86%E6%9E%90"><span class="toc-number">1.6.2.</span> <span class="toc-text">Uboot顶层Makefile分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uboot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.7.</span> <span class="toc-text">uboot启动流程详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%ACu-boot-lds%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.7.1.</span> <span class="toc-text">链接脚本u-boot.lds详解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uboot%E7%A7%BB%E6%A4%8D%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.8.</span> <span class="toc-text">uboot移植实验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LCD%E9%A9%B1%E5%8A%A8%E7%9A%84%E4%BF%AE%E6%94%B9"><span class="toc-number">1.8.1.</span> <span class="toc-text">LCD驱动的修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E9%A9%B1%E5%8A%A8%E4%BF%AE%E6%94%B9"><span class="toc-number">1.8.2.</span> <span class="toc-text">网络驱动修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#uboot%E5%90%AF%E5%8A%A8Linux%E6%B5%8B%E8%AF%95"><span class="toc-number">1.8.3.</span> <span class="toc-text">uboot启动Linux测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bootcmd%E5%92%8Cbootargs"><span class="toc-number">1.8.4.</span> <span class="toc-text">bootcmd和bootargs</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#uboot-DDR%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">1.8.5.</span> <span class="toc-text">uboot DDR初始化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Uboot%E5%9B%BE%E5%BD%A2%E5%8C%96%E9%85%8D%E7%BD%AE%E7%95%8C%E9%9D%A2"><span class="toc-number">1.9.</span> <span class="toc-text">Uboot图形化配置界面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E5%86%85%E6%A0%B8"><span class="toc-number">1.10.</span> <span class="toc-text">Linux内核</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%9E%84%E5%BB%BA"><span class="toc-number">1.11.</span> <span class="toc-text">根文件系统的构建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BusyBox%E6%9E%84%E5%BB%BA%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.11.1.</span> <span class="toc-text">BusyBox构建根文件系统</span></a></li></ol></li></ol></li></ol>
                     </div>
                 </span>
             </div>
