@@ -532,6 +532,74 @@
 
 
   
+    <article id="post-Linux驱动开发" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2024/02/27/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/">Linux驱动开发</a>
+    </h1>
+  
+
+        
+        <a href="/2024/02/27/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" class="archive-article-date">
+  	<time datetime="2024-02-27T12:33:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-02-27</time>
+</a>
+        
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+        <div class="article-pop-out tagcloud">
+          <i class="icon-tuding"></i>
+          <a class="article-tag-list-link color3">置顶</a>
+        </div>
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2024/02/27/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+  
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
     <article id="post-c内存管理以及链接脚本" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -638,6 +706,12 @@
       
         <span id="more"></span>
 
+<h2 id="2024-3-2"><a href="#2024-3-2" class="headerlink" title="2024&#x2F;3&#x2F;2"></a>2024&#x2F;3&#x2F;2</h2><p>今天学习了设备树的基本框架和语法，但是很多东西感觉很模糊，明天减少任务量并复习总结前面的内容</p>
+<h2 id="2024-3-1"><a href="#2024-3-1" class="headerlink" title="2024&#x2F;3&#x2F;1"></a>2024&#x2F;3&#x2F;1</h2><p>今天还是编写LED驱动，但是不同的是今天编写的LED驱动不需要手动查看可用设备号然后手动申请，并且可以自动分配子设备号，同时还学习了通过class类直接部署驱动到&#x2F;dev中，并且可以将一个设备创建一个结构体保存该设备的数据例如设备号，class类等</p>
+<h2 id="2024-2-29"><a href="#2024-2-29" class="headerlink" title="2024&#x2F;2&#x2F;29"></a>2024&#x2F;2&#x2F;29</h2><p>今天编写了LED的字符设备驱动，了解了编写驱动的具体流程和需要使用的函数等</p>
+<h2 id="2024-2-28"><a href="#2024-2-28" class="headerlink" title="2024&#x2F;2&#x2F;28"></a>2024&#x2F;2&#x2F;28</h2><p>今天通过编写字符驱动程序了解了字符驱动程序的编写流程，搜先要编写注册和退出函数，传入的参数有主设备号，设备姓名，函数表。还有退出函数，</p>
+<p>接着还要设置open，write，read，close等函数，同时在应用程序也要设置对应的调用，在设置例如write调用的时候，内核的值不能直接赋给应用，应用的值也不可以直接赋值给内核，都要通过相应的函数如copy_to_user   copy_from_user等</p>
+<h2 id="2024-2-27"><a href="#2024-2-27" class="headerlink" title="2024&#x2F;2&#x2F;27"></a>2024&#x2F;2&#x2F;27</h2><p>今天了解了驱动开发的流程，大致就是根据Linux提供的框架编写驱动，编写完成后还要编写一个简单的应用程序应用程序进行测试。还了解了Linux驱动开发的分类分为字符设备驱动，网络设备驱动，块设备驱动</p>
 <h2 id="2024-2-22"><a href="#2024-2-22" class="headerlink" title="2024&#x2F;2&#x2F;22"></a>2024&#x2F;2&#x2F;22</h2><p>今天算是学完了Linux的系统移植，也成功在自己的板子上移植了自己的Linux系统，总结回顾全部移植过程就是：</p>
 <ol>
 <li>首先创建自己的uboot文件，具体就是创建自己的config配置文件，以及板子对应的头文件和板级文件夹</li>
