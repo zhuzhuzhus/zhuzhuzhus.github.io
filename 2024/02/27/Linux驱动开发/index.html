@@ -8,17 +8,30 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>Linux驱动开发 | zhuzhuzhu&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Linux驱动开发Linux驱动开发和裸机开发的区别  裸机开发： 底层，和寄存器打交道，有些MCU提供库   驱动开发思维： 直接操纵寄存器不太现实 根据Linux下的各种驱动框架进行开发，一定要满足框架，也就是Linux各种驱动框架的掌握 驱动最终表现就是&#x2F;dev&#x2F;xxx文件。打开，关闭，读写。。。 现在新的内核支持设备树，这是一个.dts文件，此文件描述了板子的设备信息">
+  <meta name="description" content="Linux驱动开发 Linux驱动开发和裸机开发的区别**  裸机开发： 底层，和寄存器打交道，有些MCU提供库   驱动开发思维： 直接操纵寄存器不太现实 根据Linux下的各种驱动框架进行开发，一定要满足框架，也就是Linux各种驱动框架的掌握 驱动最终表现就是&#x2F;dev&#x2F;xxx文件。打开，关闭，读写。。。 现在新的内核支持设备树，这是一个.dts文件，此文件描述了板子的设备">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux驱动开发">
 <meta property="og:url" content="http://example.com/2024/02/27/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/index.html">
 <meta property="og:site_name" content="zhuzhuzhu&#39;s blog">
-<meta property="og:description" content="Linux驱动开发Linux驱动开发和裸机开发的区别  裸机开发： 底层，和寄存器打交道，有些MCU提供库   驱动开发思维： 直接操纵寄存器不太现实 根据Linux下的各种驱动框架进行开发，一定要满足框架，也就是Linux各种驱动框架的掌握 驱动最终表现就是&#x2F;dev&#x2F;xxx文件。打开，关闭，读写。。。 现在新的内核支持设备树，这是一个.dts文件，此文件描述了板子的设备信息">
+<meta property="og:description" content="Linux驱动开发 Linux驱动开发和裸机开发的区别**  裸机开发： 底层，和寄存器打交道，有些MCU提供库   驱动开发思维： 直接操纵寄存器不太现实 根据Linux下的各种驱动框架进行开发，一定要满足框架，也就是Linux各种驱动框架的掌握 驱动最终表现就是&#x2F;dev&#x2F;xxx文件。打开，关闭，读写。。。 现在新的内核支持设备树，这是一个.dts文件，此文件描述了板子的设备">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404011752365.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012004543.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012006685.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012006238.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012006280.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012007209.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012026331.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012026180.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012026170.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012026318.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012026326.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012026230.png">
 <meta property="article:published_time" content="2024-02-27T12:33:25.000Z">
-<meta property="article:modified_time" content="2024-03-04T14:53:45.609Z">
+<meta property="article:modified_time" content="2024-04-01T12:27:01.095Z">
 <meta property="article:author" content="ZHUJIALE">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404011752365.png">
   
     <link rel="alternative" href="/atom.xml" title="zhuzhuzhu&#39;s blog" type="application/atom+xml">
   
@@ -183,7 +196,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="Linux驱动开发"><a href="#Linux驱动开发" class="headerlink" title="Linux驱动开发"></a>Linux驱动开发</h1><p><strong>Linux驱动开发和裸机开发的区别</strong></p>
+        <h1 id="Linux驱动开发"><a href="#Linux驱动开发" class="headerlink" title="Linux驱动开发"></a>Linux驱动开发</h1><ol start="3">
+<li><p>Linux驱动开发和裸机开发的区别**</p>
 <ol>
 <li>裸机开发：<ol>
 <li>底层，和寄存器打交道，有些MCU提供库</li>
@@ -427,6 +441,779 @@
 </ol>
 </li>
 </ol>
+<h2 id="beep蜂鸣器实验"><a href="#beep蜂鸣器实验" class="headerlink" title="beep蜂鸣器实验"></a>beep蜂鸣器实验</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/kernel.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/delay.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/ide.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/init.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/module.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/gpio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/cdev.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/device.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/of.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/of_address.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/of_gpio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;asm/mach/map.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;asm/uaccess.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;asm/io.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> 0 </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BEEP_CNT			1		<span class="comment">/* 设备号个数 */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BEEP_NAME			<span class="string">&quot;beep&quot;</span>	<span class="comment">/* 名字 */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BEEPOFF 			0		<span class="comment">/* 关蜂鸣器 */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BEEPON 				1		<span class="comment">/* 开蜂鸣器 */</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* beep设备结构体 */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">beep_dev</span>&#123;</span></span><br><span class="line">	<span class="type">dev_t</span> devid;			<span class="comment">/* 设备号 	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cdev</span> <span class="title">cdev</span>;</span>		<span class="comment">/* cdev 	*/</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="keyword">class</span> *<span class="keyword">class</span>;</span>	<span class="comment">/* 类 		*/</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">device</span> *<span class="title">device</span>;</span>	<span class="comment">/* 设备 	 */</span></span><br><span class="line">	<span class="type">int</span> major;				<span class="comment">/* 主设备号	  */</span></span><br><span class="line">	<span class="type">int</span> minor;				<span class="comment">/* 次设备号   */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">device_node</span>	*<span class="title">nd</span>;</span> <span class="comment">/* 设备节点 */</span></span><br><span class="line">	<span class="type">int</span> beep_gpio;			<span class="comment">/* beep所使用的GPIO编号		*/</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">beep_dev</span> <span class="title">beep</span>;</span>		<span class="comment">/* beep设备 */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @description		: 打开设备</span></span><br><span class="line"><span class="comment"> * @param - inode 	: 传递给驱动的inode</span></span><br><span class="line"><span class="comment"> * @param - filp 	: 设备文件，file结构体有个叫做private_data的成员变量</span></span><br><span class="line"><span class="comment"> * 					  一般在open的时候将private_data指向设备结构体。</span></span><br><span class="line"><span class="comment"> * @return 			: 0 成功;其他 失败</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">beep_open</span><span class="params">(<span class="keyword">struct</span> inode *inode, <span class="keyword">struct</span> file *filp)</span></span><br><span class="line">&#123;</span><br><span class="line">	filp-&gt;private_data = &amp;beep; <span class="comment">/* 设置私有数据 */</span></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @description		: 向设备写数据 </span></span><br><span class="line"><span class="comment"> * @param - filp 	: 设备文件，表示打开的文件描述符</span></span><br><span class="line"><span class="comment"> * @param - buf 	: 要写给设备写入的数据</span></span><br><span class="line"><span class="comment"> * @param - cnt 	: 要写入的数据长度</span></span><br><span class="line"><span class="comment"> * @param - offt 	: 相对于文件首地址的偏移</span></span><br><span class="line"><span class="comment"> * @return 			: 写入的字节数，如果为负值，表示写入失败</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">ssize_t</span> <span class="title function_">beep_write</span><span class="params">(<span class="keyword">struct</span> file *filp, <span class="type">const</span> <span class="type">char</span> __user *buf, <span class="type">size_t</span> cnt, <span class="type">loff_t</span> *offt)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span> retvalue;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> databuf[<span class="number">1</span>];</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> beepstat;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">beep_dev</span> *<span class="title">dev</span> =</span> filp-&gt;private_data;</span><br><span class="line"></span><br><span class="line">	retvalue = copy_from_user(databuf, buf, cnt);</span><br><span class="line">	<span class="keyword">if</span>(retvalue &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		printk(<span class="string">&quot;kernel write failed!\r\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> -EFAULT;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	beepstat = databuf[<span class="number">0</span>];		<span class="comment">/* 获取状态值 */</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(beepstat == BEEPON) &#123;	</span><br><span class="line">		gpio_set_value(dev-&gt;beep_gpio, <span class="number">0</span>);	<span class="comment">/* 打开蜂鸣器 */</span></span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span>(beepstat == BEEPOFF) &#123;</span><br><span class="line">		gpio_set_value(dev-&gt;beep_gpio, <span class="number">1</span>);	<span class="comment">/* 关闭蜂鸣器 */</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @description		: 关闭/释放设备</span></span><br><span class="line"><span class="comment"> * @param - filp 	: 要关闭的设备文件(文件描述符)</span></span><br><span class="line"><span class="comment"> * @return 			: 0 成功;其他 失败</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">beep_release</span><span class="params">(<span class="keyword">struct</span> inode *inode, <span class="keyword">struct</span> file *filp)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 设备操作函数 */</span></span><br><span class="line"><span class="type">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span> <span class="title">beep_fops</span> =</span> &#123;</span><br><span class="line">	.owner = THIS_MODULE,</span><br><span class="line">	.open = beep_open,</span><br><span class="line">	.write = beep_write,</span><br><span class="line">	.release = 	beep_release,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @description	: 驱动出口函数</span></span><br><span class="line"><span class="comment"> * @param 		: 无</span></span><br><span class="line"><span class="comment"> * @return 		: 无</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> __init <span class="title function_">beep_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span> ret = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 设置BEEP所使用的GPIO */</span></span><br><span class="line">	<span class="comment">/* 1、获取设备节点：beep */</span></span><br><span class="line">	beep.nd = of_find_node_by_path(<span class="string">&quot;/beep&quot;</span>);</span><br><span class="line">	<span class="keyword">if</span>(beep.nd == <span class="literal">NULL</span>) &#123;</span><br><span class="line">		printk(<span class="string">&quot;beep node not find!\r\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> -EINVAL;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		printk(<span class="string">&quot;beep node find!\r\n&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 2、 获取设备树中的gpio属性，得到BEEP所使用的BEEP编号 */</span></span><br><span class="line">	beep.beep_gpio = of_get_named_gpio(beep.nd, <span class="string">&quot;beep-gpio&quot;</span>, <span class="number">0</span>);</span><br><span class="line">	<span class="keyword">if</span>(beep.beep_gpio &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		printk(<span class="string">&quot;can&#x27;t get beep-gpio&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> -EINVAL;</span><br><span class="line">	&#125;</span><br><span class="line">	printk(<span class="string">&quot;led-gpio num = %d\r\n&quot;</span>, beep.beep_gpio);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 3、设置GPIO5_IO01为输出，并且输出高电平，默认关闭BEEP */</span></span><br><span class="line">	ret = gpio_direction_output(beep.beep_gpio, <span class="number">1</span>);</span><br><span class="line">	<span class="keyword">if</span>(ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		printk(<span class="string">&quot;can&#x27;t set gpio!\r\n&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 注册字符设备驱动 */</span></span><br><span class="line">	<span class="comment">/* 1、创建设备号 */</span></span><br><span class="line">	<span class="keyword">if</span> (beep.major) &#123;		<span class="comment">/*  定义了设备号 */</span></span><br><span class="line">		beep.devid = MKDEV(beep.major, <span class="number">0</span>);</span><br><span class="line">		register_chrdev_region(beep.devid, BEEP_CNT, BEEP_NAME);</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;						<span class="comment">/* 没有定义设备号 */</span></span><br><span class="line">		alloc_chrdev_region(&amp;beep.devid, <span class="number">0</span>, BEEP_CNT, BEEP_NAME);	<span class="comment">/* 申请设备号 */</span></span><br><span class="line">		beep.major = MAJOR(beep.devid);	<span class="comment">/* 获取分配号的主设备号 */</span></span><br><span class="line">		beep.minor = MINOR(beep.devid);	<span class="comment">/* 获取分配号的次设备号 */</span></span><br><span class="line">	&#125;</span><br><span class="line">	printk(<span class="string">&quot;beep major=%d,minor=%d\r\n&quot;</span>,beep.major, beep.minor);	</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/* 2、初始化cdev */</span></span><br><span class="line">	beep.cdev.owner = THIS_MODULE;</span><br><span class="line">	cdev_init(&amp;beep.cdev, &amp;beep_fops);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/* 3、添加一个cdev */</span></span><br><span class="line">	cdev_add(&amp;beep.cdev, beep.devid, BEEP_CNT);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 4、创建类 */</span></span><br><span class="line">	beep.class = class_create(THIS_MODULE, BEEP_NAME);</span><br><span class="line">	<span class="keyword">if</span> (IS_ERR(beep.class)) &#123;</span><br><span class="line">		<span class="keyword">return</span> PTR_ERR(beep.class);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 5、创建设备 */</span></span><br><span class="line">	beep.device = device_create(beep.class, <span class="literal">NULL</span>, beep.devid, <span class="literal">NULL</span>, BEEP_NAME);</span><br><span class="line">	<span class="keyword">if</span> (IS_ERR(beep.device)) &#123;</span><br><span class="line">		<span class="keyword">return</span> PTR_ERR(beep.device);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @description	: 驱动出口函数</span></span><br><span class="line"><span class="comment"> * @param 		: 无</span></span><br><span class="line"><span class="comment"> * @return 		: 无</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> __exit <span class="title function_">beep_exit</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">/* 注销字符设备驱动 */</span></span><br><span class="line">	cdev_del(&amp;beep.cdev);<span class="comment">/*  删除cdev */</span></span><br><span class="line">	unregister_chrdev_region(beep.devid, BEEP_CNT); <span class="comment">/* 注销设备号 */</span></span><br><span class="line"></span><br><span class="line">	device_destroy(beep.class, beep.devid);</span><br><span class="line">	class_destroy(beep.class);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">module_init(beep_init);</span><br><span class="line">module_exit(beep_exit);</span><br><span class="line">MODULE_LICENSE(<span class="string">&quot;GPL&quot;</span>);</span><br><span class="line">MODULE_AUTHOR(<span class="string">&quot;zuozhongkai&quot;</span>);</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span>     BEEPCNT  1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span>     BEEPNAME <span class="string">&quot;beep&quot;</span> </span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BEEPOFF 				0			<span class="comment">/* 关灯 */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BEEPON				1			<span class="comment">/* 开灯 */</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">beep_dev</span>&#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="type">dev_t</span> devid;</span><br><span class="line">    <span class="type">int</span> major;</span><br><span class="line">    <span class="type">int</span> minor;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">cdev</span> <span class="title">cdev</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="keyword">class</span> *<span class="keyword">class</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">device</span> *<span class="title">device</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">device_node</span> *<span class="title">nd</span>;</span></span><br><span class="line">    <span class="type">int</span> beep_gpio;</span><br><span class="line">&#125;beep;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">beep_open</span><span class="params">(<span class="keyword">struct</span> inode *inode, <span class="keyword">struct</span> file *filp)</span></span><br><span class="line">&#123;</span><br><span class="line">	filp-&gt;private_data = &amp;beep; <span class="comment">/* 设置私有数据 */</span></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @description		: 向设备写数据 </span></span><br><span class="line"><span class="comment"> * @param - filp 	: 设备文件，表示打开的文件描述符</span></span><br><span class="line"><span class="comment"> * @param - buf 	: 要写给设备写入的数据</span></span><br><span class="line"><span class="comment"> * @param - cnt 	: 要写入的数据长度</span></span><br><span class="line"><span class="comment"> * @param - offt 	: 相对于文件首地址的偏移</span></span><br><span class="line"><span class="comment"> * @return 			: 写入的字节数，如果为负值，表示写入失败</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">ssize_t</span> <span class="title function_">beep_write</span><span class="params">(<span class="keyword">struct</span> file *filp, <span class="type">const</span> <span class="type">char</span> __user *buf, <span class="type">size_t</span> cnt, <span class="type">loff_t</span> *offt)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span> retvalue;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> databuf[<span class="number">1</span>];</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> beepstat;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">beep_dev</span> *<span class="title">dev</span> =</span> filp-&gt;private_data;</span><br><span class="line"></span><br><span class="line">	retvalue = copy_from_user(databuf, buf, cnt);</span><br><span class="line">	<span class="keyword">if</span>(retvalue &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		printk(<span class="string">&quot;kernel write failed!\r\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> -EFAULT;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	beepstat = databuf[<span class="number">0</span>];		<span class="comment">/* 获取状态值 */</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(beepstat == BEEPON) &#123;	</span><br><span class="line">		gpio_set_value(dev-&gt;beep_gpio, <span class="number">0</span>);	<span class="comment">/* 打开蜂鸣器 */</span></span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span>(beepstat == BEEPOFF) &#123;</span><br><span class="line">		gpio_set_value(dev-&gt;beep_gpio, <span class="number">1</span>);	<span class="comment">/* 关闭蜂鸣器 */</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @description		: 关闭/释放设备</span></span><br><span class="line"><span class="comment"> * @param - filp 	: 要关闭的设备文件(文件描述符)</span></span><br><span class="line"><span class="comment"> * @return 			: 0 成功;其他 失败</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">beep_release</span><span class="params">(<span class="keyword">struct</span> inode *inode, <span class="keyword">struct</span> file *filp)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 设备操作函数 */</span></span><br><span class="line"><span class="type">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span> <span class="title">beep_fops</span> =</span> &#123;</span><br><span class="line">	.owner = THIS_MODULE,</span><br><span class="line">	.open = beep_open,</span><br><span class="line">	.write = beep_write,</span><br><span class="line">	.release = 	beep_release,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">static</span> <span class="type">int</span> __init <span class="title function_">beep_init</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">       <span class="type">int</span> ret = <span class="number">0</span>;</span><br><span class="line">    printk(<span class="string">&quot;zhuzhuzhzuhzuhzuhzuzhz\r\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    ret = alloc_chrdev_region(&amp;beep.devid,<span class="number">0</span>,BEEPCNT,BEEPNAME);</span><br><span class="line">    beep.major = MAJOR(beep.devid);</span><br><span class="line">    beep.minor = MINOR(beep.devid);</span><br><span class="line">    printk(<span class="string">&quot;major = %d \r\nminjor = %d\r\n&quot;</span>,beep.major,beep.minor);</span><br><span class="line">    beep.cdev.owner = THIS_MODULE;</span><br><span class="line">    cdev_init(&amp;beep.cdev,&amp;beep_fops);</span><br><span class="line">    cdev_add(&amp;beep.cdev,beep.devid,BEEPCNT);</span><br><span class="line">    </span><br><span class="line">    beep.class = class_create(THIS_MODULE,BEEPNAME);</span><br><span class="line">    <span class="keyword">if</span>(IS_ERR(beep.class))&#123;</span><br><span class="line">        <span class="keyword">return</span> PTR_ERR(beep.class);</span><br><span class="line">    &#125;</span><br><span class="line">    beep.device = device_create(beep.class,<span class="literal">NULL</span>,beep.devid,<span class="literal">NULL</span>,BEEPNAME);</span><br><span class="line">     <span class="keyword">if</span>(IS_ERR(beep.device))&#123;</span><br><span class="line">        <span class="keyword">return</span> PTR_ERR(beep.device);</span><br><span class="line">    &#125;</span><br><span class="line">    beep.nd = of_find_node_by_path(<span class="string">&quot;/beep&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(beep.nd == <span class="literal">NULL</span>) &#123;</span><br><span class="line">		printk(<span class="string">&quot;beep node not find!\r\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> -EINVAL;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		printk(<span class="string">&quot;beep node find!\r\n&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">    beep.beep_gpio = of_get_named_gpio(beep.nd,<span class="string">&quot;beep-gpio&quot;</span>,<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(beep.beep_gpio &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		printk(<span class="string">&quot;can&#x27;t get beep-gpio&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> -EINVAL;</span><br><span class="line">	&#125;</span><br><span class="line">	printk(<span class="string">&quot;beep-gpio num = %d\r\n&quot;</span>, beep.beep_gpio);</span><br><span class="line">    ret = gpio_request(beep.beep_gpio,<span class="string">&quot;beep-gpio&quot;</span>);</span><br><span class="line"></span><br><span class="line">    ret = gpio_direction_output(beep.beep_gpio,<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span>(ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		printk(<span class="string">&quot;can&#x27;t set gpio!\r\n&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    gpio_set_value(beep.beep_gpio,<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span> ;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> __exit <span class="title function_">beep_exit</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    gpio_set_value(beep.beep_gpio,<span class="number">1</span>);</span><br><span class="line">    device_destroy(beep.class,beep.devid);</span><br><span class="line">    class_destroy(beep.class);</span><br><span class="line">    cdev_del(&amp;beep.cdev);</span><br><span class="line">    gpio_free(beep.beep_gpio);</span><br><span class="line">    unregister_chrdev_region(beep.devid,BEEPCNT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">module_init(beep_init);</span><br><span class="line">module_exit(beep_exit);</span><br><span class="line">MODULE_LICENSE(<span class="string">&quot;GPL&quot;</span>);</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="linux并发与竞争"><a href="#linux并发与竞争" class="headerlink" title="linux并发与竞争"></a>linux并发与竞争</h2><ol>
+<li><p>原子操作：原子变量与原子位</p>
+</li>
+<li><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ATOMIC_INIT(int i)</td>
+<td>定义原子变量的时候对其初始化。</td>
+</tr>
+<tr>
+<td>int atomic_read(atomic_t *v)</td>
+<td>读取 v 的值，并且返回。</td>
+</tr>
+<tr>
+<td>void atomic_set(atomic_t *v, int i)</td>
+<td>向 v 写入 i 值。</td>
+</tr>
+<tr>
+<td>void atomic_add(int i, atomic_t *v)</td>
+<td>给 v 加上 i 值。</td>
+</tr>
+<tr>
+<td>void atomic_sub(int i, atomic_t *v)</td>
+<td>从 v 减去 i 值。</td>
+</tr>
+<tr>
+<td>void atomic_inc(atomic_t *v)</td>
+<td>给 v 加 1，也就是自增。</td>
+</tr>
+<tr>
+<td>void atomic_dec(atomic_t *v)</td>
+<td>从 v 减 1，也就是自减</td>
+</tr>
+<tr>
+<td>int atomic_dec_return(atomic_t *v)</td>
+<td>从 v 减 1，并且返回 v 的值。</td>
+</tr>
+<tr>
+<td>int atomic_inc_return(atomic_t *v)</td>
+<td>给 v 加 1，并且返回 v 的值。</td>
+</tr>
+<tr>
+<td>int atomic_sub_and_test(int i, atomic_t *v)</td>
+<td>从 v 减 i，如果结果为 0 就返回真，否则返回假</td>
+</tr>
+<tr>
+<td>int atomic_dec_and_test(atomic_t *v)</td>
+<td>从 v 减 1，如果结果为 0 就返回真，否则返回假</td>
+</tr>
+<tr>
+<td>int atomic_inc_and_test(atomic_t *v)</td>
+<td>给 v 加 1，如果结果为 0 就返回真，否则返回假</td>
+</tr>
+<tr>
+<td>int atomic_add_negative(int i, atomic_t *v)</td>
+<td>给 v 加 i，如果结果为负就返回真，否则返回假</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>自旋锁：用于多核SMP，使用自旋锁要注意死锁现象的发生</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DEFINE_SPINLOCK(spinlock_t lock)</td>
+<td>定义并初始化一个自选变量。</td>
+</tr>
+<tr>
+<td>int spin_lock_init(spinlock_t *lock)</td>
+<td>初始化自旋锁。</td>
+</tr>
+<tr>
+<td>void spin_lock(spinlock_t *lock)</td>
+<td>获取指定的自旋锁，也叫做加锁。</td>
+</tr>
+<tr>
+<td>void spin_unlock(spinlock_t *lock)</td>
+<td>释放指定的自旋锁。</td>
+</tr>
+<tr>
+<td>int spin_trylock(spinlock_t *lock)</td>
+<td>尝试获取指定的自旋锁，如果没有获取到就返回 0</td>
+</tr>
+<tr>
+<td>int spin_is_locked(spinlock_t *lock)</td>
+<td>检查指定的自旋锁是否被获取，如果没有被获取就返回非 0，否则返回 0。</td>
+</tr>
+</tbody></table>
+<ol start="4">
+<li><p>自旋锁要防止中断占用导致死锁发生所以有相应的API函数在获取锁之前关闭中断：</p>
+</li>
+<li><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>void spin_lock_irq(spinlock_t *lock)</td>
+<td>禁止本地中断，并获取自旋锁。</td>
+</tr>
+<tr>
+<td>void spin_unlock_irq(spinlock_t *lock)</td>
+<td>激活本地中断，并释放自旋锁。</td>
+</tr>
+<tr>
+<td>void spin_lock_irqsave(spinlock_t *lock, unsigned long flags)</td>
+<td>保存中断状态，禁止本地中断，并获取自旋锁。</td>
+</tr>
+<tr>
+<td>void spin_unlock_irqrestore(spinlock_t *lock, unsigned long flags)</td>
+<td>将中断状态恢复到以前的状态，并且激活本地中断，释放自旋锁。</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>信号量：semaphore</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DEFINE_SEAMPHORE(name)</td>
+<td>定义一个信号量，并且设置信号量的值为 1。</td>
+</tr>
+<tr>
+<td>void sema_init(struct semaphore *sem, int val)</td>
+<td>初始化信号量 sem，设置信号量值为 val。</td>
+</tr>
+<tr>
+<td>void down(struct semaphore *sem)</td>
+<td>获取信号量，因为会导致休眠，因此不能在中断中使用。</td>
+</tr>
+<tr>
+<td>int down_trylock(struct semaphore *sem);</td>
+<td>尝试获取信号量，如果能获取到信号量就获取，并且返回 0。如果不能就返回非 0，并且不会进入休眠。</td>
+</tr>
+<tr>
+<td>int down_interruptible(struct semaphore *sem)</td>
+<td>获取信号量，和 down 类似，只是使用 down 进入休眠状态的线程不能被信号打断。而使用此函数进入休眠以后是可以被信号打断的。</td>
+</tr>
+<tr>
+<td>void up(struct semaphore *sem)</td>
+<td>释放信号量</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>互斥体：</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DEFINE_MUTEX(name)</td>
+<td>定义并初始化一个 mutex 变量。</td>
+</tr>
+<tr>
+<td>void mutex_init(mutex *lock)</td>
+<td>初始化 mutex。</td>
+</tr>
+<tr>
+<td>void mutex_lock(struct mutex *lock)</td>
+<td>获取 mutex，也就是给 mutex 上锁。如果获取不到就进休眠。</td>
+</tr>
+<tr>
+<td>void mutex_unlock(struct mutex *lock)</td>
+<td>释放 mutex，也就给 mutex 解锁。</td>
+</tr>
+<tr>
+<td>int mutex_trylock(struct mutex *lock)</td>
+<td>尝试获取 mutex，如果成功就返回 1，如果失败就返回 0。</td>
+</tr>
+<tr>
+<td>int mutex_is_locked(struct mutex *lock)</td>
+<td>判断 mutex 是否被获取，如果是的话就返回1，否则返回 0。</td>
+</tr>
+<tr>
+<td>int mutex_lock_interruptible(struct mutex *lock)</td>
+<td>使用此函数获取信号量失败进入休眠以后可以被信号打断。</td>
+</tr>
+</tbody></table>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="按键输入实验（直接读io）"><a href="#按键输入实验（直接读io）" class="headerlink" title="按键输入实验（直接读io）"></a>按键输入实验（直接读io）</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/kernel.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/delay.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/ide.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/init.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/module.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/gpio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/cdev.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/device.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/of.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/of_address.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/of_gpio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;asm/mach/map.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;asm/uaccess.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;asm/io.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/atomic.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> KEYNAME     <span class="string">&quot;key&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> KEYCNT      1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> KEY0VALUE  0XF0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> INVAKEY    0X00</span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">key_dev</span>&#123;</span></span><br><span class="line">    <span class="type">dev_t</span> devid;</span><br><span class="line">    <span class="type">int</span> major;</span><br><span class="line">    <span class="type">int</span> minor;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">cdev</span> <span class="title">cdev</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="keyword">class</span> *<span class="keyword">class</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">device</span> *<span class="title">device</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">device_node</span> *<span class="title">nd</span>;</span></span><br><span class="line">    <span class="type">int</span> key_gpio;</span><br><span class="line">    <span class="type">atomic_t</span> key_value;</span><br><span class="line"></span><br><span class="line">&#125;key;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">key_open</span><span class="params">(<span class="keyword">struct</span> inode *inode,<span class="keyword">struct</span> file *filp)</span></span><br><span class="line">&#123;</span><br><span class="line">    filp-&gt;private_data = &amp;key;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">key_release</span><span class="params">(<span class="keyword">struct</span> inode *node ,<span class="keyword">struct</span> file *filp)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span> ;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">ssize_t</span> <span class="title function_">key_write</span><span class="params">(<span class="keyword">struct</span> file *filp, <span class="type">const</span> <span class="type">char</span> __user *buf, <span class="type">size_t</span> cnt, <span class="type">loff_t</span> *offt)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">ssize_t</span> <span class="title function_">key_read</span><span class="params">(<span class="keyword">struct</span> file *filp, <span class="type">char</span> __user *buf, <span class="type">size_t</span> cnt, <span class="type">loff_t</span> *offt)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> value;</span><br><span class="line">    <span class="type">int</span> ret;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">key_dev</span> *<span class="title">dev</span> =</span> filp-&gt;private_data;</span><br><span class="line">    <span class="keyword">if</span>(gpio_get_value(dev-&gt;key_gpio)== <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span>(!gpio_get_value(dev-&gt;key_gpio));</span><br><span class="line">        <span class="type">atomic_set</span>(&amp;dev-&gt;key_value,KEY0VALUE);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="type">atomic_set</span>(&amp;dev-&gt;key_value,INVAKEY);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    value = <span class="type">atomic_read</span>(&amp;dev-&gt;key_value);</span><br><span class="line">    ret = copy_to_user(buf,&amp;value,<span class="keyword">sizeof</span>(value));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span> <span class="title">key_fops</span> =</span> &#123;</span><br><span class="line">    .owner = THIS_MODULE,</span><br><span class="line">    .open = key_open,</span><br><span class="line">    .write =  key_write,</span><br><span class="line">    .read = key_read,</span><br><span class="line">    .release = key_release,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">keyio_init</span><span class="params">(<span class="keyword">struct</span> key_dev *dev)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> ret = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    dev-&gt;nd = of_find_node_by_path(<span class="string">&quot;/key&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(dev-&gt;nd == <span class="literal">NULL</span>)&#123;</span><br><span class="line">        ret = -EINVAL;</span><br><span class="line">        <span class="keyword">goto</span> fail_node;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dev-&gt;key_gpio = of_get_named_gpio(dev-&gt;nd,<span class="string">&quot;key-gpios&quot;</span>,<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(dev-&gt;key_gpio &lt;<span class="number">0</span>)&#123;</span><br><span class="line">        ret = -ENAVAIL;</span><br><span class="line">        <span class="keyword">goto</span> fail_gpio;</span><br><span class="line">    &#125;</span><br><span class="line">    ret = gpio_request(dev-&gt;key_gpio,<span class="string">&quot;key0&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(ret)&#123;</span><br><span class="line">        ret = -EBUSY;</span><br><span class="line">        printk(<span class="string">&quot;io %d are using by other dev&quot;</span>,dev-&gt;key_gpio);</span><br><span class="line">        <span class="keyword">goto</span> fail_request;</span><br><span class="line">    &#125;</span><br><span class="line">    ret = gpio_direction_input(dev-&gt;key_gpio);</span><br><span class="line">    <span class="keyword">if</span>(ret &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        ret = -EBUSY;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">goto</span> fail_input;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">fail_input:</span><br><span class="line">    gpio_free(dev-&gt;key_gpio);</span><br><span class="line">fail_request:</span><br><span class="line">fail_gpio:</span><br><span class="line">fail_node:</span><br><span class="line">    <span class="keyword">return</span> ret; </span><br><span class="line">&#125;</span><br><span class="line"><span class="type">static</span> <span class="type">int</span> __init <span class="title function_">my_key_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> ret = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    key.major = <span class="number">0</span>;</span><br><span class="line">        <span class="type">atomic_set</span>(&amp;key.key_value,INVAKEY);</span><br><span class="line">    alloc_chrdev_region(&amp;key.devid,<span class="number">0</span>,KEYCNT,KEYNAME);</span><br><span class="line">    key.major = MAJOR(key.devid);</span><br><span class="line">    key.minor = MINOR(key.devid);</span><br><span class="line">    printk(<span class="string">&quot;major = %d   minor = %d \r\n&quot;</span>,key.major,key.minor);</span><br><span class="line">    key.cdev.owner = THIS_MODULE    ;</span><br><span class="line">    cdev_init(&amp;key.cdev,&amp;key_fops);</span><br><span class="line">    cdev_add(&amp;key.cdev,key.devid,KEYCNT);</span><br><span class="line"></span><br><span class="line">    key.class =  class_create(THIS_MODULE,KEYNAME);</span><br><span class="line">    device_create (key.class,<span class="literal">NULL</span>,key.devid,<span class="literal">NULL</span>,KEYNAME);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    ret = keyio_init(&amp;key);</span><br><span class="line">    <span class="keyword">if</span>(ret &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        printk(<span class="string">&quot;io error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span> ;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">static</span> <span class="type">void</span> __exit <span class="title function_">key_exit</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    gpio_free(key.key_gpio);</span><br><span class="line">    device_destroy(key.class,key.devid);</span><br><span class="line">    class_destroy(key.class);</span><br><span class="line">    cdev_del(&amp;key.cdev);</span><br><span class="line">    unregister_chrdev_region(key.devid,KEYCNT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">module_init(my_key_init);</span><br><span class="line">module_exit(key_exit);</span><br><span class="line">MODULE_LICENSE(<span class="string">&quot;GPL&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="linux内核定时器实验"><a href="#linux内核定时器实验" class="headerlink" title="linux内核定时器实验"></a>linux内核定时器实验</h2><ol>
+<li>软件定时器原理是依靠系统定时器来驱动</li>
+<li>linux内核频率可以通过图形化界面配置</li>
+</ol>
+<p>内核定时器：</p>
+<ol>
+<li><p>软件定时器不像硬件定时器一样直接给周期值。设置期满以后时间点，</p>
+</li>
+<li><p>定时处理函数</p>
+</li>
+<li><p>内核定时器不是周期性的，一次定时时间到了以后就会关闭，除非重新打开</p>
+</li>
+<li><p>内核定时器API函数：</p>
+<ol>
+<li><p>处理绕回：</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>time_after(unkown, known)</td>
+<td>unkown 通常为 jiffies， known 通常是需要对比的值。</td>
+</tr>
+<tr>
+<td>time_before(unkown, known)</td>
+<td></td>
+</tr>
+<tr>
+<td>time_after_eq(unkown, known)</td>
+<td></td>
+</tr>
+<tr>
+<td>time_before_eq(unkown, known)</td>
+<td></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>jiffies函数与ms，us，ns之间的转换：</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>int jiffies_to_msecs(const unsigned long j)</td>
+<td>将 jiffies 类型的参数 j 分别转换为对应的毫秒、微秒、纳秒。</td>
+</tr>
+<tr>
+<td>int jiffies_to_usecs(const unsigned long j)</td>
+<td></td>
+</tr>
+<tr>
+<td>u64 jiffies_to_nsecs(const unsigned long j)</td>
+<td></td>
+</tr>
+<tr>
+<td>long msecs_to_jiffies(const unsigned int m)</td>
+<td>将毫秒、微秒、纳秒转换为 jiffies 类型。</td>
+</tr>
+<tr>
+<td>long usecs_to_jiffies(const unsigned int u)</td>
+<td></td>
+</tr>
+<tr>
+<td>unsigned long nsecs_to_jiffies(u64 n)</td>
+<td></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>内核定时器函数：首先要定义一个timer_list变量表示定时器，timer_list结构体的expires成员变量表示超时时间单位为节拍数。比如我们现在需要定义一个周期为 2 秒的定时器，那么这个定时器的超时时间就是 jiffies+(2<em>HZ)，因此 expires&#x3D;jiffies+(2</em>HZ)。 function 就是定时器超时以后的定时处理函数，我们要做的工作就放到这个函数里面，需要我们编写这个定时处理函数。  </p>
+<ol>
+<li><p>init_timer 函数init_timer 函数负责初始化 timer_list 类型变量，当我们定义了一个 timer_list 变量以后一定要先用 init_timer 初始化一下。 init_timer 函数原型如下：void init_timer(struct timer_list *timer)</p>
+</li>
+<li><p>add_timer 函数add_timer 函数用于向 Linux 内核注册定时器，使用 add_timer </p>
+<p>函数向内核注册定时器以后，定时器就会开始运行，函数原型如下：void add_timer(struct timer_list *timer)</p>
+</li>
+<li><p>del_timer 函数del_timer 函数用于删除一个定时器，不管定时器有没有被激活，都可以使用此函数删除。在多处理器系统上，定时器可能会在其他的处理器上运行，因此在调用 del_timer 函数删除定时器之前要先等待其他处理器的定时处理器函数退出。 del_timer 函数原型如下：int del_timer(struct timer_list * timer)</p>
+</li>
+<li><p>del_timer_sync 函数del_timer_sync 函数是 del_timer 函数的同步版，会等待其他处理器使用完定时器再删除， del_timer_sync 不能使用在中断上下文中。 del_timer_sync 函数原型如下所示：int del_timer_sync(struct timer_list *timer)</p>
+</li>
+<li><p>mod_timer 函数mod_timer 函数用于修改定时值，如果定时器还没有激活的话， mod_timer 函数会激活定时器！函数原型如下：int mod_timer(struct timer_list *timer, unsigned long expires)</p>
+</li>
+</ol>
+</li>
+</ol>
+<p>步骤：</p>
+<ol>
+<li><p>先定义定时器结构体 struct timer_list timer</p>
+</li>
+<li><p>接着初始化定时器：init_timer(&amp;timer);  </p>
+</li>
+<li><p>设置定时器处理函数：timer.function &#x3D; function;  </p>
+</li>
+<li><p>编写定时器处理函数</p>
+</li>
+<li><p>设置定时器定时时间：timer.expires&#x3D;jffies + msecs_to_jiffies(2000);&#x2F;* 超时时间 2 秒 *&#x2F;  </p>
+</li>
+<li><p>设置要传递给定时器函数的参数：</p>
+</li>
+<li><p>timer.data &#x3D; (unsigned long)&dev; &#x2F;* 将设备结构体作为参数 *&#x2F;</p>
+</li>
+<li><p>启动定时器：add_timer(&amp;timer);  </p>
+</li>
+<li><p>删除定时器：del_timer(&amp;timer);</p>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="linux中断实验"><a href="#linux中断实验" class="headerlink" title="linux中断实验"></a>linux中断实验</h2><ol>
+<li><p>Linux中断：</p>
+<ol>
+<li>先知道要使用的中断对应的中断号</li>
+<li>申请request_irq，此函数会激活中断</li>
+<li>如果不用中断那就要用free_irq释放：void free_irq(unsigned int irq,void *dev)</li>
+<li>中断处理函数：irqreturn_t (*irq_handler_t) (int, void *)  </li>
+<li>使能和禁止中断：<ol>
+<li>void enable_irq(unsigned int irq)  </li>
+<li>void disable_irq(unsigned int irq)</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>中断的上半部和下半部：&#x3D;&#x3D;中断一定要处理的越快越好&#x3D;&#x3D;</p>
+<ol>
+<li><p>上半部：上半部就是中断处理函数，那些处理过程比较快，不会占用长时间处理就可以放在上半部完成，就是上面的中断处理就是上半部处理</p>
+</li>
+<li><p>下半部：如果中断处理过程比较耗时，那么就将这些比较耗时的代码提出来交给下半部去执行</p>
+<ol>
+<li><p>软中断： Linux 内核使用结构体 softirq_action {</p>
+<p>void (*action)(struct softirq_action *);</p>
+<p> };表示软中断 在 kernel&#x2F;softirq.c 文件中一共定义了 10 个软中断，如下所示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">HI_SOFTIRQ=<span class="number">0</span>, <span class="comment">/* 高优先级软中断 */</span></span><br><span class="line">TIMER_SOFTIRQ, <span class="comment">/* 定时器软中断 */</span></span><br><span class="line">NET_TX_SOFTIRQ, <span class="comment">/* 网络数据发送软中断 */</span></span><br><span class="line">NET_RX_SOFTIRQ, <span class="comment">/* 网络数据接收软中断 */</span></span><br><span class="line">BLOCK_SOFTIRQ,</span><br><span class="line">BLOCK_IOPOLL_SOFTIRQ,</span><br><span class="line">TASKLET_SOFTIRQ, <span class="comment">/* tasklet 软中断 */</span></span><br><span class="line">SCHED_SOFTIRQ, <span class="comment">/* 调度软中断 */</span></span><br><span class="line">HRTIMER_SOFTIRQ, <span class="comment">/* 高精度定时器软中断 */</span></span><br><span class="line">RCU_SOFTIRQ, <span class="comment">/* RCU 软中断 */</span></span><br><span class="line">NR_SOFTIRQS</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>要使用软中断要写注册：使用函数：void open_softirq(int nr, void (*action)(struct softirq_action *))  </li>
+<li>注册以后使用void raise_softirq(unsigned int nr)  触发</li>
+</ol>
+</li>
+<li><p>tasklet：是利用软中断实现的另一种下半部机制，也需要用到上半部，只是上办部分处理函数重点是调用tasklet_schedule  ：</p>
+<ol>
+<li>注册一个tasklet函数struct tasklet_struct testtasklet;  </li>
+<li>初始化，重点是对应的处理函数tasklet_init(&amp;testtasklet, testtasklet_func, data);</li>
+</ol>
+</li>
+<li><p>工作队列：类似tasklet</p>
+</li>
+</ol>
+</li>
+<li><p>设备树中断节点信息：</p>
+<ol>
+<li>#interrupt-cells指定interrupt的cells数量</li>
+<li>interrupts属性第一个cells就是gpio编号，假如父节点是&amp;gpio5，那就是gpio5_io00，第二个就是触发方式：<ol>
+<li>低电平触发：1</li>
+<li>高电平触发：2</li>
+<li>上升沿触发：4</li>
+<li>下降沿触发：8</li>
+</ol>
+</li>
+<li>interr-parent指定父中断</li>
+</ol>
+</li>
+<li><p>获取中断号：</p>
+<ol>
+<li>unsigned int irq_of_parse_and_map(struct device_node *dev,int index)</li>
+<li>int gpio_to_irq(unsigned int gpio)    仅针对于gpio</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<p>步骤：</p>
+<ol>
+<li><p>先通过imx6uirq.irqkeydesc[i].irqnum &#x3D; irq_of_parse_and_map(imx6uirq.nd,i );或者gpio_to_irq(unsigned int gpio)获取中断号</p>
+</li>
+<li><p>接着通过imx6uirq.irqkeydesc[0].handler &#x3D; key0_handler设置中断处理函数</p>
+</li>
+<li><p>再通过request_irq(imx6uirq.irqkeydesc[i].irqnum,imx6uirq.irqkeydesc[i].handler,IRQF_TRIGGER_FALLING|IRQF_TRIGGER_RISING,imx6uirq.irqkeydesc[i].name, &amp;imx6uirq);申请中断</p>
+</li>
+<li><p>再编写中断处理函数即可</p>
+</li>
+</ol>
+<h2 id="linux阻塞和非阻塞实验"><a href="#linux阻塞和非阻塞实验" class="headerlink" title="linux阻塞和非阻塞实验"></a>linux阻塞和非阻塞实验</h2><ol>
+<li>阻塞和非阻塞io<ol>
+<li>当资源不可用的时候，引用程序就会挂起，当资源可用的时候唤醒任务，应用程序使用open打开驱动文件，默认是以阻塞方式打开</li>
+<li>当资源不可用，应用程序就会轮询查看或放弃，会有超时处理机制，应用程序在使用open打开驱动文件的时候使用O_NOBLOCK。</li>
+</ol>
+</li>
+<li>等待队列：<ol>
+<li>wait_queue_head_t 需要定义一个，定义以后使用int_waitqueue_head函数初始化，或者使用宏DECLARE_WAIT_QUEUE_HEAD</li>
+<li>等待队列项：wait_queue_t表示等待队列项，或者使用宏DECLARE_WAITQUEUE(name，tsk)；</li>
+<li>添加队列项到等待队列头add_wait_queue</li>
+<li>移除等待队列项：资源可用的时候使用remove_wait_queue函数移除</li>
+<li>唤醒wake_up</li>
+</ol>
+</li>
+</ol>
+<h2 id="linux异步通知实验"><a href="#linux异步通知实验" class="headerlink" title="linux异步通知实验"></a>linux异步通知实验</h2><ol>
+<li>软件层次上对中断机制的模拟</li>
+</ol>
+<h2 id="plantform设备驱动实验"><a href="#plantform设备驱动实验" class="headerlink" title="plantform设备驱动实验"></a>plantform设备驱动实验</h2><ol>
+<li><p>linux驱动的分离与分层：</p>
+<ol>
+<li>分离<ol>
+<li>将驱动分离，主机控制器驱动和设备驱动，主机控制器由半导体厂商提供，在linux驱动框架下编写具体的设备驱动</li>
+<li>中间联系就是核心层</li>
+</ol>
+</li>
+<li>分层：<ol>
+<li>核心层</li>
+<li>设备层</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>驱动-总线-设备：</p>
+<ol>
+<li><p>总线：总线代码由linux内核提供，数据类型为bus_type向内核注册总线使用bus_register</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">bus_type</span> &#123;</span></span><br><span class="line">	<span class="type">const</span> <span class="type">char</span>		*name;</span><br><span class="line">	<span class="type">const</span> <span class="type">char</span>		*dev_name;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">device</span>		*<span class="title">dev_root</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">device_attribute</span>	*<span class="title">dev_attrs</span>;</span>	<span class="comment">/* use dev_groups instead */</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">attribute_group</span> **<span class="title">bus_groups</span>;</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">attribute_group</span> **<span class="title">dev_groups</span>;</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">attribute_group</span> **<span class="title">drv_groups</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="type">int</span> (*match)(<span class="keyword">struct</span> device *dev, <span class="keyword">struct</span> device_driver *drv);</span><br><span class="line">	<span class="type">int</span> (*uevent)(<span class="keyword">struct</span> device *dev, <span class="keyword">struct</span> kobj_uevent_env *env);</span><br><span class="line">	<span class="type">int</span> (*probe)(<span class="keyword">struct</span> device *dev);</span><br><span class="line">	<span class="type">int</span> (*remove)(<span class="keyword">struct</span> device *dev);</span><br><span class="line">	<span class="type">void</span> (*shutdown)(<span class="keyword">struct</span> device *dev);</span><br><span class="line"></span><br><span class="line">	<span class="type">int</span> (*online)(<span class="keyword">struct</span> device *dev);</span><br><span class="line">	<span class="type">int</span> (*offline)(<span class="keyword">struct</span> device *dev);</span><br><span class="line"></span><br><span class="line">	<span class="type">int</span> (*suspend)(<span class="keyword">struct</span> device *dev, <span class="type">pm_message_t</span> state);</span><br><span class="line">	<span class="type">int</span> (*resume)(<span class="keyword">struct</span> device *dev);</span><br><span class="line"></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">dev_pm_ops</span> *<span class="title">pm</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">iommu_ops</span> *<span class="title">iommu_ops</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">subsys_private</span> *<span class="title">p</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">lock_class_key</span> <span class="title">lock_key</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>总线主要工作就是完成总线下的设备和驱动之间的匹配。通过：int (*match)(struct device *dev, struct device_driver *drv);函数</li>
+<li>向linux内核注册总线，使用bus_register函数</li>
+<li>卸载使用bus_unregister</li>
+</ol>
+</li>
+<li><p>驱动：驱动就是具体的设备驱动</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">device_driver</span> &#123;</span></span><br><span class="line">	<span class="type">const</span> <span class="type">char</span>		*name;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">bus_type</span>		*<span class="title">bus</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">module</span>		*<span class="title">owner</span>;</span></span><br><span class="line">	<span class="type">const</span> <span class="type">char</span>		*mod_name;	<span class="comment">/* used for built-in modules */</span></span><br><span class="line"></span><br><span class="line">	<span class="type">bool</span> suppress_bind_attrs;	<span class="comment">/* disables bind/unbind via sysfs */</span></span><br><span class="line"></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">of_device_id</span>	*<span class="title">of_match_table</span>;</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">acpi_device_id</span>	*<span class="title">acpi_match_table</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="type">int</span> (*probe) (<span class="keyword">struct</span> device *dev);</span><br><span class="line">	<span class="type">int</span> (*remove) (<span class="keyword">struct</span> device *dev);</span><br><span class="line">	<span class="type">void</span> (*shutdown) (<span class="keyword">struct</span> device *dev);</span><br><span class="line">	<span class="type">int</span> (*suspend) (<span class="keyword">struct</span> device *dev, <span class="type">pm_message_t</span> state);</span><br><span class="line">	<span class="type">int</span> (*resume) (<span class="keyword">struct</span> device *dev);</span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">attribute_group</span> **<span class="title">groups</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">dev_pm_ops</span> *<span class="title">pm</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">driver_private</span> *<span class="title">p</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>驱动和设备匹配以后，驱动里面的probe函数就会执行</li>
+<li>使用driver_register注册驱动</li>
+</ol>
+</li>
+<li><p>设备：设备属性，包括地址范围，如果是IIC话还有IIC器件地址，速度设备的数据类型为device通过device_register向内核注册设备</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">device</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">device</span>		*<span class="title">parent</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">device_private</span>	*<span class="title">p</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">kobject</span> <span class="title">kobj</span>;</span></span><br><span class="line">	<span class="type">const</span> <span class="type">char</span>		*init_name; <span class="comment">/* initial name of the device */</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">device_type</span> *<span class="title">type</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">mutex</span>		<span class="title">mutex</span>;</span>	<span class="comment">/* mutex to synchronize calls to</span></span><br><span class="line"><span class="comment">					 * its driver.</span></span><br><span class="line"><span class="comment">					 */</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">bus_type</span>	*<span class="title">bus</span>;</span>		<span class="comment">/* type of bus device is on */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">device_driver</span> *<span class="title">driver</span>;</span>	<span class="comment">/* which driver has allocated this</span></span><br><span class="line"><span class="comment">					   device */</span></span><br><span class="line">	<span class="type">void</span>		*platform_data;	<span class="comment">/* Platform specific data, device</span></span><br><span class="line"><span class="comment">					   core doesn&#x27;t touch it */</span></span><br><span class="line">	<span class="type">void</span>		*driver_data;	<span class="comment">/* Driver data, set and get with</span></span><br><span class="line"><span class="comment">					   dev_set/get_drvdata */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dev_pm_info</span>	<span class="title">power</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dev_pm_domain</span>	*<span class="title">pm_domain</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_PINCTRL</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dev_pin_info</span>	*<span class="title">pins</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_NUMA</span></span><br><span class="line">	<span class="type">int</span>		numa_node;	<span class="comment">/* NUMA node this device is close to */</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">	u64		*dma_mask;	<span class="comment">/* dma mask (if dma&#x27;able device) */</span></span><br><span class="line">	u64		coherent_dma_mask;<span class="comment">/* Like dma_mask, but for</span></span><br><span class="line"><span class="comment">					     alloc_coherent mappings as</span></span><br><span class="line"><span class="comment">					     not all hardware supports</span></span><br><span class="line"><span class="comment">					     64 bit addresses for consistent</span></span><br><span class="line"><span class="comment">					     allocations such descriptors. */</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span>	dma_pfn_offset;</span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">device_dma_parameters</span> *<span class="title">dma_parms</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">dma_pools</span>;</span>	<span class="comment">/* dma pools (if dma&#x27;ble) */</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dma_coherent_mem</span>	*<span class="title">dma_mem</span>;</span> <span class="comment">/* internal for coherent mem</span></span><br><span class="line"><span class="comment">					     override */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_DMA_CMA</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cma</span> *<span class="title">cma_area</span>;</span>		<span class="comment">/* contiguous memory area for dma</span></span><br><span class="line"><span class="comment">					   allocations */</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">	<span class="comment">/* arch specific additions */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dev_archdata</span>	<span class="title">archdata</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">device_node</span>	*<span class="title">of_node</span>;</span> <span class="comment">/* associated device tree node */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fwnode_handle</span>	*<span class="title">fwnode</span>;</span> <span class="comment">/* firmware device node */</span></span><br><span class="line"></span><br><span class="line">	<span class="type">dev_t</span>			devt;	<span class="comment">/* dev_t, creates the sysfs &quot;dev&quot; */</span></span><br><span class="line">	u32			id;	<span class="comment">/* device instance */</span></span><br><span class="line"></span><br><span class="line">	<span class="type">spinlock_t</span>		devres_lock;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">devres_head</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">klist_node</span>	<span class="title">knode_class</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="keyword">class</span>		*<span class="keyword">class</span>;</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">attribute_group</span> **<span class="title">groups</span>;</span>	<span class="comment">/* optional groups */</span></span><br><span class="line"></span><br><span class="line">	<span class="type">void</span>	(*release)(<span class="keyword">struct</span> device *dev);</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">iommu_group</span>	*<span class="title">iommu_group</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="type">bool</span>			offline_disabled:<span class="number">1</span>;</span><br><span class="line">	<span class="type">bool</span>			offline:<span class="number">1</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>向总线注册设备的时候使用设备注册函数device_register</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>platform平台驱动模型：</p>
+<ol>
+<li><p>对于SOC内部的rtc，timer这种不好归结为具体的总线，为此linux内核提出了一个虚拟的总线：plantform，plantform设备和驱动</p>
+</li>
+<li><p>plantform总线注册：plantform_bus_init，对于platform平台，plantform_match负责驱动和设备的匹配</p>
+</li>
+<li><p>platform驱动结构体为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">platform_driver</span> &#123;</span></span><br><span class="line">	<span class="type">int</span> (*probe)(<span class="keyword">struct</span> platform_device *);</span><br><span class="line">	<span class="type">int</span> (*remove)(<span class="keyword">struct</span> platform_device *);</span><br><span class="line">	<span class="type">void</span> (*shutdown)(<span class="keyword">struct</span> platform_device *);</span><br><span class="line">	<span class="type">int</span> (*suspend)(<span class="keyword">struct</span> platform_device *, <span class="type">pm_message_t</span> state);</span><br><span class="line">	<span class="type">int</span> (*resume)(<span class="keyword">struct</span> platform_device *);</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">device_driver</span> <span class="title">driver</span>;</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">platform_device_id</span> *<span class="title">id_table</span>;</span></span><br><span class="line">	<span class="type">bool</span> prevent_deferred_probe;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>platform_driver_register向内核注册platform驱动</li>
+</ol>
+</li>
+<li><p>platform设备</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">platform_device</span> &#123;</span></span><br><span class="line">	<span class="type">const</span> <span class="type">char</span>	*name;</span><br><span class="line">	<span class="type">int</span>		id;</span><br><span class="line">	<span class="type">bool</span>		id_auto;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">device</span>	<span class="title">dev</span>;</span></span><br><span class="line">	u32		num_resources;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">resource</span>	*<span class="title">resource</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">platform_device_id</span>	*<span class="title">id_entry</span>;</span></span><br><span class="line">	<span class="type">char</span> *driver_override; <span class="comment">/* Driver name to force a match */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* MFD cell pointer */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">mfd_cell</span> *<span class="title">mfd_cell</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* arch specific additions */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">pdev_archdata</span>	<span class="title">archdata</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>有设备树，修改设备树设备节点即可</li>
+<li>向内核注册platform驱动的时候，如果驱动和设备匹配成功，最终会执行plantform_driver下的probe函数</li>
+</ol>
+</li>
+<li><p>platform匹配过程：根据前面的分析，驱动和设备的匹配是通过bus下面的match函数实现的，platform下面的match函数就是platform_match函数</p>
+<ol>
+<li>如果使用设备树通过of_driver_match_device匹配</li>
+<li>然后根据platform_dirver下的id_table匹配：platform_match_id</li>
+<li>最终就是比较字符串，就是platform_device和platform_driver下的name，无设备树形况下使用</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<p>设备树platform平台驱动流程：</p>
+<ol>
+<li>先在设备树中创建节点，重点是设置好compatible的值</li>
+<li>创建platform驱动结构体，<ol>
+<li>.driver中的.name自己设置</li>
+<li>定义of_match_name结构体数组，数组中填入设备的compatible信息然后将.driver中的of_match_table与其匹配</li>
+<li>.probe就是匹配后自动执行的函数，可以在这里初始化设备</li>
+<li>.remove就是移除 platform 驱动的时候此函数会执行  ，在这里注销设备</li>
+</ol>
+</li>
+</ol>
+<h2 id="linux自带led驱动"><a href="#linux自带led驱动" class="headerlink" title="linux自带led驱动"></a>linux自带led驱动</h2><p>通过menuconfig配置后修改设备树即可，主要是设备树的编写需要注意规范，主要通过Documentation&#x2F;devicetree&#x2F;bindings&#x2F;  中的文档标准编写，例如led：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">①、创建一个节点表示 LED 灯设备，比如 dtsleds，如果板子上有多个 LED 灯的话每个 LED</span><br><span class="line">灯都作为 dtsleds 的子节点。</span><br><span class="line">②、 dtsleds 节点的 compatible 属性值一定要为“gpio-leds”。</span><br><span class="line">③、设置 label 属性，此属性为可选，每个子节点都有一个 label 属性， label 属性一般表示</span><br><span class="line">LED 灯的名字，比如以颜色区分的话就是 red、 green 等等。</span><br><span class="line">④、每个子节点必须要设置 gpios 属性值，表示此 LED 所使用的 GPIO 引脚！</span><br><span class="line">⑤、可以设置“linux,<span class="keyword">default</span>-trigger”属性值，也就是设置 LED 灯的默认功能，可以查阅</span><br><span class="line">Documentation/devicetree/bindings/leds/common.txt 这个文档来查看可选功能，比如：</span><br><span class="line">backlight： LED 灯作为背光。</span><br><span class="line"><span class="keyword">default</span>-on： LED 灯打开</span><br><span class="line">heartbeat： LED 灯作为心跳指示灯，可以作为系统运行提示灯。</span><br><span class="line">ide-disk： LED 灯作为硬盘活动指示灯。</span><br><span class="line">timer： LED 灯周期性闪烁，由定时器驱动，闪烁频率可以修改</span><br><span class="line">⑥、可以设置“<span class="keyword">default</span>-state”属性值，可以设置为 on、 off 或 keep，为 on 的时候 LED 灯默</span><br><span class="line">认打开，为 off 的话 LED 灯默认关闭，为 keep 的话 LED 灯保持当前模式。</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">dtsleds &#123;</span><br><span class="line">compatible = <span class="string">&quot;gpio-leds&quot;</span>;</span><br><span class="line">	led0 &#123;</span><br><span class="line"> 		label = <span class="string">&quot;red&quot;</span>;</span><br><span class="line">		 gpios = &lt;&amp;gpio1 <span class="number">3</span> GPIO_ACTIVE_LOW&gt;;</span><br><span class="line">		 <span class="keyword">default</span>-state = <span class="string">&quot;off&quot;</span>;</span><br><span class="line"> 		&#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="linux杂项misc驱动实验"><a href="#linux杂项misc驱动实验" class="headerlink" title="linux杂项misc驱动实验"></a>linux杂项misc驱动实验</h2><ol>
+<li>misc设备的主设备号为10</li>
+<li>misc设备会自动创建cdev，不需要手动创建</li>
+<li>misc驱动是基于platform</li>
+<li>misc驱动编写的核心就是初始化miscdevice结构体变量</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">以前我们需要自己调用一堆的函数去创建设备，比如在以前的字符设备驱动中我们会使用</span><br><span class="line">如下几个函数完成设备创建过程：</span><br><span class="line">示例代码 <span class="number">57.1</span><span class="number">.3</span> 传统的创建设备过程</span><br><span class="line"><span class="number">1</span> alloc_chrdev_region(); <span class="comment">/* 申请设备号 */</span></span><br><span class="line"><span class="number">2</span> cdev_init(); <span class="comment">/* 初始化 cdev */</span></span><br><span class="line"><span class="number">3</span> cdev_add(); <span class="comment">/* 添加 cdev */</span></span><br><span class="line"><span class="number">4</span> class_create(); <span class="comment">/* 创建类 */</span></span><br><span class="line"><span class="number">5</span> device_create();</span><br></pre></td></tr></table></figure>
+
+
+
+<p>流程：</p>
+<ol>
+<li>首先基于platform基础上</li>
+<li>定义MISC结构体设置 minor、 name 和 fops 这三个成员变量。 minor 表示子设备号， MISC 设备的主设备号为 10  ：struct miscdevice  </li>
+<li>注册MISC设备：int misc_register(struct miscdevice * misc)  </li>
+<li>注销设备：misc_deregister(&amp;beep_miscdev);</li>
+</ol>
+<h2 id="linux-INPUT子系统驱动实验"><a href="#linux-INPUT子系统驱动实验" class="headerlink" title="linux INPUT子系统驱动实验"></a>linux INPUT子系统驱动实验</h2><p>input子系统也是字符设备，input核心层会帮我们注册input字符设备驱动，既然内核以及帮我们写好了input驱动，那我们要干嘛呢？需要我们去完善具体的输入设备，完善输入设备的时候就要按照input子系统驱动框架的要求来：</p>
+<ol>
+<li>申请并注册input_dev，使用input_allocate_device（）evbit表示输入事件，比如按键对应的事件就是EV_KEY，如果要连按还要加EV_REP。</li>
+<li>设置按键对应的键值，也就是keybit，初始化完成input_dev以后，需要向内核注册，使用input_register_device（）</li>
+<li>按键按下以后上报事件，比如对于按键而言就是在按键中断服务函数，或者消抖定时器函数里面获取按键按下情况并且上报，可以使用input_event（）</li>
+<li>报告输入事件以后还要使用input_sync（）做同步。</li>
+<li>应用程序可以通过input_event来获取输入事件数据，包括按键值，input_event是一个结构体</li>
+</ol>
+<p>流程：</p>
+<ol>
+<li><p>定义input设备结构体：struct input_dev *inputdev;  </p>
+</li>
+<li><p>通过inputdev &#x3D; input_allocate_device();   函数申请一个 input_dev  </p>
+</li>
+<li><p>设置事件和事件值：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********第一种设置事件和事件值的方法***********/</span></span><br><span class="line"> __set_bit(EV_KEY, inputdev-&gt;evbit); <span class="comment">/* 设置产生按键事件 */</span></span><br><span class="line"> __set_bit(EV_REP, inputdev-&gt;evbit); <span class="comment">/* 重复事件 */</span></span><br><span class="line"> __set_bit(KEY_0, inputdev-&gt;keybit); <span class="comment">/*设置产生哪些按键值 */</span></span><br><span class="line"> <span class="comment">/************************************************/</span></span><br><span class="line"></span><br><span class="line"> <span class="comment">/*********第二种设置事件和事件值的方法***********/</span></span><br><span class="line"> keyinputdev.inputdev-&gt;evbit[<span class="number">0</span>] = BIT_MASK(EV_KEY) |</span><br><span class="line">BIT_MASK(EV_REP);</span><br><span class="line"> keyinputdev.inputdev-&gt;keybit[BIT_WORD(KEY_0)] |=</span><br><span class="line">BIT_MASK(KEY_0);</span><br><span class="line"> <span class="comment">/************************************************/</span></span><br><span class="line"></span><br><span class="line"> <span class="comment">/*********第三种设置事件和事件值的方法***********/</span></span><br><span class="line"> keyinputdev.inputdev-&gt;evbit[<span class="number">0</span>] = BIT_MASK(EV_KEY) |</span><br><span class="line">    BIT_MASK(EV_REP);</span><br><span class="line"> input_set_capability(keyinputdev.inputdev, EV_KEY, KEY_0);</span><br><span class="line"> <span class="comment">/************************************************/</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用input_register_device(inputdev);  注册input_dev</p>
+</li>
+<li><p>在按键按下时上报input_report_key(dev-&gt;inputdev, keydesc-&gt;value, 1);  </p>
+</li>
+<li><p>上报完后要同步：input_sync(dev-&gt;inputdev);  </p>
+</li>
+<li><p>注销：input_unregister_device(keyinputdev.inputdev);  </p>
+</li>
+<li><p>释放：input_free_device(keyinputdev.inputdev);  </p>
+</li>
+<li><p>编写应用程序：</p>
+<ol>
+<li>定义input_event变量，存放输入事件信息：static struct input_event inputevent;</li>
+<li>通过read函数读取</li>
+</ol>
+</li>
+</ol>
+<h2 id="linux-lcd驱动实验"><a href="#linux-lcd驱动实验" class="headerlink" title="linux  lcd驱动实验"></a>linux  lcd驱动实验</h2><ol>
+<li>framebuffer设备：RGBLCD屏幕，frambuffer是一种机制，应用程序操作驱动LCD显存的一种机制，因为应用程序需要通过操作显存来在LCD上显示字符，图片等信息，当我们编写好LCD驱动后会生成一个名为&#x2F;dev&#x2F;fbX的设备，应用程序通过访问这个设备就可以访问LCD</li>
+</ol>
+<h2 id="linux-RTC驱动实验"><a href="#linux-RTC驱动实验" class="headerlink" title="linux RTC驱动实验"></a>linux RTC驱动实验</h2><ol>
+<li>rtc是一个标准的字符设备驱动，在内核中被内核抽象为rtc_device结构体</li>
+</ol>
+<h2 id="linux-iic驱动实验"><a href="#linux-iic驱动实验" class="headerlink" title="linux iic驱动实验"></a>linux iic驱动实验</h2><ol>
+<li><p>IIC传输数据格式：</p>
+<ol>
+<li>写操作：<ul>
+<li>主设备发出start信号</li>
+<li>接着发出设备地址（用来确定是往哪个芯片写数据）方向（读&#x2F;写，0表示写，1表示读）</li>
+<li>从设备回应ACK信号</li>
+<li>主设备发送&#x3D;&#x3D;一个字节&#x3D;&#x3D;的数据给从设备，等待回应</li>
+<li>每传输一字节数据，接收方要有一个回应信号（确定数据是否接受完成)，然后再传输下一个数据。</li>
+<li>数据发送完之后，主芯片就会发送一个停止信号</li>
+</ul>
+</li>
+<li>读操作：<ul>
+<li>主设备发出start信号</li>
+<li>接着发出设备地址（用来确定是往哪个芯片写数据）方向（读&#x2F;写，0表示写，1表示读）</li>
+<li>从设备回应ACK信号</li>
+<li>从设备发送一个字节的数据给主设备，并等待回应</li>
+<li>每传输一字节数据，接收方要有一个回应信号（确定数据是否接受完成)，然后再传输下一个数据。</li>
+<li>数据发送完之后，主芯片就会发送一个停止信号。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p>IIC传输流程：</p>
+<ol>
+<li>start信号：SCL保持高电平，SDA从高变低表示传输开始</li>
+<li>结束信号： SCL为高电平时，SDA从低变高</li>
+<li>SCL保持低电平，SDA在SCL低电平期间将电平拉高或者拉低</li>
+<li>SCL电平升高，此时SDA电平保持稳定，为高发出1，为低发出0</li>
+</ol>
+<p><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404011752365.png" alt="image-20240401175245184"></p>
+</li>
+<li><p>裸机下的IIC驱动框架：</p>
+<ol>
+<li>首先编写IIC控制器驱动，向外提供一个i2c_master_transfer函数</li>
+<li>不管是什么IIC芯片</li>
+</ol>
+</li>
+<li><p>SMBus协议：是基于IIC协议的，但是SMBus要求更严格，属于IIC协议的子集</p>
+<ul>
+<li>具体协议参考<a target="_blank" rel="noopener" href="http://www.smbus.org/specs/%E6%88%96%E8%80%85%E9%9F%A6%E4%B8%9C%E5%B1%B1%E6%96%87%E6%A1%A3">http://www.smbus.org/specs/或者韦东山文档</a></li>
+</ul>
+</li>
+<li><p>使用一句话概括I2C传输：APP通过I2C Controller与I2C Device传输数据。</p>
+<ul>
+<li><p>在linux内核中用i2c_adapter表示一个IIC BUS或者称为I2C Controller</p>
+<ul>
+<li><p>该结构体如下所示：重要成员变量：</p>
+<ul>
+<li>nr：第几个I2C BUS(I2C Controller)</li>
+<li>i2c_algorithm，里面有该I2C BUS的传输函数，用来收发I2C数据</li>
+<li><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012004543.png" alt="image-20240401195406901"></li>
+</ul>
+<p><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012006685.png" alt="image-20240401195518212"></p>
+</li>
+</ul>
+</li>
+<li><p>使用使用i2c_client来表示一个I2C Device<br><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012006238.png" alt="image-20240401195750783"></p>
+</li>
+<li><p>在上面的i2c_algorithm结构体中可以看到要传输的数据被称为：i2c_msg:<br><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012006280.png" alt="image-20240401195909998"></p>
+<ul>
+<li><p>一个i2c_msg要么是读，要么是写</p>
+</li>
+<li><p>举例：设备地址为0x50的EEPROM，要读取它里面存储地址为0x10的一个字节，应该构造几个i2c_msg？</p>
+<ul>
+<li><p>要构造2个i2c_msg</p>
+</li>
+<li><p>第一个i2c_msg表示写操作，把要访问的存储地址0x10发给设备</p>
+</li>
+<li><p>第二个i2c_msg表示读操作</p>
+</li>
+<li><p>代码如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">u8 data_addr = <span class="number">0x10</span>;</span><br><span class="line">i8 data;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">i2c_msg</span> <span class="title">msgs</span>[2];</span></span><br><span class="line"></span><br><span class="line">msgs[<span class="number">0</span>].addr   = <span class="number">0x50</span>;</span><br><span class="line">msgs[<span class="number">0</span>].flags  = <span class="number">0</span>;</span><br><span class="line">msgs[<span class="number">0</span>].len    = <span class="number">1</span>;</span><br><span class="line">msgs[<span class="number">0</span>].buf    = &amp;data_addr;</span><br><span class="line"></span><br><span class="line">msgs[<span class="number">1</span>].addr   = <span class="number">0x50</span>;</span><br><span class="line">msgs[<span class="number">1</span>].flags  = I2C_M_RD;</span><br><span class="line">msgs[<span class="number">1</span>].len    = <span class="number">1</span>;</span><br><span class="line">msgs[<span class="number">1</span>].buf    = &amp;data;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>内核传输数据：</p>
+<ul>
+<li><p>APP通过I2C Controller与I2C Device传输数据</p>
+</li>
+<li><p>APP通过i2c_adapter与i2c_client传输i2c_msg</p>
+</li>
+<li><p>内核函数i2c_transfer</p>
+<ul>
+<li>i2c_msg里含有addr，所以这个函数里不需要i2c_client</li>
+</ul>
+<p><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012007209.png" alt="image-20240401200737968"></p>
+</li>
+</ul>
+</li>
+</ol>
+<p><em><strong>i2c设备驱动编写流程</strong></em>：</p>
+<ol>
+<li><p>先创建i2c设备：</p>
+<ul>
+<li><p>通过I2C bus number来创建</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">i2c_register_board_info</span><span class="params">(<span class="type">int</span> busnum, <span class="keyword">struct</span> i2c_board_info <span class="type">const</span> *info, <span class="type">unsigned</span> len)</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过设备树来创建：在设备树中添加，IIC设备挂到哪个IIC控制器上就在哪个控制器下添加对应的节点</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">i2c1: i2c@400a0000 &#123;</span><br><span class="line">		/* ... master properties skipped ... */</span><br><span class="line">		clock-frequency = &lt;100000&gt;;</span><br><span class="line"></span><br><span class="line">		flash@50 &#123;</span><br><span class="line">			compatible = &quot;atmel,24c256&quot;;</span><br><span class="line">			reg = &lt;0x50&gt;;</span><br><span class="line">		&#125;;</span><br><span class="line"></span><br><span class="line">		pca9532: gpio@60 &#123;</span><br><span class="line">			compatible = &quot;nxp,pca9532&quot;;</span><br><span class="line">			gpio-controller;</span><br><span class="line">			#gpio-cells = &lt;2&gt;;</span><br><span class="line">			reg = &lt;0x60&gt;;</span><br><span class="line">		&#125;;</span><br><span class="line">	&#125;;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>通过用户空间(user-space)生成调试时、或者不方便通过代码明确地生成i2c_client时，可以通过用户空间来生成。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建一个i2c_client, .name = &quot;eeprom&quot;, .addr=0x50, .adapter是i2c-3</span></span><br><span class="line"><span class="meta"># echo eeprom 0x50 &gt; /sys/bus/i2c/devices/i2c-3/new_device</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除一个i2c_client</span></span><br><span class="line"><span class="meta"># echo 0x50 &gt; /sys/bus/i2c/devices/i2c-3/delete_device</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>先在入口函数中注册：i2c_add_driver（ap3216c_driver）</p>
+</li>
+<li><p>创建设备i2c驱动结构体static struct i2c_driver ap3216c_driver</p>
+<ul>
+<li>设置probe函数</li>
+<li>设置remove函数</li>
+<li>设置.driver中的信息如owner，name，&#x3D;&#x3D;of_match_table&#x3D;&#x3D; </li>
+<li>编写of_match_table：static const struct of_device_id ap3216c_of_match[] ，主要是匹配compatible、</li>
+<li>如果没有设备树就设置.id_table</li>
+</ul>
+</li>
+<li><p>编写probe函数，可以在这初始化设备，并且设置client值，一般在设备结构体中定义一个void指针变量然后将该指针变量指向probe函数自己传进来的client变量，也就是设备结构体</p>
+</li>
+<li><p>接着编写读和写函数，但是linux内核也提供了API函数：</p>
+<ol>
+<li><p>int i2c_master_send(const struct i2c_client *client,const char *buf,int count)</p>
+<ul>
+<li><p>client： I2C 设备对应的 i2c_client。</p>
+</li>
+<li><p>buf：要发送的数据。</p>
+</li>
+<li><p>count： 要发送的数据字节数，要小于 64KB， 因为 i2c_msg 的 len 成员变量是一个 u16(无符号 16 位)类型的数据。</p>
+</li>
+<li><p>返回值： 负值，失败，其他非负值，发送的字节数</p>
+</li>
+</ul>
+</li>
+<li><p>int i2c_master_recv(const struct i2c_client *client,char *buf,int count)</p>
+<ul>
+<li>client： I2C 设备对应的 i2c_client。</li>
+<li>buf：要接收的数据。</li>
+<li>count： 要接收的数据字节数，要小于 64KB， 因为 i2c_msg 的 len 成员变量是一个 u16(无符号 16 位)类型的数据。</li>
+<li>返回值： 负值，失败，其他非负值，发送的字节数。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p>进行读写和应用程序的编写</p>
+</li>
+</ol>
+<p><em><strong>IIC适配器驱动编写流程：</strong></em></p>
+<p>1. </p>
+<h2 id="linux-SPI驱动实验"><a href="#linux-SPI驱动实验" class="headerlink" title="linux SPI驱动实验"></a>linux SPI驱动实验</h2><ol>
+<li>linux下spi驱动框架：<ol>
+<li>主机控制驱动：SOC的SPI外设驱动，此驱动时半导体厂商编写好的，</li>
+<li>spi控制器驱动核心就是spi_master的构建，该结构体里就有如何通过spi控制器与spi外设进行通信的函数，此函数是原厂编写的</li>
+</ol>
+</li>
+<li>spi设备驱动：就是具体的SPI芯片驱动，比如ICM20608<ol>
+<li>spi_device：每个spi_device都有一个spi_master，每个SPI设备肯定挂载到了一个SPI控制器，比如ICM20608挂载到了6ULL的ECSPI3接口上。有设备树时内核启动的时候会自动解析出来</li>
+<li>spi_driver：<strong>非常重要</strong>，申请或者定义一个spi_driver然后初始化spi_driver中的各个成员变量，当SPI设备和驱动匹配以后，spi_driver下的probe函数就会执行</li>
+<li>spi_driver初始化成功以后需要向内核注册，函数为spi_register_driver</li>
+</ol>
+</li>
+</ol>
+<h2 id="linux-多点电容屏触摸实验"><a href="#linux-多点电容屏触摸实验" class="headerlink" title="linux 多点电容屏触摸实验"></a>linux 多点电容屏触摸实验</h2><ol>
+<li>电容触摸屏，通过触摸芯片上报多点触摸信息，比如FT5426，这是一个IIC，多点电容触摸屏本质是一个	IIC驱动</li>
+<li>触摸IC一般都是有INT，当检测到触摸信息以后就会触发中断，就要在中断处理函数中读取信息</li>
+<li>得到触摸点信息，linux系统下有触摸屏上报的流程，涉及到input子系统下触摸信息的上报。<br>触摸协议分为TypeA和TypeB：<ol>
+<li>TypeA：一次上报全部触摸点信息，系统去判断这些信息属于哪个触摸点</li>
+<li>TypeB：适用于触摸芯片有硬件追踪能力的，上报触摸信息是通过不同的事件上报的：ABS_MT_XXX</li>
+</ol>
+</li>
+</ol>
+<p>驱动：</p>
+<ol>
+<li>驱动主框架是IIC设备，会用到中断，在中断处理函数里面上报触摸点信息，要用到input子系统框架</li>
+</ol>
+<h2 id="USB驱动"><a href="#USB驱动" class="headerlink" title="USB驱动"></a>USB驱动</h2><ul>
+<li><p>概念</p>
+<ul>
+<li><p>硬件框架：必须通过usbhoste访问设备，最多六级hub（可以通过hub访问usb设备）</p>
+<p>​	<img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012026331.png" alt="image-20240326174758343"></p>
+</li>
+<li><p>软件框架：应用程序通过调用usb设备的驱动程序来收发数据，usb设备的驱动程序会调用usbhoste的驱动程序来访问到usbhoste通过usbhoste访问usbdev</p>
+</li>
+</ul>
+</li>
+<li><p>传输类型：</p>
+<ul>
+<li>批量传输：就是使用批量事务实现数据传输，比如U盘。</li>
+<li>中断传输：就是使用中断事务实现数据传输，比如鼠标。</li>
+<li>实时传输：就是使用实时事务实现数据传输，比如摄像头。</li>
+<li>控制传输：由建立事务、批量事务组成，所有的USB设备都必须支持控制传输，用于”识别&#x2F;枚举”</li>
+</ul>
+</li>
+<li><p>设备枚举过程：</p>
+<ul>
+<li><p>使用控制传输，读取设备信息(设备描述符)：第一次读取时，它只需要得到8字节数据，因为第8个数据表示端点0能传输的最大数据长度。<br><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012026180.png" alt="image-20240327144125316"></p>
+</li>
+<li><p>Host分配地址给设备，然后把新地址发给设备：<br><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012026170.png" alt="image-20240327144138983"></p>
+</li>
+<li><p>使用新地址，重新读取设备描述符，设备描述符长度是18：<br><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012026318.png" alt="image-20240327144200089"></p>
+</li>
+<li><p>读取配置描述符：它传入的长度是255，想一次性把当前配置描述符、它下面的接口描述符、端点描述符全部读出来<br><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012026326.png" alt="image-20240327144222302"></p>
+</li>
+<li><p>读取字符描述符</p>
+<p><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202404012026230.png" alt="sdfsfefsefgsefgwesese"></p>
+</li>
+</ul>
+</li>
+<li><p>libusb</p>
+</li>
+</ul>
+</li>
+</ol>
 
       
 
@@ -555,7 +1342,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91"><span class="toc-number">1.</span> <span class="toc-text">Linux驱动开发</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.1.</span> <span class="toc-text">字符设备驱动开发基础实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AALinux%E9%A9%B1%E5%8A%A8%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.2.</span> <span class="toc-text">第一个Linux驱动实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LED%E9%A9%B1%E5%8A%A8%E5%AE%9E%E9%AA%8C%EF%BC%88%E7%9B%B4%E6%8E%A5%E6%93%8D%E4%BD%9C%E5%AF%84%E5%AD%98%E5%99%A8%E7%89%88%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">LED驱动实验（直接操作寄存器版）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E6%96%B0%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.4.</span> <span class="toc-text">Linux新字符设备驱动实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E8%AE%BE%E5%A4%87%E6%A0%91"><span class="toc-number">1.5.</span> <span class="toc-text">Linux设备树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#dts%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="toc-number">1.5.1.</span> <span class="toc-text">dts基本语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E5%A4%87%E6%A0%91%E5%9C%A8%E7%B3%BB%E7%BB%9F%E9%87%8C%E9%9D%A2%E7%9A%84%E4%BD%93%E7%8E%B0"><span class="toc-number">1.5.2.</span> <span class="toc-text">设备树在系统里面的体现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E5%86%85%E6%A0%B8%E7%9A%84OF%E6%93%8D%E4%BD%9C%E5%87%BD%E6%95%B0"><span class="toc-number">1.6.</span> <span class="toc-text">Linux内核的OF操作函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pinctl%E5%92%8Cgpio%E5%AD%90%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.7.</span> <span class="toc-text">pinctl和gpio子系统</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91"><span class="toc-number">1.</span> <span class="toc-text">Linux驱动开发</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.1.</span> <span class="toc-text">字符设备驱动开发基础实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AALinux%E9%A9%B1%E5%8A%A8%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.2.</span> <span class="toc-text">第一个Linux驱动实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LED%E9%A9%B1%E5%8A%A8%E5%AE%9E%E9%AA%8C%EF%BC%88%E7%9B%B4%E6%8E%A5%E6%93%8D%E4%BD%9C%E5%AF%84%E5%AD%98%E5%99%A8%E7%89%88%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">LED驱动实验（直接操作寄存器版）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E6%96%B0%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.4.</span> <span class="toc-text">Linux新字符设备驱动实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E8%AE%BE%E5%A4%87%E6%A0%91"><span class="toc-number">1.5.</span> <span class="toc-text">Linux设备树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#dts%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="toc-number">1.5.1.</span> <span class="toc-text">dts基本语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E5%A4%87%E6%A0%91%E5%9C%A8%E7%B3%BB%E7%BB%9F%E9%87%8C%E9%9D%A2%E7%9A%84%E4%BD%93%E7%8E%B0"><span class="toc-number">1.5.2.</span> <span class="toc-text">设备树在系统里面的体现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E5%86%85%E6%A0%B8%E7%9A%84OF%E6%93%8D%E4%BD%9C%E5%87%BD%E6%95%B0"><span class="toc-number">1.6.</span> <span class="toc-text">Linux内核的OF操作函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pinctl%E5%92%8Cgpio%E5%AD%90%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.7.</span> <span class="toc-text">pinctl和gpio子系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#beep%E8%9C%82%E9%B8%A3%E5%99%A8%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.8.</span> <span class="toc-text">beep蜂鸣器实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E5%B9%B6%E5%8F%91%E4%B8%8E%E7%AB%9E%E4%BA%89"><span class="toc-number">1.9.</span> <span class="toc-text">linux并发与竞争</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8C%89%E9%94%AE%E8%BE%93%E5%85%A5%E5%AE%9E%E9%AA%8C%EF%BC%88%E7%9B%B4%E6%8E%A5%E8%AF%BBio%EF%BC%89"><span class="toc-number">1.10.</span> <span class="toc-text">按键输入实验（直接读io）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E5%86%85%E6%A0%B8%E5%AE%9A%E6%97%B6%E5%99%A8%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.11.</span> <span class="toc-text">linux内核定时器实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E4%B8%AD%E6%96%AD%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.12.</span> <span class="toc-text">linux中断实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E9%98%BB%E5%A1%9E%E5%92%8C%E9%9D%9E%E9%98%BB%E5%A1%9E%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.13.</span> <span class="toc-text">linux阻塞和非阻塞实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.14.</span> <span class="toc-text">linux异步通知实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#plantform%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.15.</span> <span class="toc-text">plantform设备驱动实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E8%87%AA%E5%B8%A6led%E9%A9%B1%E5%8A%A8"><span class="toc-number">1.16.</span> <span class="toc-text">linux自带led驱动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E6%9D%82%E9%A1%B9misc%E9%A9%B1%E5%8A%A8%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.17.</span> <span class="toc-text">linux杂项misc驱动实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux-INPUT%E5%AD%90%E7%B3%BB%E7%BB%9F%E9%A9%B1%E5%8A%A8%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.18.</span> <span class="toc-text">linux INPUT子系统驱动实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux-lcd%E9%A9%B1%E5%8A%A8%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.19.</span> <span class="toc-text">linux  lcd驱动实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux-RTC%E9%A9%B1%E5%8A%A8%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.20.</span> <span class="toc-text">linux RTC驱动实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux-iic%E9%A9%B1%E5%8A%A8%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.21.</span> <span class="toc-text">linux iic驱动实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux-SPI%E9%A9%B1%E5%8A%A8%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.22.</span> <span class="toc-text">linux SPI驱动实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux-%E5%A4%9A%E7%82%B9%E7%94%B5%E5%AE%B9%E5%B1%8F%E8%A7%A6%E6%91%B8%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.23.</span> <span class="toc-text">linux 多点电容屏触摸实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#USB%E9%A9%B1%E5%8A%A8"><span class="toc-number">1.24.</span> <span class="toc-text">USB驱动</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
