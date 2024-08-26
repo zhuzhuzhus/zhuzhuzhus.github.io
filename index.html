@@ -253,6 +253,223 @@
 
 
   
+    <article id="post-arm" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2024/08/26/arm/">系统移植篇</a>
+    </h1>
+  
+
+        
+        <a href="/2024/08/26/arm/" class="archive-article-date">
+  	<time datetime="2024-08-26T13:51:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-08-26</time>
+</a>
+        
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id=""><a href="#" class="headerlink" title=""></a></h1><h1 id="arm架构学习"><a href="#arm架构学习" class="headerlink" title="arm架构学习"></a>arm架构学习</h1><p><strong>工作模式</strong></p>
+<ul>
+<li><p>User ：用户模式，一般在执行上层应用程序的时候处于该模式（和linux用户态和内核态无关）</p>
+</li>
+<li><p>Fiq 快速中断模式</p>
+</li>
+<li><p>IRQ：中断模式</p>
+</li>
+<li><p>SVC：当复位或执行软中断指令后arm进入这种模式（例如刚上电或者软中断执行的时候处于该模式）</p>
+</li>
+<li><p>Abort： 当产生存取异常时进入这种模式</p>
+</li>
+<li><p>Undef： 当执行未定义的指令时ARM将进入这种模式</p>
+</li>
+<li><p>System： 使用和User模式相同的寄存器集的特权模式</p>
+</li>
+<li><p>Monitor：为了安全而拓展出的用于执行安全监控代码的模式</p>
+</li>
+</ul>
+<h2 id="ARM寄存器组织"><a href="#ARM寄存器组织" class="headerlink" title="ARM寄存器组织"></a>ARM寄存器组织</h2><p>其中 r0<del>r3 主要用于子程序间传递参数， r4</del>r11 主要用于保存局部变量，但在 Thumb 程序中，通常只能使用 r4~r7 来保存局部变量； r12 用作子程序间scratch 寄存器，即 ip 寄存器； r13 通常用做栈指针，即 sp； r14 寄存器又被称为连接寄存器（lr），用于保存子程序以及中断的返回地址； r15 用作程序计数器（pc），由于 ARM 采用了流水线机制，当正确读取了 PC 的值后，该值为当前指令地址加 8 个字节，即 PC 指向当前指令的下两条指令地址。</p>
+<p>CPSR和SPSR都是程序状态寄存器，其中SPSR是用来保存中断前的CPSR中的值，以便在中断返回之后恢复处理器程序状态。</p>
+<ul>
+<li><p>r15：PC寄存器：程序计数器，用于存储当前取址指令地址 </p>
+</li>
+<li><p>R14：链接寄存器 LR：</p>
+<ul>
+<li>执行跳转指令的时候（b），LR会自动保存跳转指令的下一条指令，程序需要返回时将LR的值复制到PC即可实现</li>
+<li>产生异常时，对应异常模式下的LR会自动保存被异常打断的指令的下一条指令的地址，异常结束后将LR的值复制到PC</li>
+</ul>
+</li>
+<li><p>R13：栈地址 </p>
+</li>
+<li><p>CPSR寄存器：当前程序状态寄存器</p>
+<ul>
+<li><p>[8:0]为控制域</p>
+<ul>
+<li><ul>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li><p>[10110]Monitor</p>
+</li>
+</ul>
+</li>
+<li><p>[5]:</p>
+<ul>
+<li></li>
+<li></li>
+</ul>
+</li>
+<li><p>[6]</p>
+<ul>
+<li><a href="ARM">0</a>:FIQ enable</li>
+<li><a href="Thumb">1</a>:FIQ disable</li>
+</ul>
+</li>
+<li><p>[7]</p>
+<ul>
+<li><a href="ARM">0</a>:IRQ enable</li>
+<li><a href="Thumb">1</a>:IRQ disable</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><ul>
+<li></li>
+<li></li>
+<li><p>[29]: </p>
+<ul>
+<li>当运算器进行加法运算产生了进位该位自动置1，否则为0 </li>
+<li>当运算器进行减法运算产生了接位该位自动置0，否则为1</li>
+</ul>
+</li>
+<li><p>[28]：</p>
+<ul>
+<li>当运算器进行加法运算产生了符号位进位该位自动置1，否则为0      </li>
+<li>当运算器进行减法运算产生了符号位借位该位自动置0，否则为1</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>****SPSR:****程序状态保存寄存器</p>
+</li>
+</ul>
+<h2 id="ARM异常处理"><a href="#ARM异常处理" class="headerlink" title="ARM异常处理"></a>ARM异常处理</h2><p>arm异常源：</p>
+<ul>
+<li>FIQ                                   					   FIQ模式</li>
+<li>IRQ									      IRQ模式</li>
+<li>Resset复位电平有效			                         SVC模式</li>
+<li>Software Interrupt 执行swi命令                             SVC模式</li>
+<li>Data Abort 数据中止						Abort模式</li>
+<li>Prefetch Abort 指令预取中止		                  Abort模式</li>
+<li>Undefined Instruction 遇到不能处理的指令          Undef模式</li>
+</ul>
+<p>产生异常后</p>
+<ol>
+<li>拷贝CPSR的内容到对应异常模式下的SPSR</li>
+<li>修改CPSR的值：<ol>
+<li>修改中断禁止位禁止相应的中断</li>
+<li>修改模式位进入相应的异常模式</li>
+<li>修改状态位进入ARM状态</li>
+</ol>
+</li>
+<li>保存返回地址到对应异常模式下的LR</li>
+<li>设置PC为相应的异常向量（异常向量表对应的地址）</li>
+</ol>
+<p>异常处理完成后返回：</p>
+<ol>
+<li>将SPSR的值复制给CPSR使程序恢复到之前的状态</li>
+<li>将LR的值给PC，使程序跳转回之前的地址</li>
+</ol>
+<p> 异常优先级</p>
+<ol>
+<li>reset</li>
+<li>data abort</li>
+<li>fiq</li>
+<li>irq</li>
+<li>prefetch abort</li>
+<li>software interrupt</li>
+<li>undefined instruction</li>
+</ol>
+<h2 id="ARM指令集"><a href="#ARM指令集" class="headerlink" title="ARM指令集"></a>ARM指令集</h2><p>&#x3D;&#x3D;arm指令集&#x3D;&#x3D;</p>
+<ul>
+<li>所有指令都占用32bit存储空间</li>
+<li>执行arm指令集时PC每次自增4</li>
+</ul>
+<p>&#x3D;&#x3D;thumb指令集&#x3D;&#x3D;</p>
+<ul>
+<li>所有指令都占用16bit存储空间</li>
+<li>执行arm指令集时PC每次自增2</li>
+</ul>
+<h3 id="数据处理指令"><a href="#数据处理指令" class="headerlink" title="数据处理指令"></a>数据处理指令</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@数据搬移指令</span><br><span class="line">mov r1,#1   @把1搬移到r1寄存器 </span><br><span class="line">mov r2,r1   	@把r2的值搬移到r1</span><br><span class="line"></span><br><span class="line">mvn r0,#0Xff 	@取反 后搬移，将0xffffff00搬移到r0</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@立即数 0-255 可以直接写入，本质就是包含在指令当中的数，属于指令的一部分</span><br><span class="line">@	优点是取值的时候就可以将其读到cpu不用单独去内存读取，速度快</span><br><span class="line">@	缺点是，范围有限，不能是任意的32位的数，有局限性</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">@加法指令</span><br><span class="line">add r1,r2,r3		@r1 = r2 + r3</span><br><span class="line">add r1,r2,#5 	@r1 = r2 +5</span><br><span class="line">@第一个被加数不能为数</span><br><span class="line">@add格式：</span><br><span class="line">@	《操作码》 《目标寄存器》 《第一操作寄存器》 《第二操作数》</span><br><span class="line">adds @变化cpsr中的nvcr位用法和add相同</span><br><span class="line">adc r1,r2,r3 	@add后加上cpsr中的c位（bit29）</span><br><span class="line"></span><br><span class="line">@减法指令 和加法雷同</span><br><span class="line">sub r1,r2,r3		@r1 = r2 - r3</span><br><span class="line">subs	@变化cpsr中的nvcr位，用法和sub相同</span><br><span class="line">sbc r1,r2,r3		@sub后减去cpsr的c位的取反的值</span><br><span class="line"></span><br><span class="line">@逆向减法指令</span><br><span class="line"> rsb r1,r2,r3		@r1 = r3 - r2</span><br><span class="line"></span><br><span class="line">@乘法指令</span><br><span class="line">mul r1,r2,r3		@r1 = r2 * r3</span><br><span class="line">@乘法之旅只能两个寄存器相乘</span><br><span class="line"></span><br><span class="line">@按位与指令</span><br><span class="line">and r1,r2,r3		@r1 = r2 &amp;r3</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@按位或指令</span><br><span class="line">orr r1,r2,r3		@r1 = r2 | r3</span><br><span class="line"></span><br><span class="line">@按位异或指令</span><br><span class="line">eor r1,r2,r3	r1 = r2 ^ r3</span><br><span class="line"></span><br><span class="line">@左移指令 </span><br><span class="line">lsl r1,r2,r3		@r1 = r2 &lt;&lt; r3 </span><br><span class="line"></span><br><span class="line">@右移指令</span><br><span class="line">lsr r1,r2,r3		@r1 = r2 &gt;&gt; r3</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@位清零指令</span><br><span class="line">bic r1,r2,#0xf	@ 将r2的最后4位清0保存到r1</span><br><span class="line"></span><br><span class="line">@数据运算指令的格式扩展</span><br><span class="line">mov r1,r2,lsl #l	@将r2左移1位放入r1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="跳转与存储器访问指令"><a href="#跳转与存储器访问指令" class="headerlink" title="跳转与存储器访问指令"></a>跳转与存储器访问指令</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">内存访问指令</span><br><span class="line">@写内存 </span><br><span class="line">str r1,[r2] 将r1寄存器的数据存储到r2指向的内存空间  </span><br><span class="line"></span><br><span class="line">@读内存</span><br><span class="line">ldr r3,[r2] 将r2指向的内存空间的数据读取到r3寄存器</span><br><span class="line"></span><br><span class="line">@往内存存储一个字节</span><br><span class="line">strb r1,[r2]</span><br><span class="line">@往内存中写两个字节</span><br><span class="line">strh r1，[r2]</span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+
+<p>寻址：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">寄存器寻址：直接从寄存器拿值</span><br><span class="line">@add r1,r2,r3</span><br><span class="line">寄存器移位寻址</span><br><span class="line"></span><br><span class="line">@mov r1,r2,lsl #1 @先从r2找到要移位的数，再从机器码找到移动位数，再mov</span><br><span class="line"></span><br><span class="line">@寄存器间接寻址</span><br><span class="line">str r1，r[2]</span><br><span class="line"></span><br><span class="line">@。。。</span><br><span class="line"></span><br><span class="line">@基址加变址寻址</span><br><span class="line">mov r1,0xffffffff</span><br><span class="line">mov r2,#0x40000000</span><br><span class="line">mov r3,#4</span><br><span class="line">str r1,[r2,r3]		@将r1寄存器中的数据写入到r2 + r3 指向的内存空间</span><br><span class="line"></span><br><span class="line">str r1,[r2,r3,lsl #1] 	@将r1寄存器的值写到r2 + r3   &lt;&lt; 1</span><br><span class="line"></span><br><span class="line">@基址加变址索引方式，前索引</span><br><span class="line">mov r1,0xffffffff</span><br><span class="line">mov r2,#0x40000000</span><br><span class="line">str r1,[r2,#8]	 	@ 将r1寄存器的值写到r2 + 8</span><br><span class="line"> </span><br><span class="line"> @基址加变址索引方式，后索引</span><br><span class="line">mov r1,0xffffffff</span><br><span class="line">mov r2,#0x40000000</span><br><span class="line">str r1,[r2]，#8	 	@ 将r1寄存器的值写到r2 ，并将r2加8</span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">@基址加变址索引方式，自动索引</span><br><span class="line">mov r1,0xffffffff</span><br><span class="line">mov r2,#0x40000000</span><br><span class="line">str r1,[r2，#8]!	 	@ 将r1寄存器的值写到r2 + 8，并将r2加8</span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+        <div class="article-pop-out tagcloud">
+          <i class="icon-tuding"></i>
+          <a class="article-tag-list-link color3">置顶</a>
+        </div>
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2024/08/26/arm/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+  
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
     <article id="post-Linux驱动开发" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
