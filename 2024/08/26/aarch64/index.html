@@ -8,18 +8,23 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>AARCH64架构学习 | zhuzhuzhu&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="AARCH64学习参考">
+  <meta name="description" content="AARCH64学习参考 armv8基础知识armv8中，执行发生在4个异常级别之一，在aarch64中，异常级别决定了特权级别，类似于armv7中定义的特权级别，异常级别决定特权级别，因此在Eln执行对于特权Pln。类似地，具有比另一个更大的n值的异常级别处于更高的异常级别，一个数字比另一个小的异常级别被描述为处于较低的异常级别。  EL0 ：normal user app EL1：Operati">
 <meta property="og:type" content="article">
 <meta property="og:title" content="AARCH64架构学习">
 <meta property="og:url" content="http://example.com/2024/08/26/aarch64/index.html">
 <meta property="og:site_name" content="zhuzhuzhu&#39;s blog">
-<meta property="og:description" content="AARCH64学习参考">
+<meta property="og:description" content="AARCH64学习参考 armv8基础知识armv8中，执行发生在4个异常级别之一，在aarch64中，异常级别决定了特权级别，类似于armv7中定义的特权级别，异常级别决定特权级别，因此在Eln执行对于特权Pln。类似地，具有比另一个更大的n值的异常级别处于更高的异常级别，一个数字比另一个小的异常级别被描述为处于较低的异常级别。  EL0 ：normal user app EL1：Operati">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409032044334.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409032048647.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409032117334.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409032119479.png">
 <meta property="article:published_time" content="2024-08-26T13:51:46.000Z">
-<meta property="article:modified_time" content="2024-09-01T08:10:53.655Z">
+<meta property="article:modified_time" content="2024-09-03T13:32:39.032Z">
 <meta property="article:author" content="ZHUJIALE">
 <meta property="article:tag" content="架构学习">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409032044334.png">
   
     <link rel="alternative" href="/atom.xml" title="zhuzhuzhu&#39;s blog" type="application/atom+xml">
   
@@ -185,6 +190,30 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h1 id="AARCH64学习"><a href="#AARCH64学习" class="headerlink" title="AARCH64学习"></a>AARCH64学习</h1><p><a target="_blank" rel="noopener" href="https://armv8-doc.readthedocs.io/en/latest/03.html">参考</a></p>
+<h2 id="armv8基础知识"><a href="#armv8基础知识" class="headerlink" title="armv8基础知识"></a>armv8基础知识</h2><p>armv8中，执行发生在4个异常级别之一，在aarch64中，异常级别决定了特权级别，类似于armv7中定义的特权级别，异常级别决定特权级别，因此在Eln执行对于特权Pln。类似地，具有比另一个更大的n值的异常级别处于更高的异常级别，一个数字比另一个小的异常级别被描述为处于较低的异常级别。</p>
+<ul>
+<li>EL0 ：normal user app</li>
+<li>EL1：Operation system kernel typically described as privileged</li>
+<li>EL2：Hypervisor</li>
+<li>EL3：Low-level firmware，including the Secure Monitor<img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409032044334.png" alt="image-20220314223244988"></li>
+</ul>
+<p>ARMv8-A提供两种安全状态，安全和非安全，非安全状态也称为正常世界，这使操作系统能够与受信任的操作系统在同一硬件上并行运行，并提供针对某些软件攻击和硬件攻击的保护，ARM TrustZone技术使系统能够在正常和安全世界之间进行分区，与ARMv7-A架构一样，安全监视器充当在正常和安全世界之间移动的网关。<img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409032048647.png" alt="image-20220314223407631"></p>
+<p>ARMv8-A还提供对虚拟化支持，但仅在普通世界中。这意味着管理程序或虚拟管理器代码可以在系统上运行并托管多个客户操作系统。每个客户操作系统本质上都是在虚拟机上运行。然后，每个操作系统都不会意识到它正在与其他客户操作系统共享系统上的时间。</p>
+<p>正常世界(对应于非安全状态)具有以下特权组件:</p>
+<ul>
+<li>Guest Os kernels 此类内核包括在非安全 EL1 中运行的 Linux 或 Windows。在管理程序下运行时，丰富的操作系统内核可以作为来宾或主机运行，具体取决于管理程序型。·</li>
+<li>Hypervisor 这在 EL2 上运行，它始终是非安全的。虚拟机管理程序在存在并启用时，可为丰富的操作系统内核提供虚拟化服务。、</li>
+</ul>
+<p>安全世界具有以下特权组件:</p>
+<ul>
+<li><p>Secure frmware 在应用处理器上，这个固件必须是在启动时运行的第一件事。它提供了多种服务，包括平台初始化、可信操作系统的安装以及安全监视器调用的路由。</p>
+</li>
+<li><p>Trusted Os 受信任的操作系统为普通世界提供安全服务，并为执行安全或受信任的应用程序提供运行时环境。</p>
+</li>
+</ul>
+<p>ARMv8 架构中的安全监视器处于更高的异常级别，并且比所有其他级别具有更高的特权。<br>这提供了软件特权的逻辑模型。</p>
+<p><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409032117334.png" alt="image-20220314223946303"></p>
+<p><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409032119479.png" alt="image-20220314224010456"></p>
 
       
 
@@ -333,7 +362,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#AARCH64%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.</span> <span class="toc-text">AARCH64学习</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#AARCH64%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.</span> <span class="toc-text">AARCH64学习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#armv8%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">1.1.</span> <span class="toc-text">armv8基础知识</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
