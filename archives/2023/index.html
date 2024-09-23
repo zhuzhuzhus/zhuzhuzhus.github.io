@@ -6,19 +6,14 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>c内存管理以及链接脚本 | zhuzhuzhu&#39;s blog</title>
+  <title>Archives: 2023 | zhuzhuzhu&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="关于对c代码内存的一些理解起因是在观看裸机开发教程中在汇编中引入了一个链接文件，教程中并未对其做出过多的解释，所以我就自己查看资料对c的内存管理有了进一步的理解，链接文件如下： 1234567891011121314SECTIONS&#123;	. &#x3D; 0X87800000;	.text :	&#123;		start.o		main.o		*(.text)	&#125;	.rodata ALIG">
-<meta property="og:type" content="article">
-<meta property="og:title" content="c内存管理以及链接脚本">
-<meta property="og:url" content="http://example.com/2024/01/05/c%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%BB%A5%E5%8F%8A%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AC/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="zhuzhuzhu&#39;s blog">
+<meta property="og:url" content="http://example.com/archives/2023/index.html">
 <meta property="og:site_name" content="zhuzhuzhu&#39;s blog">
-<meta property="og:description" content="关于对c代码内存的一些理解起因是在观看裸机开发教程中在汇编中引入了一个链接文件，教程中并未对其做出过多的解释，所以我就自己查看资料对c的内存管理有了进一步的理解，链接文件如下： 1234567891011121314SECTIONS&#123;	. &#x3D; 0X87800000;	.text :	&#123;		start.o		main.o		*(.text)	&#125;	.rodata ALIG">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2024-01-05T07:35:22.000Z">
-<meta property="article:modified_time" content="2024-01-05T08:01:19.337Z">
 <meta property="article:author" content="ZHUJIALE">
-<meta property="article:tag" content="随笔">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="zhuzhuzhu&#39;s blog" type="application/atom+xml">
@@ -157,262 +152,98 @@
           </div>
           <div id="js-content" class="content-ll">
             
-    <i class="fa fa-thumb-tack"></i>
-    <font color=7D26CD>置顶</font>
-    <span class="post-meta-divider">|</span>
-    
-    
-    
-<article id="post-c内存管理以及链接脚本" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
   
-    <h1 class="article-title" itemprop="name">
-      c内存管理以及链接脚本
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2023" class="archive-year">2023</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2023/09/11/ARM%E8%A3%B8%E6%9C%BA%E5%BC%80%E5%8F%91/" class="archive-article-date">
+  	<time datetime="2023-09-11T03:13:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-09-11</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2023/09/11/ARM%E8%A3%B8%E6%9C%BA%E5%BC%80%E5%8F%91/">ARM裸机开发</a>
     </h1>
   
 
-        
-        <a href="/2024/01/05/c%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%BB%A5%E5%8F%8A%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AC/" class="archive-article-date">
-  	<time datetime="2024-01-05T07:35:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-05</time>
-</a>
-        
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="关于对c代码内存的一些理解"><a href="#关于对c代码内存的一些理解" class="headerlink" title="关于对c代码内存的一些理解"></a>关于对c代码内存的一些理解</h2><p>起因是在观看裸机开发教程中在汇编中引入了一个链接文件，教程中并未对其做出过多的解释，所以我就自己查看资料对c的内存管理有了进一步的理解，链接文件如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">SECTIONS&#123;</span><br><span class="line">	. = 0X87800000;</span><br><span class="line">	.text :</span><br><span class="line">	&#123;</span><br><span class="line">		start.o</span><br><span class="line">		main.o</span><br><span class="line">		*(.text)</span><br><span class="line">	&#125;</span><br><span class="line">	.rodata ALIGN(4) : &#123;*(.rodata*)&#125;</span><br><span class="line">	.data ALIGN(4) : &#123; *(.data) &#125;</span><br><span class="line"> __bss_start = .;</span><br><span class="line">	.bss ALIGN(4) : &#123; *(.bss) *(COMMON) &#125;</span><br><span class="line">	__bss_end = .;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在这个文件里我们看到了.text,.rodata,.data,.bss我一开始看到这个觉得一头雾水（因为本人c语言基础较弱），首先是不知道这些段是干嘛的，其次是不知道编写这个所谓链接文件的目的，所以我就去网上查看资料，终于有了一些收获</p>
-<span id="more"></span>
-
-<h3 id="链接文件的目的"><a href="#链接文件的目的" class="headerlink" title="链接文件的目的"></a>链接文件的目的</h3><p>我们在做开发时，不可能只有一个c文件，一定是很多文件共同配合组成一个项目，而每个文件都会编译成.o文件，所以需要通过链接器来将二进制数据有序组织起来，并且根据链接脚本中的指示为程序不同部分分配内存，我们知道了链接文件的用处，那么问题来了，我们刚刚那一段链接脚本的代码时干嘛的呢？</p>
-<p>在知道那一段链接脚本是干嘛的之前，我们需要知道c语言代码在内存中的存放分区：</p>
-<ol>
-<li>栈区：这是一段由编译器自己分配并释放的内存，通常存放局部变量，形参，返回值（也就是自定义函数中的内容），所以几乎所有的函数调用都依赖与栈来实现，并且具有先进先出的规则</li>
-<li>堆区：堆区内存需要程序员手动申请并释放，自己分配的内存除非程序员手动释放否则永不释放（malloc，free）</li>
-<li>数据段和代码段：<strong>这一部分就和我们链接文件相关了</strong><ul>
-<li>在数据段中分为以下部分：<ul>
-<li>.bss段：这部分保存着未初始化的全局变量和静态局部变量，由于未初始化，所以会被系统自动初始化为0</li>
-<li>.data段：保存已经初始化的全局变量和静态局部变量</li>
-<li>.rodata段：只读数据段，存放着只读数据一般是程序里的只读变量（const修饰变量），字符串变量，常量数据</li>
-</ul>
-</li>
-<li>代码段细分以下几个区域：<ul>
-<li>.text段：存放用户代码</li>
-<li>.init段:存放系统初始化代码</li>
-</ul>
-</li>
-</ul>
-</li>
-</ol>
-<p>有了上面3的解释再回去看上面代码就简单易懂了:</p>
-<ol>
-<li>首先通过. &#x3D; 0X87800000;将起始地址置为0X87800000</li>
-<li>接着通过.text :{start.o   main.   *(.text) }设置.text段(也即是代码段)内容设置链接到开始位置的文件为start.o，因为 start.o 里面包含着第一个要执行的指令，所以一定要链接到最开始的地方。</li>
-<li>接着再通过.rodata ALIGN(4) : {<em>(.rodata</em>)}<br>.data ALIGN(4) : { *(.data) }将rodata和data段放在代码段之后,而ALIGN(4) 这个关键字的作用是4字节对齐</li>
-<li>最后通过 __bss_start &#x3D; .;<br> .bss ALIGN(4) : { *(.bss) *(COMMON) }<br> __bss_end &#x3D; .;设置bss段的起始和终止地址数据以及将bss段存放在data段后面</li>
-</ol>
-<p>补:<br>关于局部变量,全局变量和静态变量:</p>
-<ol>
-<li><p>全局变量:定义在函数外的变量,作用范围是所有函数&#x3D;&#x3D;当某函数的局部变量与全局变量同名时,全局变量在该函数中不起作用&#x3D;&#x3D;</p>
-</li>
-<li><p>局部变量:在函数内部定义的变量,有效范围仅限于函数内部&#x3D;&#x3D;形参也是局部变量&#x3D;&#x3D;</p>
-</li>
-<li><p>静态变量:</p>
-<ol>
-<li><p>局部静态变量:在局部变量前面加上static关键字,&#x3D;&#x3D;使得局部变量由原来存储在栈内存变成存储在静态存储区&#x3D;&#x3D;</p>
-<ol>
-<li>生存周期:当static用来修饰局部变量的时候,他就改变了局部变量的存储位置.局部静态变量在离开作用域之后并没有被销毁,而是任驻留在内存中,直到程序结束例如:<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">f</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">static</span> <span class="type">int</span> b = <span class="number">200</span>; <span class="comment">// 静态局部变量，退出整个程序之前不会释放</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, b);</span><br><span class="line">    b++; <span class="comment">// b的值加1</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    f();</span><br><span class="line">    f(); <span class="comment">// b只会初始化一次，重复调用函数 f()，会使静态局部变量 b 的值不断增大</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-</li>
-<li><p>全局静态变量:在全局变量之前加上关键字static，全局变量就被定义成为一个全局静态变量。</p>
-<ol>
-<li>内存中的位置：静态存储区</li>
-<li>初始化：未经初始化的全局静态变量会被程序自动初始化为0</li>
-<li>作用域：全局静态变量在声明他的文件之外是不可见的。准确地讲从定义之处开始到文件结尾。</li>
-<li>定义全局静态变量的好处：<ul>
-<li>不会被其他文件所访问，修改</li>
-<li>其他文件中可以使用相同名字的变量，不会发生冲突。</li>
-</ul>
-</li>
-</ol>
-</li>
-</ol>
-</li>
-</ol>
-
-      
-
-      
-        <div class="page-reward">
-          <a href="javascript:;" class="page-reward-btn tooltip-top">
-            <div class="tooltip tooltip-east">
-            <span class="tooltip-item">
-              赏
-            </span>
-            <span class="tooltip-content">
-              <span class="tooltip-text">
-                <span class="tooltip-inner">
-                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
-                  <div class="reward-box">
-                    
-                    
-                  </div>
-                </span>
-              </span>
-            </span>
-          </div>
-          </a>
-        </div>
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-        <div class="article-pop-out tagcloud">
-          <i class="icon-tuding"></i>
-          <a class="article-tag-list-link color3">置顶</a>
-        </div>
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">裸机开发</a>
         		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
+        <div class="clearfix"></div>
+    </header>
   </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/01/05/c%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%BB%A5%E5%8F%8A%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AC/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-  
 </article>
-
   
-<nav id="article-nav">
-  
-    <a href="/2024/01/18/%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          系统移植篇
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2024/01/05/1/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">嵌入式学习规划</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
+    
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2023/04/05/Ubuntu-%E6%93%8D%E4%BD%9C%E5%85%A5%E9%97%A8/" class="archive-article-date">
+  	<time datetime="2023-04-05T03:13:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-04-05</time>
+</a>
         </div>
-        
-        
-        <div class="toc-container tooltip-left">
-            <i class="icon-font icon-category"></i>
-            <div class="tooltip tooltip-east">
-                <span class="tooltip-item">
-                </span>
-                <span class="tooltip-content">
-                    <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E5%AF%B9c%E4%BB%A3%E7%A0%81%E5%86%85%E5%AD%98%E7%9A%84%E4%B8%80%E4%BA%9B%E7%90%86%E8%A7%A3"><span class="toc-number">1.</span> <span class="toc-text">关于对c代码内存的一些理解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%93%BE%E6%8E%A5%E6%96%87%E4%BB%B6%E7%9A%84%E7%9B%AE%E7%9A%84"><span class="toc-number">1.1.</span> <span class="toc-text">链接文件的目的</span></a></li></ol></li></ol>
-                    </div>
-                </span>
-            </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2023/04/05/Ubuntu-%E6%93%8D%E4%BD%9C%E5%85%A5%E9%97%A8/">Ubuntu 操作入门</a>
+    </h1>
+  
+
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+          
+
         </div>
-        
-    </div>
-</aside>
-
-
-
+        <div class="clearfix"></div>
+    </header>
+  </div>
+</article>
   
   
+    </div></section>
   
 
-  
+    
 
-  
-
-  
 
           </div>
         </div>
@@ -450,8 +281,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
