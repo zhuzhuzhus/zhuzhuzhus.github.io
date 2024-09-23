@@ -19,8 +19,15 @@
 <meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409032048647.png">
 <meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409032117334.png">
 <meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409032119479.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409231647314.png">
+<meta property="og:image" content="https://armv8-doc.readthedocs.io/en/latest/_images/06_09.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409231647792.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409231648890.png">
+<meta property="og:image" content="https://armv8-doc.readthedocs.io/en/latest/_images/06_16.png">
+<meta property="og:image" content="https://armv8-doc.readthedocs.io/en/latest/_images/image-ch8.2-table8-1.png">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409231649773.png">
 <meta property="article:published_time" content="2024-08-26T13:51:46.000Z">
-<meta property="article:modified_time" content="2024-09-03T13:32:39.032Z">
+<meta property="article:modified_time" content="2024-09-23T08:49:34.139Z">
 <meta property="article:author" content="ZHUJIALE">
 <meta property="article:tag" content="架构学习">
 <meta name="twitter:card" content="summary">
@@ -214,6 +221,167 @@
 <p>ARMv8 架构中的安全监视器处于更高的异常级别，并且比所有其他级别具有更高的特权。<br>这提供了软件特权的逻辑模型。</p>
 <p><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409032117334.png" alt="image-20220314223946303"></p>
 <p><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409032119479.png" alt="image-20220314224010456"></p>
+<h2 id="寄存器"><a href="#寄存器" class="headerlink" title="寄存器"></a>寄存器</h2><p><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409231647314.png" alt="image-04_s_registers"></p>
+<h2 id="指令集"><a href="#指令集" class="headerlink" title="指令集"></a>指令集</h2><p><strong>数据处理指令</strong></p>
+<p>一般的格式可以认为是指令，其次是操作数，如下所示。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Instruction Rd, Rn, Operand2</span><br></pre></td></tr></table></figure>
+
+<p>第二个操作数可能是一个寄存器，一个修改后的寄存器，或者一个立即数。R的使用表明它可以是一个X或一个W寄存器。</p>
+<p>下面的表格显示一些可用的算术和逻辑运算。</p>
+<table>
+<thead>
+<tr>
+<th align="center">种类</th>
+<th align="center">指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">算术</td>
+<td align="center">ADD, SUB, ADC, SBC, NEG</td>
+</tr>
+<tr>
+<td align="center">逻辑</td>
+<td align="center">AND, BIC, ORR, ORN, EOR, EON</td>
+</tr>
+<tr>
+<td align="center">比较</td>
+<td align="center">CMP, CMN, TST</td>
+</tr>
+<tr>
+<td align="center">移位</td>
+<td align="center">MOV, MVN</td>
+</tr>
+</tbody></table>
+<p>算术指令示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ADD W0, W1, W2, LSL #3 // W0 = W1 + (W2 &lt;&lt; 3)</span><br><span class="line">SUBS X0, X4, X3, ASR #2 // X0 = X4 - (X3 &gt;&gt; 2),</span><br><span class="line">MOV X0, X1	// Copy X1 to X0</span><br><span class="line">CMP W3, W4	 / Set flags based on W3 - W4</span><br><span class="line">ADD W0, W5, #27	// W0 = W5 + 27</span><br></pre></td></tr></table></figure>
+
+<p>BIC（位元位清除）指令执行寄存器的AND，这是目标寄存器之后的第一个，具有第二个操作数的倒置值。例如，要清除寄存器X0的位[11]，请使用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MOV X1, #0x800 </span><br><span class="line">BIC X0, X0, X1</span><br></pre></td></tr></table></figure>
+
+<p><strong>条件指令</strong></p>
+<p>处理器状态描述了四个状态标志，零（Z）、负（N）、Carry（C）和溢出（V）。和arm相似</p>
+<p><img src="https://armv8-doc.readthedocs.io/en/latest/_images/06_09.png" alt="image-20220420182839984"></p>
+<ul>
+<li><p>有条件选择（移动）</p>
+<ul>
+<li><p>CSEL 根据一个条件在两个寄存器之间进行选择。无条件指令，然后是条件选择，可以取代简短的条件序列。它的用法是这样的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CSEL &lt;Xd&gt;, &lt;Xn&gt;, &lt;Xm&gt;, &lt;cond&gt;</span><br></pre></td></tr></table></figure>
+
+<p>意思是如果条件(cond)满足，就选择(sel)Xn作为Xd，否则选择Xm作为Xd。比如下面这条语句：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CSEL X0, X0, X1, ge</span><br></pre></td></tr></table></figure>
+
+<p>表示的是如果X0&gt;&#x3D;X1(ge - greater or equal)，那么X0&#x3D;X0(保持不变)，否则X0&#x3D;X1。</p>
+</li>
+<li><p>CSINC 根据一个条件在两个寄存器之间进行选择。返回第一个源寄存器或第二个源寄存器加一。例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CSINC X0, X1, X0, NE // Set the return register X0 to X1 if Zero flag clear,else increment X0</span><br></pre></td></tr></table></figure>
+
+<p>上面的代码提供了示例指令的一些别名，其中要么使用零寄存器，要么将同一寄存器用作指令的目标和两个源寄存器。</p>
+</li>
+<li><p>CSINV 根据条件在两个寄存器之间进行选择。返回第一个源寄存器或倒置的第二个源寄存器。</p>
+</li>
+<li><p>CSNEG 根据条件在两个寄存器之间进行选择。返回第一个源寄存器或被否定的第二个源寄存器。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>这类指令为避免使用分支或有条件执行的指令提供了一个强有力的方法。编译器或汇编程序员可能采用一种技术，对if-then-else语句的两个分支进行操作。然后在最后选择正确的结果。</p>
+<p>例如，考虑简单的C代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if (i == 0) r = r + 2; else r = r - 1;</span><br></pre></td></tr></table></figure>
+
+<p>这可能会产生类似于以下内容的代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CMP w0, #0       // if (i == 0)</span><br><span class="line">SUB w2, w1, #1   // r = r - 1</span><br><span class="line">ADD w1, w1, #2   // r = r + 2</span><br><span class="line">CSEL w1, w1, w2, EQ  // select between the two results</span><br></pre></td></tr></table></figure>
+
+<p><strong>内存访问指令</strong></p>
+<p><strong>加载指令格式</strong></p>
+<p>Load指令的一般形式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LDR Rt, &lt;addr&gt;</span><br></pre></td></tr></table></figure>
+
+<p>对于加载到整数寄存器中，你可以选择一个大小来加载。例如，要加载一个比指定的寄存器值小的尺寸，在LDR指令中加入以下后缀之一：</p>
+<ul>
+<li>LDRB (8-bit, zero extended).</li>
+<li>LDRSB (8-bit, sign extended).</li>
+<li>LDRH (16-bit, zero extended).</li>
+<li>LDRSH (16-bit, sign extended).</li>
+<li>LDRSW (32-bit, sign extended).</li>
+</ul>
+<p><strong>存储指令格式</strong>：</p>
+<p>存储指令的一般形式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">STR Rn，&lt;addr&gt;</span><br></pre></td></tr></table></figure>
+
+<p>偏移寻址模式将一个立即数或一个可选择修改的寄存器值添加到一个64位的基础寄存器中以产生一个地址。<img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409231647792.png" alt="image-20220420184852102"></p>
+<p><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409231648890.png" alt="image-20220420185057121"></p>
+<p><strong>访问多个内存位置</strong></p>
+<p>在A64代码中，有加载对（LDP）和存储对（STP）指令。与A32的LDRD和STRD指令不同，任何两个整数寄存器都可以被读取或写入。数据被读入或写入相邻的内存位置。为这些指令所提供的寻址模式选项比其他内存访问指令的限制性更强。LDP和STP指令只能使用一个带有7位有符号即时值的基寄存器，并可选择预增加或后增加。与32位的LDRD和STRD不同，LDP和STP可以进行无符号访问。</p>
+<p><img src="https://armv8-doc.readthedocs.io/en/latest/_images/06_16.png" alt="image-20220420185343789"></p>
+<p><strong>无特权访问</strong></p>
+<p>A64的LDTR和STTR指令执行无特权的加载或存储（参见ARMv8-A架构参考手册中的LDTR和STTR）：</p>
+<ul>
+<li>在 EL0、EL2 或 EL3，它们表现为正常加载或存储。</li>
+<li>当在EL1执行时，它们的行为就像是在EL0特权级别执行的一样。</li>
+</ul>
+<p>这些指令相当于A32 LDRT和STRT指令。</p>
+<p><strong>格式</strong>（假设为类似LDR的通用格式）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldtr&#123;&lt;size&gt;&#125; Rd, &lt;addr&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>&lt;size&gt;</code>：指定数据的大小，如字节（b）、半字（h）、字（w）等。</li>
+<li><code>Rd</code>：目标寄存器，用于存储从内存中加载的数据。</li>
+<li><code>&lt;addr&gt;</code>：内存地址，指向要加载数据的内存位置。</li>
+</ul>
+<p><strong>预取内存</strong></p>
+<p>从内存中预取（PRFM）使代码能够向内存系统提供一个提示，即来自特定地址的数据将很快被程序使用。这个提示的效果由实施者决定，但通常情况下，它导致数据或指令被加载到一个缓存中。</p>
+<p>指令语法是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PRFM &lt;prfop&gt;, &lt;addr&gt; | label</span><br></pre></td></tr></table></figure>
+
+<p>其中prfop是以下选项的串联：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Type    PLD or PST (prefetch for load or store).</span><br><span class="line">Target  L1, L2, or L3 (which cache to target).</span><br><span class="line">Policy  KEEP or STRM (keep in cache, or streaming data).</span><br></pre></td></tr></table></figure>
+
+<p>例如，PLDL1KEEP。</p>
+<p>这些指令与A32 PLD和PLI指令相似。</p>
+<p><strong>系统寄存器访问</strong></p>
+<p>系统寄存器访问提供了两项说明：</p>
+<ul>
+<li>MRS Xt,</li>
+</ul>
+<p> 例如：MRS X4, ELR_EL1 &#x2F;&#x2F; Copies ELR_EL1 to X4</p>
+<ul>
+<li><p>MSR , Xt</p>
+<p>例如：MSR SPSR_EL1, X0 &#x2F;&#x2F; Copies X0 to SPSR_EL1</p>
+</li>
+</ul>
+<p>PSTATE的个别字段也可以用MSR或MRS访问。例如，要选择与EL0相关的堆栈指针或当前的异常级别。</p>
+<ul>
+<li><p>MSR SPSel, #imm &#x2F;&#x2F; A value of 0 or 1 in this register is used to select &#x2F;&#x2F; between using EL0 stack pointer or the current exception</p>
+<p>&#x2F;&#x2F; level stack pointer</p>
+</li>
+</ul>
+<p>这些指令有特殊形式可用于清除或设置单个异常掩码位（见第4-5页的保存进程状态寄存器）：</p>
+<ul>
+<li>MSR DAIFClr, #imm4</li>
+<li>MSR DAIFSet, #imm4</li>
+</ul>
+<h3 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h3><p><img src="https://armv8-doc.readthedocs.io/en/latest/_images/image-ch8.2-table8-1.png" alt="image-ch8.2-table8-1"></p>
+<h2 id="AArch64-内部寄存器在函数调用中的传递标准"><a href="#AArch64-内部寄存器在函数调用中的传递标准" class="headerlink" title="AArch64 内部寄存器在函数调用中的传递标准"></a>AArch64 内部寄存器在函数调用中的传递标准</h2><p><strong>通用目的寄存器作为参数</strong></p>
+<ol>
+<li><p>x0 - x7 :参数寄存器,这些寄存器用于将参数传递给函数并返回结果。 它们可以用作临时寄存器或调用者保存的寄存器变量</p>
+</li>
+<li><p>x8：（间接结果寄存器）用于传递间接结果的地址位置，例如函数返回大型结构的位置（不只是返回，函数内部有大的结构体也会使用）</p>
+</li>
+<li><p>x9 - x15:（调用者保存临时寄存器）调用者保存的临时寄存器是指在函数调用过程中，其值不由被调用函数（callee）负责保存的寄存器。如果调用者（caller）希望在函数调用后继续使用这些寄存器中的值，它必须在调用之前将这些值保存到其他地方（如堆栈或其他寄存器），并在调用返回后恢复它们。</p>
+</li>
+<li><p>x16，x17：用作临时寄存器，主要再子程序或函数调用的内部过程中使用。它可以用来存储临时数据，或者作为子程序调用之间值得临时存储。在大多数情况下不需要在函数调用之间保存其内容</p>
+</li>
+<li><p>x18：（平台寄存器）保留供平台ABI使用。这是平台上得一个附加临时寄存器，无特殊含义</p>
+</li>
+<li><p>x19 - x29：（被调用者保存寄存器）这些寄存器的值在被调用函数（callee）内部被保存，并在返回给调用者（caller）之前恢复。被调用函数有责任在可能修改这些寄存器的值之前保存它们的原始内容，并在函数返回之前恢复这些值。</p>
+<p><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202409231649773.png" alt="image-ch9.1-figure9-2"></p>
+</li>
+<li><p>x29:（ Frame Pointer 寄存器）主要作用是指向当前函数的栈帧（Stack Frame）的起始地址，从而方便访问函数内部的局部变量和参数。在函数开始时，通常会将SP寄存器的值（即当前栈顶的地址）复制到X29寄存器中，以设置FP的值。</p>
+</li>
+<li><p>x30：(链接寄存器)：与arm32类似，保存返回地址</p>
+</li>
+</ol>
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>如果发生异常，则 PSTATE 信息被保存在 Saved Program Status Register 中。(SPSR_ELn) 存在于 SPSR_EL3、SPSR_EL2 和 SPSR_EL1中</p>
 
       
 
@@ -362,7 +530,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#AARCH64%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.</span> <span class="toc-text">AARCH64学习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#armv8%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">1.1.</span> <span class="toc-text">armv8基础知识</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#AARCH64%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.</span> <span class="toc-text">AARCH64学习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#armv8%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">1.1.</span> <span class="toc-text">armv8基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">1.2.</span> <span class="toc-text">寄存器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E9%9B%86"><span class="toc-number">1.3.</span> <span class="toc-text">指令集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.3.1.</span> <span class="toc-text">数据类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AArch64-%E5%86%85%E9%83%A8%E5%AF%84%E5%AD%98%E5%99%A8%E5%9C%A8%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E4%BC%A0%E9%80%92%E6%A0%87%E5%87%86"><span class="toc-number">1.4.</span> <span class="toc-text">AArch64 内部寄存器在函数调用中的传递标准</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="toc-number">1.5.</span> <span class="toc-text">异常处理</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -514,6 +682,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">架构学习</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">网络协议栈</a>
               </li>
             
             <div class="clearfix"></div>
