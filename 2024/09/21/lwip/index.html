@@ -6,17 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>AARCH64架构学习 | zhuzhuzhu&#39;s blog</title>
+  <title>LWIP网络协议栈学习 | zhuzhuzhu&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="lwiplwip协议栈内存管理pbuf 结构体： 123456789101112131415161718192021222324252627282930313233struct pbuf &#123;  &#x2F;** next pbuf in singly linked pbuf chain *&#x2F;  struct pbuf *next;  &#x2F;** pointer to the actual data i">
 <meta property="og:type" content="article">
-<meta property="og:title" content="AARCH64架构学习">
+<meta property="og:title" content="LWIP网络协议栈学习">
 <meta property="og:url" content="http://example.com/2024/09/21/lwip/index.html">
 <meta property="og:site_name" content="zhuzhuzhu&#39;s blog">
 <meta property="og:description" content="lwiplwip协议栈内存管理pbuf 结构体： 123456789101112131415161718192021222324252627282930313233struct pbuf &#123;  &#x2F;** next pbuf in singly linked pbuf chain *&#x2F;  struct pbuf *next;  &#x2F;** pointer to the actual data i">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-09-21T13:51:46.000Z">
-<meta property="article:modified_time" content="2024-09-23T03:32:34.733Z">
+<meta property="article:modified_time" content="2024-09-23T08:53:36.373Z">
 <meta property="article:author" content="ZHUJIALE">
 <meta property="article:tag" content="网络协议栈">
 <meta name="twitter:card" content="summary">
@@ -170,7 +170,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      AARCH64架构学习
+      LWIP网络协议栈学习
     </h1>
   
 
@@ -197,6 +197,8 @@
 <li>type：4种pbuf类型</li>
 <li>ref：引用标志</li>
 </ul>
+<more>
+
 <p>pbuf_ram:</p>
 <ul>
 <li>payload：指向一片可变空间</li>
