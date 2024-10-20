@@ -6,19 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>LWIP网络协议栈学习 | zhuzhuzhu&#39;s blog</title>
+  <title>zhuzhuzhu&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="lwiplwip协议栈内存管理pbuf 结构体： 123456789101112131415161718192021222324252627282930313233struct pbuf &#123;  &#x2F;** next pbuf in singly linked pbuf chain *&#x2F;  struct pbuf *next;  &#x2F;** pointer to the actual data i">
+  <meta name="description" content="网卡phy学习MII接口网络的数据传输时靠MII，常用的MII mode如下：  MII接口：表中信号方向针对PHY芯片来说，I表示输入，O表示输出：     信号 方向 位宽 含义    RX_CLK O 1 发送时钟，PHY芯片产生，100Mbps时为25MHz，10Mbps时为 2.5MHz。   RX_DV O 1 高电平表示发送的数据有效。   RX_ER O 1 高电平表示发送数据的错">
 <meta property="og:type" content="article">
-<meta property="og:title" content="LWIP网络协议栈学习">
-<meta property="og:url" content="http://example.com/2024/09/21/lwip/index.html">
+<meta property="og:title" content="zhuzhuzhu&#39;s blog">
+<meta property="og:url" content="http://example.com/2024/10/20/phy/index.html">
 <meta property="og:site_name" content="zhuzhuzhu&#39;s blog">
-<meta property="og:description" content="lwiplwip协议栈内存管理pbuf 结构体： 123456789101112131415161718192021222324252627282930313233struct pbuf &#123;  &#x2F;** next pbuf in singly linked pbuf chain *&#x2F;  struct pbuf *next;  &#x2F;** pointer to the actual data i">
+<meta property="og:description" content="网卡phy学习MII接口网络的数据传输时靠MII，常用的MII mode如下：  MII接口：表中信号方向针对PHY芯片来说，I表示输入，O表示输出：     信号 方向 位宽 含义    RX_CLK O 1 发送时钟，PHY芯片产生，100Mbps时为25MHz，10Mbps时为 2.5MHz。   RX_DV O 1 高电平表示发送的数据有效。   RX_ER O 1 高电平表示发送数据的错">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2024-09-21T13:51:46.000Z">
-<meta property="article:modified_time" content="2024-09-23T08:58:59.914Z">
+<meta property="article:published_time" content="2024-10-20T05:14:22.519Z">
+<meta property="article:modified_time" content="2024-10-20T05:14:56.471Z">
 <meta property="article:author" content="ZHUJIALE">
-<meta property="article:tag" content="网络协议栈">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="zhuzhuzhu&#39;s blog" type="application/atom+xml">
@@ -157,146 +156,485 @@
           </div>
           <div id="js-content" class="content-ll">
             
-    <i class="fa fa-thumb-tack"></i>
-    <font color=7D26CD>置顶</font>
-    <span class="post-meta-divider">|</span>
     
     
-    
-<article id="post-lwip" class="article article-type-post " itemscope itemprop="blogPost">
+<article id="post-phy" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      LWIP网络协议栈学习
-    </h1>
-  
-
-        
-        <a href="/2024/09/21/lwip/" class="archive-article-date">
-  	<time datetime="2024-09-21T13:51:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-09-21</time>
-</a>
-        
-      </header>
-      
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="lwip"><a href="#lwip" class="headerlink" title="lwip"></a>lwip</h1><h2 id="lwip协议栈内存管理"><a href="#lwip协议栈内存管理" class="headerlink" title="lwip协议栈内存管理"></a>lwip协议栈内存管理</h2><p>pbuf 结构体：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pbuf</span> &#123;</span></span><br><span class="line">  <span class="comment">/** next pbuf in singly linked pbuf chain */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">pbuf</span> *<span class="title">next</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/** pointer to the actual data in the buffer */</span></span><br><span class="line">  <span class="type">void</span> *payload;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * total length of this buffer and all next buffers in chain</span></span><br><span class="line"><span class="comment">   * belonging to the same packet.</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * For non-queue packet chains this is the invariant:</span></span><br><span class="line"><span class="comment">   * p-&gt;tot_len == p-&gt;len + (p-&gt;next? p-&gt;next-&gt;tot_len: 0)</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="type">u16_t</span> tot_len;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** length of this buffer */</span></span><br><span class="line">  <span class="type">u16_t</span> len;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** pbuf_type as u8_t instead of enum to save space */</span></span><br><span class="line">  <span class="type">u8_t</span> <span class="comment">/*pbuf_type*/</span> type;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** misc flags */</span></span><br><span class="line">  <span class="type">u8_t</span> flags;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * the reference count always equals the number of pointers</span></span><br><span class="line"><span class="comment">   * that refer to this pbuf. This can be pointers from an application,</span></span><br><span class="line"><span class="comment">   * the stack itself, or pbuf-&gt;next pointers from a chain.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="type">u16_t</span> ref;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
+        <h1 id="网卡phy学习"><a href="#网卡phy学习" class="headerlink" title="网卡phy学习"></a>网卡phy学习</h1><h2 id="MII接口"><a href="#MII接口" class="headerlink" title="MII接口"></a>MII接口</h2><p>网络的数据传输时靠MII，常用的MII mode如下：</p>
+<ol>
+<li><p>MII接口：<br>表中信号方向针对PHY芯片来说，I表示输入，O表示输出：</p>
 <ul>
-<li>next:链表</li>
-<li>payload： 存放网络数据包的  </li>
-<li>len：可变空间大小</li>
-<li>tot_len：整个链表下一个节点之后的总长度大小</li>
-<li>type：4种pbuf类型</li>
-<li>ref：引用标志</li>
+<li><table>
+<thead>
+<tr>
+<th>信号</th>
+<th>方向</th>
+<th>位宽</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RX_CLK</td>
+<td>O</td>
+<td>1</td>
+<td>发送时钟，PHY芯片产生，100Mbps时为25MHz，10Mbps时为 2.5MHz。</td>
+</tr>
+<tr>
+<td>RX_DV</td>
+<td>O</td>
+<td>1</td>
+<td>高电平表示发送的数据有效。</td>
+</tr>
+<tr>
+<td>RX_ER</td>
+<td>O</td>
+<td>1</td>
+<td>高电平表示发送数据的错误，接收端不接受该数据。</td>
+</tr>
+<tr>
+<td>RX_D</td>
+<td>O</td>
+<td>4</td>
+<td>发送数据总线。</td>
+</tr>
+<tr>
+<td>TX_CLK</td>
+<td>O</td>
+<td>1</td>
+<td>接收时钟，PHY芯片产生，频率与RX_CLK一致。</td>
+</tr>
+<tr>
+<td>TX_EN</td>
+<td>I</td>
+<td>1</td>
+<td>高电平表示接收的数据有效。</td>
+</tr>
+<tr>
+<td>TX_ER</td>
+<td>I</td>
+<td>1</td>
+<td>高电平表示接收的数据包有误，丢弃该数据包。</td>
+</tr>
+<tr>
+<td>TX_D</td>
+<td>I</td>
+<td>4</td>
+<td>接收数据总线。</td>
+</tr>
+<tr>
+<td>CRS</td>
+<td>O</td>
+<td>1</td>
+<td>载波侦测信号，不需要同步于参考时钟，有数据传输，CRS就有效，仅PHY在半双工模式下有效。</td>
+</tr>
+<tr>
+<td>COL</td>
+<td>O</td>
+<td>1</td>
+<td><a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=%E5%86%B2%E7%AA%81%E6%A3%80%E6%B5%8B&zhida_source=entity">冲突检测</a>信号，不需要同步于参考时钟，仅PHY在半双工模式下有效。</td>
+</tr>
+</tbody></table>
+<strong>MII接口只能实现100Mbps、10Mbps速率的数据传输，不能实现1000Mbps。</strong> 发送、接收的数据线均为4位，则每个<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=%E6%97%B6%E9%92%9F%E5%91%A8%E6%9C%9F&zhida_source=entity">时钟周期</a>发送或接收4位数据。<strong>如果要实现100Mbps<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=%E9%80%9A%E4%BF%A1%E9%80%9F%E7%8E%87&zhida_source=entity">通信速率</a>，那么时钟频率就应该是25MHz。如果要实现10Mbps通信速率，那么<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=2&q=%E6%97%B6%E9%92%9F%E9%A2%91%E7%8E%87&zhida_source=entity">时钟频率</a>就应该是2.5MHz。</strong></li>
 </ul>
-<span id="more"></span>
-
-<p>pbuf_ram:</p>
+</li>
+<li><p>RMII接口：</p>
 <ul>
-<li>payload：指向一片可变空间</li>
+<li><p>RMII（Reduced Media Independent Interface）接口其实就是MII接口的简化版本，<strong>将TX_CLK和RX_CLK合并为双向时钟线REF_CLK，由外部的<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=%E6%99%B6%E6%8C%AF&zhida_source=entity">晶振</a>同时给PHY芯片和MAC主控芯片提供<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=2&q=%E6%97%B6%E9%92%9F%E4%BF%A1%E5%8F%B7&zhida_source=entity">时钟信号</a>。</strong>将4位的数据线简化为2位。</p>
+</li>
+<li><table>
+<thead>
+<tr>
+<th>信号</th>
+<th>方向</th>
+<th>位宽</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>REF_CLK</td>
+<td>I</td>
+<td>1</td>
+<td>参考时钟，外部晶振产生，100Mbps时为50MHz，10Mbps时为5MHz。</td>
+</tr>
+<tr>
+<td>CRS_DV</td>
+<td>O</td>
+<td>1</td>
+<td>高电平表示发送的数据有效。</td>
+</tr>
+<tr>
+<td>RX_ER</td>
+<td>O</td>
+<td>1</td>
+<td>高电平表示发送数据的错误，接收端不接受该数据。</td>
+</tr>
+<tr>
+<td>RX_D</td>
+<td>O</td>
+<td>2</td>
+<td>发送数据总线。</td>
+</tr>
+<tr>
+<td>TX_EN</td>
+<td>I</td>
+<td>1</td>
+<td>高电平表示接收的数据有效。</td>
+</tr>
+<tr>
+<td>TX_D</td>
+<td>I</td>
+<td>2</td>
+<td>接收数据总线。</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>RMII将发送时钟、接收时钟合并为参考时钟信号，把4位的数据线简化为2位数据线，可以简化PCB布局布线。RMII同样只能实现100Mbps和10Mbps，当以<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=100Mbps%E9%80%9F%E7%8E%87&zhida_source=entity">100Mbps速率</a>传输数据时，每个时钟传输2位数据，此时参考时钟应该设置为50MHz。当以<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=2&q=10Mbps%E9%80%9F%E7%8E%87&zhida_source=entity">10Mbps速率</a>传输数据时，参考时钟应设置为5MHz。</p>
+</li>
 </ul>
-<p>pbuf_rom&#x2F;ref：</p>
+</li>
+<li><p>GMII接口：</p>
 <ul>
-<li>payload ：指向非易失的内存空间</li>
+<li>GMII（Gigabit Media Independent Interface）接口是比较常见的千兆网接口</li>
+<li>接口信号的含义与MII接口一致，此处就不在赘述，注意MII的接收时钟和发送时钟均由PHY芯片输出，而GMII的TX_CLK是由MAC输出给PHY芯片的。此外就是数据位宽由MII的4位变为了8位。</li>
 </ul>
-<p>pbuf_poll</p>
+</li>
+<li><p>RGMII接口：</p>
 <ul>
-<li>指向ram中长度固定的内存</li>
+<li>RGMII（Reduced Gigabit Media Independent Interface）接口就是把GMII接口的数据线做简化处理，也能够实现千兆网</li>
+<li>相比GMII接口，RGMII接口的数据线由8位缩减到4位，RX_DV与RX_ER信号合成为RX_CTL信号。该接口实现1000Mbps传输速率时，时钟依旧是125MHz</li>
 </ul>
-<p>pbuf层：</p>
+</li>
+</ol>
+<h2 id="mdio"><a href="#mdio" class="headerlink" title="mdio"></a>mdio</h2><p><a target="_blank" rel="noopener" href="https://www.ieee802.org/3/efm/public/nov02/oam/pannell_oam_1_1102.pdf">参考文献</a></p>
+<p>&#x3D;&#x3D;mac访问phy的一些配置通过mdio bus访问，MDIO的作用仅仅只是用来查看一些状态和功能，还有简单的控制。而网络的数据传输时靠MII不是靠MDIO&#x3D;&#x3D;</p>
+<p>mdio的读写有两种协议 C22和 C45：</p>
+<h3 id="C22"><a href="#C22" class="headerlink" title="C22"></a>C22</h3><table>
+<thead>
+<tr>
+<th>Frame</th>
+<th>Preamble (32bits)</th>
+<th>Start (2bits）</th>
+<th>OP Code (2bits)</th>
+<th>PHYAD (5bits)</th>
+<th>REGAD (5bits)</th>
+<th>Turn Around (2bits)</th>
+<th>Data (16bits)</th>
+<th>Idle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Read</td>
+<td>1…….1</td>
+<td>01</td>
+<td>10</td>
+<td>A4…A0</td>
+<td>R4…R0</td>
+<td>Z0</td>
+<td>D15…….D0</td>
+<td>Z*</td>
+</tr>
+<tr>
+<td>Write</td>
+<td>1…….1</td>
+<td>01</td>
+<td>01</td>
+<td>A4…A0</td>
+<td>R4…R0</td>
+<td>10</td>
+<td>D15…….D0</td>
+<td>Z*</td>
+</tr>
+</tbody></table>
+<p>上图中*表示高阻态，这时MDIO的状态由一个外部的1.5KΩ电阻决定。</p>
 <ul>
-<li>transport：传输层 tcp</li>
-<li>ip：网络层</li>
-<li>link：数据链路层</li>
-<li>raw_tx:发送层</li>
+<li>Preamble+Start： 32bits的前导码以及2bit的开始位。</li>
+<li>OP Code： 2bits的操作码，10表示读，01表示写。</li>
+<li>PHYAD： 5bits的PHY地址，一般PHY地址从0开始顺序编号，例如6口switch中PHY地址为0-5。</li>
+<li>REGAD： 5bits的寄存器地址，即要读或写的寄存器。</li>
+<li>Turn Around： 2bits的TA，在读命令中，MDIO在此时由MAC驱动改为PHY驱动，并等待一个时钟周期准备发送数据。在写命令中，不需要MDIO方向发生变化，则只是等待两个时钟周期准备写入数据。</li>
+<li>Data： 16bits数据，在读命令中，PHY芯片将读到的对应PHYAD的REGAD寄存器的数据写到Data中，在写命令中，MAC将要写入对应PHYAD的REGAD寄存器的值写入Data中。</li>
+<li>Idle： 空闲状态，此时MDIO无源驱动，处高阻状态，但一般用上拉电阻使其处在高电平。</li>
 </ul>
-<h2 id="网卡设计与实现"><a href="#网卡设计与实现" class="headerlink" title="网卡设计与实现"></a>网卡设计与实现</h2><p>netif：</p>
-<p> flag ：</p>
+<h3 id="C45"><a href="#C45" class="headerlink" title="C45"></a>C45</h3><table>
+<thead>
+<tr>
+<th>Frame</th>
+<th>Preamble (32bits)</th>
+<th>Start (2bits）</th>
+<th>OP Code (2bits)</th>
+<th>PHYAD (5bits)</th>
+<th>DEVAD (5bits)</th>
+<th>Turn Around (2bits)</th>
+<th>Data (16bits)</th>
+<th>Idle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Address</td>
+<td>1…….1</td>
+<td>00</td>
+<td>00</td>
+<td>PPPPP</td>
+<td>EEEEE</td>
+<td>10</td>
+<td>A15…….A0</td>
+<td>Z*</td>
+</tr>
+<tr>
+<td>Write</td>
+<td>1…….1</td>
+<td>00</td>
+<td>01</td>
+<td>PPPPP</td>
+<td>EEEEE</td>
+<td>10</td>
+<td>D15…….D0</td>
+<td>Z*</td>
+</tr>
+<tr>
+<td>Read</td>
+<td>1…….1</td>
+<td>00</td>
+<td>11</td>
+<td>PPPPP</td>
+<td>EEEEE</td>
+<td>z0</td>
+<td>D15…….D0</td>
+<td>Z*</td>
+</tr>
+<tr>
+<td>Read Inc.</td>
+<td>1…….1</td>
+<td>00</td>
+<td>10</td>
+<td>PPPPP</td>
+<td>EEEEE</td>
+<td>Z0</td>
+<td>D15…….D0</td>
+<td>Z*</td>
+</tr>
+</tbody></table>
 <ul>
-<li>NETIF_FLAGH_UP:LWIP可以正常使用</li>
-<li>NETIF_FLAG_BROADCAST:广播通信标志</li>
-<li>NETIF_FLAG_LINK_IP:MAC和PHY可以正常使用</li>
-<li>NETIF_FLAG_ETHARP:ARP标志</li>
-<li>NETIF_FLAG_ETHERNET:tcp&#x2F;ip协议正常</li>
+<li><p>Preamble+Start： 32bits的前导码以及2bit的开始位。帧开始标志， 为了区别CL22，Clause45 的开始标志为比特“00”。</p>
+</li>
+<li><p>OP Code： 操作码，Clause45有4种操作码，比特“00”表示设置当前寄存器地址，比特“01”表示写当前寄存器。比特“10”表示读当前寄存器，比特“11”表示读当前寄存器读完后把当前寄存器的值加1，用于顺序读。</p>
+</li>
+<li><p>PRTAD： Port Address，端口地址， 也称物理地址。</p>
+</li>
+<li><p>DEVAD：器件地址，CL45新增概念，各值与器件对应如下。</p>
+</li>
+<li><table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Device</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>00000</td>
+<td>Reserved</td>
+</tr>
+<tr>
+<td>00001</td>
+<td>PMD&#x2F;PMA</td>
+</tr>
+<tr>
+<td>00010</td>
+<td>WIS</td>
+</tr>
+<tr>
+<td>00011</td>
+<td>PCS</td>
+</tr>
+<tr>
+<td>00100</td>
+<td>PHY XS</td>
+</tr>
+<tr>
+<td>00101</td>
+<td>DTE XS</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>REGAD： 用来选MMD的65536个寄存器中的某个寄存器的地址。</p>
+</li>
+<li><p>Turn Around： 2bits的TA，在读命令中，MDIO在此时由MAC驱动改为PHY驱动，并等待一个时钟周期准备发送数据。在写命令中，不需要MDIO方向发生变化，则只是等待两个时钟周期准备写入数据。</p>
+</li>
+<li><p>Data： 帧的寄存器的数据域，16bits，若为读操作，则为MMD送到STA的数据，若为写操作，则为STA送到MMD数据。</p>
+</li>
+<li><p>Idle： 空闲状态，此时MDIO无源驱动，处高阻状态，但一般用上拉电阻使其处在高电平。</p>
+</li>
 </ul>
-<p>netif结构体：</p>
-<ul>
-<li>next：链表</li>
-<li>netif_input_fn:网卡输入数据包接口函数</li>
-<li>netif_output_fn：数据包输出接口函数</li>
-<li>netif_linkoutput_fn:链路层输出接口</li>
-<li>states：当前netif状态，也就是falg</li>
-<li>mtu：数据链路层最大传输单元</li>
-<li>hwaddr_len:mac地址长度</li>
-<li>flag：上面的flag</li>
-<li>name：网卡驱动名称</li>
-<li>num：硬件编号</li>
-</ul>
-<p>api：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> netif *<span class="title function_">netif_add</span><span class="params">(<span class="keyword">struct</span> netif *netif,</span></span><br><span class="line"><span class="params"></span></span><br><span class="line"><span class="params">\#<span class="keyword">if</span> LWIP_IPV4</span></span><br><span class="line"><span class="params"></span></span><br><span class="line"><span class="params">​            <span class="type">const</span> <span class="type">ip4_addr_t</span> *ipaddr, <span class="type">const</span> <span class="type">ip4_addr_t</span> *netmask, <span class="type">const</span> <span class="type">ip4_addr_t</span> *gw,</span></span><br><span class="line"><span class="params"></span></span><br><span class="line"><span class="params">\#endif <span class="comment">/* LWIP_IPV4 */</span></span></span><br><span class="line"><span class="params"></span></span><br><span class="line"><span class="params">​            <span class="type">void</span> *state, netif_init_fn init, netif_input_fn input)</span>;</span><br><span class="line"></span><br><span class="line">\<span class="meta">#<span class="keyword">if</span> LWIP_IPV4</span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">netif_set_addr</span><span class="params">(<span class="keyword">struct</span> netif *netif, <span class="type">const</span> <span class="type">ip4_addr_t</span> *ipaddr, <span class="type">const</span> <span class="type">ip4_addr_t</span> *netmask,</span></span><br><span class="line"><span class="params"></span></span><br><span class="line"><span class="params">​          <span class="type">const</span> <span class="type">ip4_addr_t</span> *gw)</span>；</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>底层相关接口：</p>
-<p>ethernetif_init：初始化网卡驱动（调用底层驱动）</p>
-<p>ethernetif_input：（网卡数据输入）</p>
-<p>low_level_init：网卡底层驱动，主要针对硬件</p>
-<p>low_level_input：接收到网卡数据后会通过此函数封装为pbuf提供上层使用</p>
-<p>low_level_output：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">~~~</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">1.</span> tcpip_init</span><br><span class="line"></span><br><span class="line">+ 初始化所有子功能模块</span><br><span class="line">+ 启动tcp/ip任务</span><br><span class="line">+ 用于用户初始化的函数指针</span><br><span class="line">+ 用户初始化相关的参数</span><br><span class="line"></span><br><span class="line">~~~c</span><br><span class="line"><span class="comment">//用于os，裸机使用lwip_init</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">tcpip_init</span><span class="params">(tcpip_init_done_fn initfunc, <span class="type">void</span> *arg)</span></span><br><span class="line">&#123;</span><br><span class="line">  lwip_init();</span><br><span class="line">	<span class="comment">//用户初始化函数赋值</span></span><br><span class="line">  tcpip_init_done = initfunc;</span><br><span class="line">  tcpip_init_done_arg = arg;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//mailbox，任务与任务间消息通信，网卡收到数据，网络分层解析，任务通过mailbox进行传输</span></span><br><span class="line">  <span class="keyword">if</span>(sys_mbox_new(&amp;mbox, TCPIP_MBOX_SIZE) != ERR_OK) &#123;</span><br><span class="line">    LWIP_ASSERT(<span class="string">&quot;failed to create tcpip_thread mbox&quot;</span>, <span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> LWIP_TCPIP_CORE_LOCKING</span></span><br><span class="line">    <span class="comment">//创建互斥锁，保护共享资源</span></span><br><span class="line">  <span class="keyword">if</span>(sys_mutex_new(&amp;lock_tcpip_core) != ERR_OK) &#123;</span><br><span class="line">    LWIP_ASSERT(<span class="string">&quot;failed to create lock_tcpip_core&quot;</span>, <span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* LWIP_TCPIP_CORE_LOCKING */</span></span></span><br><span class="line">	<span class="comment">//标准cmis接口，内部调用的RTOS的创建任务接口</span></span><br><span class="line">  sys_thread_new(TCPIP_THREAD_NAME, tcpip_thread, <span class="literal">NULL</span>, TCPIP_THREAD_STACKSIZE, TCPIP_THREAD_PRIO);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-<h2 id="lwip-tcp-ip设计原理"><a href="#lwip-tcp-ip设计原理" class="headerlink" title="lwip tcp&#x2F;ip设计原理"></a>lwip tcp&#x2F;ip设计原理</h2><p>sys_timeo结构体：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Function prototype for a timeout callback function. Register such a function</span></span><br><span class="line"><span class="comment"> * using sys_timeout().</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param arg Additional argument to pass to the function - set up by sys_timeout()</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="title function_">void</span> <span class="params">(* sys_timeout_handler)</span><span class="params">(<span class="type">void</span> *arg)</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sys_timeo</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sys_timeo</span> *<span class="title">next</span>;</span></span><br><span class="line">  <span class="type">u32_t</span> time;</span><br><span class="line">  sys_timeout_handler h;</span><br><span class="line">  <span class="type">void</span> *arg;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> LWIP_DEBUG_TIMERNAMES</span></span><br><span class="line">  <span class="type">const</span> <span class="type">char</span>* handler_name;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* LWIP_DEBUG_TIMERNAMES */</span></span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> LWIP_DEBUG_TIMERNAMES</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">sys_timeout_debug</span><span class="params">(<span class="type">u32_t</span> msecs, sys_timeout_handler handler, <span class="type">void</span> *arg, <span class="type">const</span> <span class="type">char</span>* handler_name)</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> sys_timeout(msecs, handler, arg) sys_timeout_debug(msecs, handler, arg, #handler)</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span> <span class="comment">/* LWIP_DEBUG_TIMERNAMES */</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">sys_timeout</span><span class="params">(<span class="type">u32_t</span> msecs, sys_timeout_handler handler, <span class="type">void</span> *arg)</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* LWIP_DEBUG_TIMERNAMES */</span></span></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>超时处理</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Wait (forever) for a message to arrive in an mbox.</span></span><br><span class="line"><span class="comment"> * While waiting, timeouts are processed.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param mbox the mbox to fetch the message from</span></span><br><span class="line"><span class="comment"> * @param msg the place to store the message</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">sys_timeouts_mbox_fetch</span><span class="params">(<span class="type">sys_mbox_t</span> *mbox, <span class="type">void</span> **msg)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">u32_t</span> time_needed;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sys_timeo</span> *<span class="title">tmptimeout</span>;</span></span><br><span class="line">  sys_timeout_handler handler;</span><br><span class="line">  <span class="type">void</span> *arg;</span><br><span class="line"></span><br><span class="line"> again:</span><br><span class="line">  <span class="keyword">if</span> (!next_timeout) &#123;</span><br><span class="line">    time_needed = sys_arch_mbox_fetch(mbox, msg, <span class="number">0</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (next_timeout-&gt;time &gt; <span class="number">0</span>) &#123;</span><br><span class="line">      time_needed = sys_arch_mbox_fetch(mbox, msg, next_timeout-&gt;time);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      time_needed = SYS_ARCH_TIMEOUT;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (time_needed == SYS_ARCH_TIMEOUT) &#123;</span><br><span class="line">      <span class="comment">/* If time == SYS_ARCH_TIMEOUT, a timeout occured before a message</span></span><br><span class="line"><span class="comment">         could be fetched. We should now call the timeout handler and</span></span><br><span class="line"><span class="comment">         deallocate the memory allocated for the timeout. */</span></span><br><span class="line">      tmptimeout = next_timeout;</span><br><span class="line">      next_timeout = tmptimeout-&gt;next;</span><br><span class="line">      handler = tmptimeout-&gt;h;</span><br><span class="line">      arg = tmptimeout-&gt;arg;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> LWIP_DEBUG_TIMERNAMES</span></span><br><span class="line">      <span class="keyword">if</span> (handler != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        LWIP_DEBUGF(TIMERS_DEBUG, (<span class="string">&quot;stmf calling h=%s arg=%p\n&quot;</span>,</span><br><span class="line">          tmptimeout-&gt;handler_name, arg));</span><br><span class="line">      &#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* LWIP_DEBUG_TIMERNAMES */</span></span></span><br><span class="line">      memp_free(MEMP_SYS_TIMEOUT, tmptimeout);</span><br><span class="line">      <span class="keyword">if</span> (handler != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="comment">/* For LWIP_TCPIP_CORE_LOCKING, lock the core before calling the</span></span><br><span class="line"><span class="comment">           timeout handler function. */</span></span><br><span class="line">        LOCK_TCPIP_CORE();</span><br><span class="line">        handler(arg);</span><br><span class="line">        UNLOCK_TCPIP_CORE();</span><br><span class="line">      &#125;</span><br><span class="line">      LWIP_TCPIP_THREAD_ALIVE();</span><br><span class="line"></span><br><span class="line">      <span class="comment">/* We try again to fetch a message from the mbox. */</span></span><br><span class="line">      <span class="keyword">goto</span> again;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">/* If time != SYS_ARCH_TIMEOUT, a message was received before the timeout</span></span><br><span class="line"><span class="comment">         occured. The time variable is set to the number of</span></span><br><span class="line"><span class="comment">         milliseconds we waited for the message. */</span></span><br><span class="line">      <span class="keyword">if</span> (time_needed &lt; next_timeout-&gt;time) &#123;</span><br><span class="line">        next_timeout-&gt;time -= time_needed;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        next_timeout-&gt;time = <span class="number">0</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>tcpip_msg：消息类型：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">tcpip_msg_type</span> &#123;</span></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> LWIP_NETCONN</span></span><br><span class="line">  TCPIP_MSG_API,   			<span class="comment">//当用户调用应用层接口时属于api消息类型</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* LWIP_NETCONN */</span></span></span><br><span class="line">  TCPIP_MSG_INPKT,			<span class="comment">//网络数据包消息，实际就是网卡上来数据了</span></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> LWIP_NETIF_API</span></span><br><span class="line">  TCPIP_MSG_NETIFAPI,</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* LWIP_NETIF_API */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> LWIP_TCPIP_TIMEOUT</span></span><br><span class="line">  TCPIP_MSG_TIMEOUT,		<span class="comment">//创建超时定时器</span></span><br><span class="line">  TCPIP_MSG_UNTIMEOUT,		<span class="comment">//删除超时定时器</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* LWIP_TCPIP_TIMEOUT */</span></span></span><br><span class="line">  TCPIP_MSG_CALLBACK,		<span class="comment">//回调函数消息</span></span><br><span class="line">  TCPIP_MSG_CALLBACK_STATIC	<span class="comment">//静态</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>msg结构体：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">tcpip_msg</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">enum</span> <span class="title">tcpip_msg_type</span> <span class="title">type</span>;</span>				<span class="comment">//消息类型</span></span><br><span class="line">  <span class="type">sys_sem_t</span> *sem;	</span><br><span class="line">  <span class="comment">//消息内容</span></span><br><span class="line">  <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">    </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">api_msg</span> *<span class="title">apimsg</span>;</span>				</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">netifapi_msg</span> *<span class="title">netifapimsg</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">      <span class="comment">//数据包</span></span><br><span class="line">      <span class="class"><span class="keyword">struct</span> <span class="title">pbuf</span> *<span class="title">p</span>;</span></span><br><span class="line">      <span class="comment">//网卡接口</span></span><br><span class="line">      <span class="class"><span class="keyword">struct</span> <span class="title">netif</span> *<span class="title">netif</span>;</span></span><br><span class="line">    &#125; inp;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">      <span class="comment">//回调函数</span></span><br><span class="line">      tcpip_callback_fn function;</span><br><span class="line">      <span class="comment">//回调函数参数</span></span><br><span class="line">      <span class="type">void</span> *ctx;</span><br><span class="line">    &#125; cb;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">      <span class="comment">//超时时间</span></span><br><span class="line">      <span class="type">u32_t</span> msecs;</span><br><span class="line">      <span class="comment">//超时回调函数</span></span><br><span class="line">      sys_timeout_handler h;</span><br><span class="line">      <span class="comment">//超时回调参数</span></span><br><span class="line">      <span class="type">void</span> *arg;</span><br><span class="line">    &#125; tmo;</span><br><span class="line">  &#125; msg;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>tcipip_thread</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span></span><br><span class="line"><span class="title function_">tcpip_thread</span><span class="params">(<span class="type">void</span> *arg)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">tcpip_msg</span> *<span class="title">msg</span>;</span></span><br><span class="line">  LWIP_UNUSED_ARG(arg);</span><br><span class="line">  <span class="comment">//初始化完成后需要执行的代码</span></span><br><span class="line">  <span class="keyword">if</span> (tcpip_init_done != <span class="literal">NULL</span>) &#123;</span><br><span class="line">    tcpip_init_done(tcpip_init_done_arg);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  LOCK_TCPIP_CORE();</span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;                          <span class="comment">/* MAIN Loop */</span></span><br><span class="line">    UNLOCK_TCPIP_CORE();</span><br><span class="line">    LWIP_TCPIP_THREAD_ALIVE();</span><br><span class="line">    <span class="comment">/* wait for a message, timeouts are processed while waiting */</span></span><br><span class="line">    sys_timeouts_mbox_fetch(&amp;mbox, (<span class="type">void</span> **)&amp;msg);</span><br><span class="line">    LOCK_TCPIP_CORE();</span><br><span class="line">    <span class="keyword">switch</span> (msg-&gt;type) &#123;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> LWIP_NETCONN</span></span><br><span class="line">    <span class="keyword">case</span> TCPIP_MSG_API:</span><br><span class="line">      LWIP_DEBUGF(TCPIP_DEBUG, (<span class="string">&quot;tcpip_thread: API message %p\n&quot;</span>, (<span class="type">void</span> *)msg));</span><br><span class="line">      msg-&gt;msg.apimsg-&gt;function(&amp;(msg-&gt;msg.apimsg-&gt;msg));</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* LWIP_NETCONN */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> !LWIP_TCPIP_CORE_LOCKING_INPUT</span></span><br><span class="line">    <span class="keyword">case</span> TCPIP_MSG_INPKT:</span><br><span class="line">      LWIP_DEBUGF(TCPIP_DEBUG, (<span class="string">&quot;tcpip_thread: PACKET %p\n&quot;</span>, (<span class="type">void</span> *)msg));</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> LWIP_ETHERNET</span></span><br><span class="line">      <span class="keyword">if</span> (msg-&gt;msg.inp.netif-&gt;flags &amp; (NETIF_FLAG_ETHARP | NETIF_FLAG_ETHERNET)) &#123;</span><br><span class="line">        ethernet_input(msg-&gt;msg.inp.p, msg-&gt;msg.inp.netif);</span><br><span class="line">      &#125; <span class="keyword">else</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* LWIP_ETHERNET */</span></span></span><br><span class="line">      &#123;</span><br><span class="line">        ip_input(msg-&gt;msg.inp.p, msg-&gt;msg.inp.netif);</span><br><span class="line">      &#125;</span><br><span class="line">      memp_free(MEMP_TCPIP_MSG_INPKT, msg);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* LWIP_TCPIP_CORE_LOCKING_INPUT */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> LWIP_NETIF_API</span></span><br><span class="line">    <span class="keyword">case</span> TCPIP_MSG_NETIFAPI:</span><br><span class="line">      LWIP_DEBUGF(TCPIP_DEBUG, (<span class="string">&quot;tcpip_thread: Netif API message %p\n&quot;</span>, (<span class="type">void</span> *)msg));</span><br><span class="line">      msg-&gt;msg.netifapimsg-&gt;function(&amp;(msg-&gt;msg.netifapimsg-&gt;msg));</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* LWIP_NETIF_API */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> LWIP_TCPIP_TIMEOUT</span></span><br><span class="line">    <span class="keyword">case</span> TCPIP_MSG_TIMEOUT:</span><br><span class="line">      LWIP_DEBUGF(TCPIP_DEBUG, (<span class="string">&quot;tcpip_thread: TIMEOUT %p\n&quot;</span>, (<span class="type">void</span> *)msg));</span><br><span class="line">      sys_timeout(msg-&gt;msg.tmo.msecs, msg-&gt;msg.tmo.h, msg-&gt;msg.tmo.arg);</span><br><span class="line">      memp_free(MEMP_TCPIP_MSG_API, msg);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> TCPIP_MSG_UNTIMEOUT:</span><br><span class="line">      LWIP_DEBUGF(TCPIP_DEBUG, (<span class="string">&quot;tcpip_thread: UNTIMEOUT %p\n&quot;</span>, (<span class="type">void</span> *)msg));</span><br><span class="line">      sys_untimeout(msg-&gt;msg.tmo.h, msg-&gt;msg.tmo.arg);</span><br><span class="line">      memp_free(MEMP_TCPIP_MSG_API, msg);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* LWIP_TCPIP_TIMEOUT */</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> TCPIP_MSG_CALLBACK:</span><br><span class="line">      LWIP_DEBUGF(TCPIP_DEBUG, (<span class="string">&quot;tcpip_thread: CALLBACK %p\n&quot;</span>, (<span class="type">void</span> *)msg));</span><br><span class="line">      msg-&gt;msg.cb.function(msg-&gt;msg.cb.ctx);</span><br><span class="line">      memp_free(MEMP_TCPIP_MSG_API, msg);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> TCPIP_MSG_CALLBACK_STATIC:</span><br><span class="line">      LWIP_DEBUGF(TCPIP_DEBUG, (<span class="string">&quot;tcpip_thread: CALLBACK_STATIC %p\n&quot;</span>, (<span class="type">void</span> *)msg));</span><br><span class="line">      msg-&gt;msg.cb.function(msg-&gt;msg.cb.ctx);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      LWIP_DEBUGF(TCPIP_DEBUG, (<span class="string">&quot;tcpip_thread: invalid message: %d\n&quot;</span>, msg-&gt;type));</span><br><span class="line">      LWIP_ASSERT(<span class="string">&quot;tcpip_thread: invalid message&quot;</span>, <span class="number">0</span>);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>tcpip_input</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Pass a received packet to tcpip_thread for input processing</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param p the received packet, p-&gt;payload pointing to the Ethernet header or</span></span><br><span class="line"><span class="comment"> *          to an IP header (if inp doesn&#x27;t have NETIF_FLAG_ETHARP or</span></span><br><span class="line"><span class="comment"> *          NETIF_FLAG_ETHERNET flags)</span></span><br><span class="line"><span class="comment"> * @param inp the network interface on which the packet was received</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">err_t</span></span><br><span class="line"><span class="title function_">tcpip_input</span><span class="params">(<span class="keyword">struct</span> pbuf *p, <span class="keyword">struct</span> netif *inp)</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> LWIP_TCPIP_CORE_LOCKING_INPUT</span></span><br><span class="line">  <span class="type">err_t</span> ret;</span><br><span class="line">  LWIP_DEBUGF(TCPIP_DEBUG, (<span class="string">&quot;tcpip_input: PACKET %p/%p\n&quot;</span>, (<span class="type">void</span> *)p, (<span class="type">void</span> *)inp));</span><br><span class="line">  LOCK_TCPIP_CORE();</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> LWIP_ETHERNET</span></span><br><span class="line">  <span class="keyword">if</span> (inp-&gt;flags &amp; (NETIF_FLAG_ETHARP | NETIF_FLAG_ETHERNET)) &#123;</span><br><span class="line">    ret = ethernet_input(p, inp);</span><br><span class="line">  &#125; <span class="keyword">else</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* LWIP_ETHERNET */</span></span></span><br><span class="line">  &#123;</span><br><span class="line">    ret = ip_input(p, inp);</span><br><span class="line">  &#125;</span><br><span class="line">  UNLOCK_TCPIP_CORE();</span><br><span class="line">  <span class="keyword">return</span> ret;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span> <span class="comment">/* LWIP_TCPIP_CORE_LOCKING_INPUT */</span></span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">tcpip_msg</span> *<span class="title">msg</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!sys_mbox_valid(&amp;mbox)) &#123;</span><br><span class="line">    <span class="keyword">return</span> ERR_VAL;</span><br><span class="line">  &#125;</span><br><span class="line">  msg = (<span class="keyword">struct</span> tcpip_msg *)memp_malloc(MEMP_TCPIP_MSG_INPKT);</span><br><span class="line">  <span class="keyword">if</span> (msg == <span class="literal">NULL</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> ERR_MEM;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  msg-&gt;type = TCPIP_MSG_INPKT;</span><br><span class="line">  msg-&gt;msg.inp.p = p;</span><br><span class="line">  msg-&gt;msg.inp.netif = inp;</span><br><span class="line">  <span class="keyword">if</span> (sys_mbox_trypost(&amp;mbox, msg) != ERR_OK) &#123;</span><br><span class="line">    memp_free(MEMP_TCPIP_MSG_INPKT, msg);</span><br><span class="line">    <span class="keyword">return</span> ERR_MEM;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> ERR_OK;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* LWIP_TCPIP_CORE_LOCKING_INPUT */</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<p>第45号条款的主要变化是如何访问寄存器。在第22中，一个单独的帧指定要读或写的地址和数据，同时完成了这些工作。45号中改变这种范式，第一个地址帧发送到指定的MMD和寄存器，然后发送第二帧来执行读或写。</p>
+<p>添加这个依次循环访问的好处是45条款是向后兼容22条款的，允许设备的互操作。其次，通过创建一个框架的登记地址，地址空间从5位增加到16位，这使得STA访问65536个不同的寄存器。</p>
+<h2 id="管理接口寄存器"><a href="#管理接口寄存器" class="headerlink" title="管理接口寄存器"></a>管理接口寄存器</h2><p>以太网传输速率从10兆发展到今天的100G，MAC层和PHY层之间的硬件接口发生了很大的变化，但是其中用来管理PHY的物理引脚始终只有2个，即MDC和MDIO引脚。随着PHY层变得越来越复杂，PHY寄存器的组织方式和寻址方式发生了变化，PHY管理接口的名称也从“MII管理接口”变为“MDIO接口”。千兆以太网之前，PHY管理接口称为“MII管理接口”；从10G以太网开始使用“MDIO接口”。有的千兆和百兆PHY支持一些扩展功能，也需要使用MDIO接口进行管理。</p>
+<h3 id="MII-管理接口寄存器"><a href="#MII-管理接口寄存器" class="headerlink" title="MII 管理接口寄存器"></a>MII 管理接口寄存器</h3><p>MII管理接口的寄存器列表：</p>
+<table>
+<thead>
+<tr>
+<th>地址</th>
+<th>寄存器名称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>Control</td>
+<td>基本寄存器</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Status</td>
+<td>基本寄存器</td>
+</tr>
+<tr>
+<td>2,3</td>
+<td>PHYIdentifier</td>
+<td>扩展寄存器，2用于存放phyid的高16位，3用于存放低16位</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Auto-NegotiationAdvertisement</td>
+<td>扩展寄存器</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Auto-NegotiationLinkPartnerBasePageAbility</td>
+<td>扩展寄存器，用于自协商功能</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Auto-NegotiationExpansion</td>
+<td>扩展寄存器，用于自协商功能</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Auto-NegotiationNextPageTransmit</td>
+<td>扩展寄存器，用于自协商功能</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Auto-NegotiationLinkPartnerReceivedNextPage</td>
+<td>扩展寄存器，用于自协商功能</td>
+</tr>
+<tr>
+<td>9</td>
+<td>MASTER-SLAVEControlRegister</td>
+<td>扩展寄存器，用于自协商功能</td>
+</tr>
+<tr>
+<td>10</td>
+<td>MASTER-SLAVEStatusRegister</td>
+<td>扩展寄存器，用于自协商功能</td>
+</tr>
+<tr>
+<td>11</td>
+<td>PSEControlregister</td>
+<td>扩展寄存器</td>
+</tr>
+<tr>
+<td>12</td>
+<td>PSEStatusregister</td>
+<td>扩展寄存器</td>
+</tr>
+<tr>
+<td>13</td>
+<td>MMDAccessControlRegister</td>
+<td>扩展寄存器</td>
+</tr>
+<tr>
+<td>14</td>
+<td>MMDAccessAddressDataRegister</td>
+<td>扩展寄存器</td>
+</tr>
+<tr>
+<td>15</td>
+<td>ExtendedStatus</td>
+<td>千兆以太网中，register15用作扩展的状态寄存器；百兆以太网中，保留未使用。</td>
+</tr>
+<tr>
+<td>16~31</td>
+<td>VendorSpecific</td>
+<td>由PHY厂商自定义。这也意味着，这些寄存器需要参考芯片手册才能了解具体的含义。</td>
+</tr>
+</tbody></table>
+<h3 id="mdio管理寄存器列表"><a href="#mdio管理寄存器列表" class="headerlink" title="mdio管理寄存器列表"></a>mdio管理寄存器列表</h3><p>在MDIO接口的定义中，PHY层被划分为多个MMD设备（MDIOManagableDevice），每个MMD内部的寄存器的地址分配和MII管理接口中的地址类似，不过寄存器的数量多出很多。</p>
+<p>IEEE802.3标准规定的MMD设备地址：</p>
+<table>
+<thead>
+<tr>
+<th>设备地址</th>
+<th>设备名称</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>1</td>
+<td>PMA&#x2F;PMD设备10G以太网中，PMA和PMD通常集成在一起。</td>
+</tr>
+<tr>
+<td>2</td>
+<td>WIS</td>
+</tr>
+<tr>
+<td>3</td>
+<td>PCS</td>
+</tr>
+<tr>
+<td>4</td>
+<td>PHYXS</td>
+</tr>
+<tr>
+<td>5</td>
+<td>DTEXS</td>
+</tr>
+<tr>
+<td>6</td>
+<td>TC</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Auto-Negotiation</td>
+</tr>
+<tr>
+<td>8</td>
+<td>SeparatedPMA(1)40G&#x2F;100G以太网中，PMA和PMD是分开的。</td>
+</tr>
+<tr>
+<td>9</td>
+<td>SeparatedPMA(2)</td>
+</tr>
+<tr>
+<td>10</td>
+<td>SeparatedPMA(3)</td>
+</tr>
+<tr>
+<td>11</td>
+<td>SeparatedPMA(4)</td>
+</tr>
+<tr>
+<td>12~28</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>29</td>
+<td>Clause22扩展</td>
+</tr>
+<tr>
+<td>30</td>
+<td>VendorSpecific1。这意味着，device30的寄存器需要参考厂商的芯片手册才能了解具体的含义。</td>
+</tr>
+<tr>
+<td>31</td>
+<td>VendorSpecific2</td>
+</tr>
+</tbody></table>
 
       
 
@@ -325,23 +663,7 @@
     </div>
     <div class="article-info article-info-index">
       
-        <div class="article-pop-out tagcloud">
-          <i class="icon-tuding"></i>
-          <a class="article-tag-list-link color3">置顶</a>
-        </div>
       
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">网络协议栈</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
       
 
       
@@ -392,7 +714,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/09/21/lwip/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/10/20/phy/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -407,18 +729,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2024/10/20/phy/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          (no title)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2024/09/01/aarch64/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">AARCH64架构学习</div>
+    <a href="/2024/09/21/lwip/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">LWIP网络协议栈学习</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -445,7 +758,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#lwip"><span class="toc-number">1.</span> <span class="toc-text">lwip</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#lwip%E5%8D%8F%E8%AE%AE%E6%A0%88%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="toc-number">1.1.</span> <span class="toc-text">lwip协议栈内存管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E5%8D%A1%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.</span> <span class="toc-text">网卡设计与实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lwip-tcp-ip%E8%AE%BE%E8%AE%A1%E5%8E%9F%E7%90%86"><span class="toc-number">1.3.</span> <span class="toc-text">lwip tcp&#x2F;ip设计原理</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BD%91%E5%8D%A1phy%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.</span> <span class="toc-text">网卡phy学习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#MII%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.1.</span> <span class="toc-text">MII接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mdio"><span class="toc-number">1.2.</span> <span class="toc-text">mdio</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#C22"><span class="toc-number">1.2.1.</span> <span class="toc-text">C22</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C45"><span class="toc-number">1.2.2.</span> <span class="toc-text">C45</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%A1%E7%90%86%E6%8E%A5%E5%8F%A3%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">1.3.</span> <span class="toc-text">管理接口寄存器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MII-%E7%AE%A1%E7%90%86%E6%8E%A5%E5%8F%A3%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">1.3.1.</span> <span class="toc-text">MII 管理接口寄存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mdio%E7%AE%A1%E7%90%86%E5%AF%84%E5%AD%98%E5%99%A8%E5%88%97%E8%A1%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">mdio管理寄存器列表</span></a></li></ol></li></ol></li></ol>
                     </div>
                 </span>
             </div>
