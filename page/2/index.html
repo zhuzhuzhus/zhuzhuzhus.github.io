@@ -153,11 +153,31 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-linux_kernel" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-c内存管理以及链接脚本" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2024/01/05/c%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%BB%A5%E5%8F%8A%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AC/">c内存管理以及链接脚本</a>
+    </h1>
+  
+
+        
+        <a href="/2024/01/05/c%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%BB%A5%E5%8F%8A%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AC/" class="archive-article-date">
+  	<time datetime="2024-01-05T07:35:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-05</time>
+</a>
+        
+      </header>
+      
     
     <div class="article-entry" itemprop="articleBody">
       
+        <h2 id="关于对c代码内存的一些理解"><a href="#关于对c代码内存的一些理解" class="headerlink" title="关于对c代码内存的一些理解"></a>关于对c代码内存的一些理解</h2><p>起因是在观看裸机开发教程中在汇编中引入了一个链接文件，教程中并未对其做出过多的解释，所以我就自己查看资料对c的内存管理有了进一步的理解，链接文件如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">SECTIONS&#123;</span><br><span class="line">	. = 0X87800000;</span><br><span class="line">	.text :</span><br><span class="line">	&#123;</span><br><span class="line">		start.o</span><br><span class="line">		main.o</span><br><span class="line">		*(.text)</span><br><span class="line">	&#125;</span><br><span class="line">	.rodata ALIGN(4) : &#123;*(.rodata*)&#125;</span><br><span class="line">	.data ALIGN(4) : &#123; *(.data) &#125;</span><br><span class="line"> __bss_start = .;</span><br><span class="line">	.bss ALIGN(4) : &#123; *(.bss) *(COMMON) &#125;</span><br><span class="line">	__bss_end = .;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个文件里我们看到了.text,.rodata,.data,.bss我一开始看到这个觉得一头雾水（因为本人c语言基础较弱），首先是不知道这些段是干嘛的，其次是不知道编写这个所谓链接文件的目的，所以我就去网上查看资料，终于有了一些收获</p>
         
       
 
@@ -165,12 +185,28 @@
     </div>
     <div class="article-info article-info-index">
       
+        <div class="article-pop-out tagcloud">
+          <i class="icon-tuding"></i>
+          <a class="article-tag-list-link color3">置顶</a>
+        </div>
       
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2024/07/03/linux_kernel/">展开全文 >></a>
+          <a class="article-more-a" href="/2024/01/05/c%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%BB%A5%E5%8F%8A%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AC/">展开全文 >></a>
         </p>
       
 

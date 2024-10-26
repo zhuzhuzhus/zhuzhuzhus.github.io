@@ -907,6 +907,169 @@
 
 
   
+    <article id="post-page" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2024/10/21/page/">arm页表学习</a>
+    </h1>
+  
+
+        
+        <a href="/2024/10/21/page/" class="archive-article-date">
+  	<time datetime="2024-10-21T07:35:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-10-21</time>
+</a>
+        
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qianlong4526888/article/details/9058221">ARMv8(aarch64)页表建立过程详细分析_aarch64 页表-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/LoyenWang/p/11406693.html">【原创】（一）ARMv8 MMU及Linux页表映射 - LoyenWang - 博客园</a></p>
+<h1 id="arm页表"><a href="#arm页表" class="headerlink" title="arm页表"></a>arm页表</h1><p>ARMv8架构可以支持48位虚拟地址，并配置成4级页表（4K页），或者3级页表（64K页）。而本Linux系统只使用39位虚拟地址（512G内核，512G用户），配置成3级页表（4K页）或者2级页表（64K页）</p>
+<p>用户空间的地址63:39位都置零，内核空间地址63:39都置一，虚拟地址的第63位可以用来选择TTBRx</p>
+<p>AArch64Linux内存布局：</p>
+<table>
+<thead>
+<tr>
+<th align="center">地址范围开始</th>
+<th align="center">地址范围结束</th>
+<th align="center">大小</th>
+<th align="center">用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0000000000000000</td>
+<td align="center">0000007fffffffff</td>
+<td align="center">512GB</td>
+<td align="center">用户空间</td>
+</tr>
+<tr>
+<td align="center">ffffff8000000000</td>
+<td align="center">ffffffbbfffcffff</td>
+<td align="center">~240GB</td>
+<td align="center">vmalloc区域</td>
+</tr>
+<tr>
+<td align="center">ffffffbbfffd0000</td>
+<td align="center">ffffffbcfffdffff</td>
+<td align="center">64KB</td>
+<td align="center">守护页</td>
+</tr>
+<tr>
+<td align="center">ffffffbbfffe0000</td>
+<td align="center">ffffffbcfffeffff</td>
+<td align="center">64KB</td>
+<td align="center">PCI I&#x2F;O空间</td>
+</tr>
+<tr>
+<td align="center">ffffffbbffff0000</td>
+<td align="center">ffffffbcffffffff</td>
+<td align="center">64KB</td>
+<td align="center">守护页</td>
+</tr>
+<tr>
+<td align="center">ffffffbc00000000</td>
+<td align="center">ffffffbdffffffff</td>
+<td align="center">8GB</td>
+<td align="center">vmemmap区域</td>
+</tr>
+<tr>
+<td align="center">ffffffbe00000000</td>
+<td align="center">ffffffbffbffffff</td>
+<td align="center">~8GB</td>
+<td align="center">守护页和未来vmemmap区域</td>
+</tr>
+<tr>
+<td align="center">ffffffbffc000000</td>
+<td align="center">ffffffbfffffffff</td>
+<td align="center">64MB</td>
+<td align="center">模块区域</td>
+</tr>
+<tr>
+<td align="center">ffffffc000000000</td>
+<td align="center">ffffffffffffffff</td>
+<td align="center">256GB</td>
+<td align="center">内存（保留或未分配）</td>
+</tr>
+</tbody></table>
+<h2 id="aarch64虚拟地址"><a href="#aarch64虚拟地址" class="headerlink" title="aarch64虚拟地址"></a>aarch64虚拟地址</h2><p>4K页时的虚拟地址</p>
+<p> <img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202410212138481.jpeg" alt="img"></p>
+<p>64K页时的虚拟地址</p>
+<p><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202410212138692.jpeg" alt="img"></p>
+<ul>
+<li>PGD全局页表字典</li>
+<li>PTE页表项</li>
+<li>PMD 中间页表字典</li>
+</ul>
+<p>TLB</p>
+<p>  Translation lookaside buffer,即旁路转换缓冲，或称为页表缓冲；里面存放的是一些页表文件（<strong>虚拟地址到物理地址的转换表）。又称为快表技术</strong>。如果匹配到逻辑地址就可以迅速找到页框号（页框号可以理解为页表项），通过页框号与逻辑地址的后12位的偏移自合得到最终的物理地址。如果没在TLB中匹配到逻辑地址，就出现TLB不命中（TLB Misss），需要通过常规的页表查询。如果TLB足够大，那么这个转换就会变得迅速。但是事实是TLB的容量非常小，一般都是几十项到几百项不等。<br>    在有些的处理器架构中，为了提供效率，还将TLB进行分组，以X86架构为例，一般都分为以下四个组：<br>    第一组：缓存一般页表（4KB页面）的指令页表缓存（Instruction-TLB）<br>    第二组：缓存一般页表（4KB页面）的数据页表缓存（Data-TLB）<br>    第三组：缓存大尺寸页表（2MB&#x2F;4M页B面）的指令页表缓存（Instruction-TLB）<br>    第四组：缓存大尺寸页表（2MB&#x2F;4MB页面）的数据页表缓存（Data-TLB）<br>    举一个例子：假设一个应用程序需要使用8KB的物理内存，如果使用常规页（4KB）并且使TLB总能命中，那么至少需要在TLB表中存放两个表项，在这种情况下，只要寻址的内容都在该内容页内，那么只要两个表项就足够了。如果该应用程序需要使用512个内容页也就是2MB大小，那么需要512个页表表项才能保证不会出现TLB不命中的情况。但是TLB容量有限，随着程序的变大或者使用内存的增加，那么势必会增加TLB的使用项，最后导致TLB出现不命中的情况。此时，大页的优势就显示出来了，如果使用2MB作为分页的基本单位，那么只需要一个页表项就可以保证不出现TLB不命中的情况；对于消耗内存以GB（2^30）为单位的大型程序，可以采用1GB为单位作为分页的基本单位，减少TLB不命中的情况。</p>
+<h2 id="页表建立过程"><a href="#页表建立过程" class="headerlink" title="页表建立过程"></a>页表建立过程</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line"></span><br><span class="line"> * Setup the initial page tables. We only setup the barest amount which is</span><br><span class="line"></span><br><span class="line"> * required to get the kernel running. The following sections are required:</span><br><span class="line"></span><br><span class="line"> *   -identity mapping to enable the MMU (low address, TTBR0)</span><br><span class="line"></span><br><span class="line"> *   -first few MB of the kernel linear mapping to jump to once the MMU has</span><br><span class="line"></span><br><span class="line"> *    been enabled, including the FDT blob (TTBR1)</span><br><span class="line"></span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">__create_page_tables:</span><br><span class="line"></span><br><span class="line">          pgtbl     x25, x26,x24                         //idmap_pg_dir and swapper_pg_dir addresses</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">          /*</span><br><span class="line"></span><br><span class="line">           * 清空新建的两个页表TTBR0，TTBR1</span><br><span class="line"></span><br><span class="line">           */</span><br><span class="line"></span><br><span class="line">          mov       x0,x25</span><br><span class="line"></span><br><span class="line">          add       x6,x26, #SWAPPER_DIR_SIZE</span><br><span class="line"></span><br><span class="line">1:        stp       xzr,xzr, [x0], #16</span><br><span class="line"></span><br><span class="line">          stp       xzr,xzr, [x0], #16</span><br><span class="line"></span><br><span class="line">          stp       xzr,xzr, [x0], #16</span><br><span class="line"></span><br><span class="line">          stp       xzr,xzr, [x0], #16</span><br><span class="line"></span><br><span class="line">          cmp       x0,x6</span><br><span class="line"></span><br><span class="line">          b.lo      1b</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">          ldr       x7,=MM_MMUFLAGS</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">          /*</span><br><span class="line"></span><br><span class="line">           * Create the identity mapping.</span><br><span class="line"></span><br><span class="line">           */</span><br><span class="line"></span><br><span class="line">          add       x0, x25,#PAGE_SIZE                   // sectiontable address</span><br><span class="line"></span><br><span class="line">          adr       x3, __turn_mmu_on            // virtual/physical address</span><br><span class="line"></span><br><span class="line">          create_pgd_entry x25, x0, x3, x5, x6  //展开见1.1.3</span><br><span class="line"></span><br><span class="line">          create_block_map x0, x7, x3, x5, x5, idmap=1</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">          /*</span><br><span class="line"></span><br><span class="line">           * Map the kernel image (starting withPHYS_OFFSET).</span><br><span class="line"></span><br><span class="line">           */</span><br><span class="line"></span><br><span class="line">          add       x0,x26, #PAGE_SIZE                   //section table address</span><br><span class="line"></span><br><span class="line">          mov       x5,#PAGE_OFFSET</span><br><span class="line"></span><br><span class="line">          create_pgd_entry x26, x0, x5, x3, x6</span><br><span class="line"></span><br><span class="line">          ldr       x6,=KERNEL_END - 1</span><br><span class="line"></span><br><span class="line">          mov       x3,x24                               // physoffset</span><br><span class="line"></span><br><span class="line">          create_block_map x0, x7, x3, x5, x6</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">          /*</span><br><span class="line"></span><br><span class="line">           * Map the FDT blob (maximum 2MB; must bewithin 512MB of</span><br><span class="line"></span><br><span class="line">           * PHYS_OFFSET).</span><br><span class="line"></span><br><span class="line">           */</span><br><span class="line"></span><br><span class="line">          mov       x3,x21                               // FDTphys address</span><br><span class="line"></span><br><span class="line">          and       x3,x3, #~((1 &lt;&lt; 21) - 1)    // 2MBaligned</span><br><span class="line"></span><br><span class="line">          mov       x6,#PAGE_OFFSET</span><br><span class="line"></span><br><span class="line">          sub       x5,x3, x24                           //subtract PHYS_OFFSET</span><br><span class="line"></span><br><span class="line">          tst       x5,#~((1 &lt;&lt; 29) - 1)                 //within 512MB?</span><br><span class="line"></span><br><span class="line">          csel      x21,xzr, x21, ne            // zero the FDTpointer</span><br><span class="line"></span><br><span class="line">          b.ne      1f</span><br><span class="line"></span><br><span class="line">          add       x5,x5, x6                            // __va(FDTblob)</span><br><span class="line"></span><br><span class="line">          add       x6,x5, #1 &lt;&lt; 21             // 2MB forthe FDT blob</span><br><span class="line"></span><br><span class="line">          sub       x6,x6, #1                            //inclusive range</span><br><span class="line"></span><br><span class="line">          create_block_map x0, x7, x3, x5, x6</span><br><span class="line"></span><br><span class="line">1:</span><br><span class="line"></span><br><span class="line">          ret</span><br><span class="line"></span><br><span class="line">ENDPROC(__create_page_tables)</span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+        <div class="article-pop-out tagcloud">
+          <i class="icon-tuding"></i>
+          <a class="article-tag-list-link color3">置顶</a>
+        </div>
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2024/10/21/page/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+  
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
     <article id="post-phy" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -928,7 +1091,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id=""><a href="#" class="headerlink" title=""></a></h2><h1 id="网卡phy学习"><a href="#网卡phy学习" class="headerlink" title="网卡phy学习"></a>网卡phy学习</h1><h2 id="MII接口"><a href="#MII接口" class="headerlink" title="MII接口"></a>MII接口</h2><p>网络的数据传输时靠MII，常用的MII mode如下：</p>
+        <h1 id="网卡phy学习"><a href="#网卡phy学习" class="headerlink" title="网卡phy学习"></a>网卡phy学习</h1><h2 id="MII接口"><a href="#MII接口" class="headerlink" title="MII接口"></a>MII接口</h2><p>网络的数据传输时靠MII，常用的MII mode如下：</p>
 <ol>
 <li><p>MII接口：<br>表中信号方向针对PHY芯片来说，I表示输入，O表示输出：</p>
 <ul>
@@ -1004,403 +1167,7 @@
 </tbody></table>
 <strong>MII接口只能实现100Mbps、10Mbps速率的数据传输，不能实现1000Mbps。</strong> 发送、接收的数据线均为4位，则每个<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=%E6%97%B6%E9%92%9F%E5%91%A8%E6%9C%9F&zhida_source=entity">时钟周期</a>发送或接收4位数据。<strong>如果要实现100Mbps<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=%E9%80%9A%E4%BF%A1%E9%80%9F%E7%8E%87&zhida_source=entity">通信速率</a>，那么时钟频率就应该是25MHz。如果要实现10Mbps通信速率，那么<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=2&q=%E6%97%B6%E9%92%9F%E9%A2%91%E7%8E%87&zhida_source=entity">时钟频率</a>就应该是2.5MHz。</strong></li>
 </ul>
-</li>
-<li><p>RMII接口：</p>
-<ul>
-<li><p>RMII（Reduced Media Independent Interface）接口其实就是MII接口的简化版本，<strong>将TX_CLK和RX_CLK合并为双向时钟线REF_CLK，由外部的<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=%E6%99%B6%E6%8C%AF&zhida_source=entity">晶振</a>同时给PHY芯片和MAC主控芯片提供<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=2&q=%E6%97%B6%E9%92%9F%E4%BF%A1%E5%8F%B7&zhida_source=entity">时钟信号</a>。</strong>将4位的数据线简化为2位。</p>
-</li>
-<li><table>
-<thead>
-<tr>
-<th>信号</th>
-<th>方向</th>
-<th>位宽</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>REF_CLK</td>
-<td>I</td>
-<td>1</td>
-<td>参考时钟，外部晶振产生，100Mbps时为50MHz，10Mbps时为5MHz。</td>
-</tr>
-<tr>
-<td>CRS_DV</td>
-<td>O</td>
-<td>1</td>
-<td>高电平表示发送的数据有效。</td>
-</tr>
-<tr>
-<td>RX_ER</td>
-<td>O</td>
-<td>1</td>
-<td>高电平表示发送数据的错误，接收端不接受该数据。</td>
-</tr>
-<tr>
-<td>RX_D</td>
-<td>O</td>
-<td>2</td>
-<td>发送数据总线。</td>
-</tr>
-<tr>
-<td>TX_EN</td>
-<td>I</td>
-<td>1</td>
-<td>高电平表示接收的数据有效。</td>
-</tr>
-<tr>
-<td>TX_D</td>
-<td>I</td>
-<td>2</td>
-<td>接收数据总线。</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>RMII将发送时钟、接收时钟合并为参考时钟信号，把4位的数据线简化为2位数据线，可以简化PCB布局布线。RMII同样只能实现100Mbps和10Mbps，当以<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=100Mbps%E9%80%9F%E7%8E%87&zhida_source=entity">100Mbps速率</a>传输数据时，每个时钟传输2位数据，此时参考时钟应该设置为50MHz。当以<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=2&q=10Mbps%E9%80%9F%E7%8E%87&zhida_source=entity">10Mbps速率</a>传输数据时，参考时钟应设置为5MHz。</p>
-</li>
-</ul>
-</li>
-<li><p>GMII接口：</p>
-<ul>
-<li>GMII（Gigabit Media Independent Interface）接口是比较常见的千兆网接口</li>
-<li>接口信号的含义与MII接口一致，此处就不在赘述，注意MII的接收时钟和发送时钟均由PHY芯片输出，而GMII的TX_CLK是由MAC输出给PHY芯片的。此外就是数据位宽由MII的4位变为了8位。</li>
-</ul>
-</li>
-<li><p>RGMII接口：</p>
-<ul>
-<li>RGMII（Reduced Gigabit Media Independent Interface）接口就是把GMII接口的数据线做简化处理，也能够实现千兆网</li>
-<li>相比GMII接口，RGMII接口的数据线由8位缩减到4位，RX_DV与RX_ER信号合成为RX_CTL信号。该接口实现1000Mbps传输速率时，时钟依旧是125MHz</li>
-</ul>
-</li>
-</ol>
-<h2 id="mdio"><a href="#mdio" class="headerlink" title="mdio"></a>mdio</h2><p><a target="_blank" rel="noopener" href="https://www.ieee802.org/3/efm/public/nov02/oam/pannell_oam_1_1102.pdf">参考文献</a></p>
-<p>&#x3D;&#x3D;mac访问phy的一些配置通过mdio bus访问，MDIO的作用仅仅只是用来查看一些状态和功能，还有简单的控制。而网络的数据传输时靠MII不是靠MDIO&#x3D;&#x3D;</p>
-<p>mdio的读写有两种协议 C22和 C45：</p>
-<h3 id="C22"><a href="#C22" class="headerlink" title="C22"></a>C22</h3><table>
-<thead>
-<tr>
-<th>Frame</th>
-<th>Preamble (32bits)</th>
-<th>Start (2bits）</th>
-<th>OP Code (2bits)</th>
-<th>PHYAD (5bits)</th>
-<th>REGAD (5bits)</th>
-<th>Turn Around (2bits)</th>
-<th>Data (16bits)</th>
-<th>Idle</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Read</td>
-<td>1…….1</td>
-<td>01</td>
-<td>10</td>
-<td>A4…A0</td>
-<td>R4…R0</td>
-<td>Z0</td>
-<td>D15…….D0</td>
-<td>Z*</td>
-</tr>
-<tr>
-<td>Write</td>
-<td>1…….1</td>
-<td>01</td>
-<td>01</td>
-<td>A4…A0</td>
-<td>R4…R0</td>
-<td>10</td>
-<td>D15…….D0</td>
-<td>Z*</td>
-</tr>
-</tbody></table>
-<p>上图中*表示高阻态，这时MDIO的状态由一个外部的1.5KΩ电阻决定。</p>
-<ul>
-<li>Preamble+Start： 32bits的前导码以及2bit的开始位。</li>
-<li>OP Code： 2bits的操作码，10表示读，01表示写。</li>
-<li>PHYAD： 5bits的PHY地址，一般PHY地址从0开始顺序编号，例如6口switch中PHY地址为0-5。</li>
-<li>REGAD： 5bits的寄存器地址，即要读或写的寄存器。</li>
-<li>Turn Around： 2bits的TA，在读命令中，MDIO在此时由MAC驱动改为PHY驱动，并等待一个时钟周期准备发送数据。在写命令中，不需要MDIO方向发生变化，则只是等待两个时钟周期准备写入数据。</li>
-<li>Data： 16bits数据，在读命令中，PHY芯片将读到的对应PHYAD的REGAD寄存器的数据写到Data中，在写命令中，MAC将要写入对应PHYAD的REGAD寄存器的值写入Data中。</li>
-<li>Idle： 空闲状态，此时MDIO无源驱动，处高阻状态，但一般用上拉电阻使其处在高电平。</li>
-</ul>
-<h3 id="C45"><a href="#C45" class="headerlink" title="C45"></a>C45</h3><table>
-<thead>
-<tr>
-<th>Frame</th>
-<th>Preamble (32bits)</th>
-<th>Start (2bits）</th>
-<th>OP Code (2bits)</th>
-<th>PHYAD (5bits)</th>
-<th>DEVAD (5bits)</th>
-<th>Turn Around (2bits)</th>
-<th>Data (16bits)</th>
-<th>Idle</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Address</td>
-<td>1…….1</td>
-<td>00</td>
-<td>00</td>
-<td>PPPPP</td>
-<td>EEEEE</td>
-<td>10</td>
-<td>A15…….A0</td>
-<td>Z*</td>
-</tr>
-<tr>
-<td>Write</td>
-<td>1…….1</td>
-<td>00</td>
-<td>01</td>
-<td>PPPPP</td>
-<td>EEEEE</td>
-<td>10</td>
-<td>D15…….D0</td>
-<td>Z*</td>
-</tr>
-<tr>
-<td>Read</td>
-<td>1…….1</td>
-<td>00</td>
-<td>11</td>
-<td>PPPPP</td>
-<td>EEEEE</td>
-<td>z0</td>
-<td>D15…….D0</td>
-<td>Z*</td>
-</tr>
-<tr>
-<td>Read Inc.</td>
-<td>1…….1</td>
-<td>00</td>
-<td>10</td>
-<td>PPPPP</td>
-<td>EEEEE</td>
-<td>Z0</td>
-<td>D15…….D0</td>
-<td>Z*</td>
-</tr>
-</tbody></table>
-<ul>
-<li><p>Preamble+Start： 32bits的前导码以及2bit的开始位。帧开始标志， 为了区别CL22，Clause45 的开始标志为比特“00”。</p>
-</li>
-<li><p>OP Code： 操作码，Clause45有4种操作码，比特“00”表示设置当前寄存器地址，比特“01”表示写当前寄存器。比特“10”表示读当前寄存器，比特“11”表示读当前寄存器读完后把当前寄存器的值加1，用于顺序读。</p>
-</li>
-<li><p>PRTAD： Port Address，端口地址， 也称物理地址。</p>
-</li>
-<li><p>DEVAD：器件地址，CL45新增概念，各值与器件对应如下。</p>
-</li>
-<li><table>
-<thead>
-<tr>
-<th>Value</th>
-<th>Device</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>00000</td>
-<td>Reserved</td>
-</tr>
-<tr>
-<td>00001</td>
-<td>PMD&#x2F;PMA</td>
-</tr>
-<tr>
-<td>00010</td>
-<td>WIS</td>
-</tr>
-<tr>
-<td>00011</td>
-<td>PCS</td>
-</tr>
-<tr>
-<td>00100</td>
-<td>PHY XS</td>
-</tr>
-<tr>
-<td>00101</td>
-<td>DTE XS</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>REGAD： 用来选MMD的65536个寄存器中的某个寄存器的地址。</p>
-</li>
-<li><p>Turn Around： 2bits的TA，在读命令中，MDIO在此时由MAC驱动改为PHY驱动，并等待一个时钟周期准备发送数据。在写命令中，不需要MDIO方向发生变化，则只是等待两个时钟周期准备写入数据。</p>
-</li>
-<li><p>Data： 帧的寄存器的数据域，16bits，若为读操作，则为MMD送到STA的数据，若为写操作，则为STA送到MMD数据。</p>
-</li>
-<li><p>Idle： 空闲状态，此时MDIO无源驱动，处高阻状态，但一般用上拉电阻使其处在高电平。</p>
-</li>
-</ul>
-<p>第45号条款的主要变化是如何访问寄存器。在第22中，一个单独的帧指定要读或写的地址和数据，同时完成了这些工作。45号中改变这种范式，第一个地址帧发送到指定的MMD和寄存器，然后发送第二帧来执行读或写。</p>
-<p>添加这个依次循环访问的好处是45条款是向后兼容22条款的，允许设备的互操作。其次，通过创建一个框架的登记地址，地址空间从5位增加到16位，这使得STA访问65536个不同的寄存器。</p>
-<h2 id="管理接口寄存器"><a href="#管理接口寄存器" class="headerlink" title="管理接口寄存器"></a>管理接口寄存器</h2><p>以太网传输速率从10兆发展到今天的100G，MAC层和PHY层之间的硬件接口发生了很大的变化，但是其中用来管理PHY的物理引脚始终只有2个，即MDC和MDIO引脚。随着PHY层变得越来越复杂，PHY寄存器的组织方式和寻址方式发生了变化，PHY管理接口的名称也从“MII管理接口”变为“MDIO接口”。千兆以太网之前，PHY管理接口称为“MII管理接口”；从10G以太网开始使用“MDIO接口”。有的千兆和百兆PHY支持一些扩展功能，也需要使用MDIO接口进行管理。</p>
-<h3 id="MII-管理接口寄存器"><a href="#MII-管理接口寄存器" class="headerlink" title="MII 管理接口寄存器"></a>MII 管理接口寄存器</h3><p>MII管理接口的寄存器列表：</p>
-<table>
-<thead>
-<tr>
-<th>地址</th>
-<th>寄存器名称</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>0</td>
-<td>Control</td>
-<td>基本寄存器</td>
-</tr>
-<tr>
-<td>1</td>
-<td>Status</td>
-<td>基本寄存器</td>
-</tr>
-<tr>
-<td>2,3</td>
-<td>PHYIdentifier</td>
-<td>扩展寄存器，2用于存放phyid的高16位，3用于存放低16位</td>
-</tr>
-<tr>
-<td>4</td>
-<td>Auto-NegotiationAdvertisement</td>
-<td>扩展寄存器</td>
-</tr>
-<tr>
-<td>5</td>
-<td>Auto-NegotiationLinkPartnerBasePageAbility</td>
-<td>扩展寄存器，用于自协商功能</td>
-</tr>
-<tr>
-<td>6</td>
-<td>Auto-NegotiationExpansion</td>
-<td>扩展寄存器，用于自协商功能</td>
-</tr>
-<tr>
-<td>7</td>
-<td>Auto-NegotiationNextPageTransmit</td>
-<td>扩展寄存器，用于自协商功能</td>
-</tr>
-<tr>
-<td>8</td>
-<td>Auto-NegotiationLinkPartnerReceivedNextPage</td>
-<td>扩展寄存器，用于自协商功能</td>
-</tr>
-<tr>
-<td>9</td>
-<td>MASTER-SLAVEControlRegister</td>
-<td>扩展寄存器，用于自协商功能</td>
-</tr>
-<tr>
-<td>10</td>
-<td>MASTER-SLAVEStatusRegister</td>
-<td>扩展寄存器，用于自协商功能</td>
-</tr>
-<tr>
-<td>11</td>
-<td>PSEControlregister</td>
-<td>扩展寄存器</td>
-</tr>
-<tr>
-<td>12</td>
-<td>PSEStatusregister</td>
-<td>扩展寄存器</td>
-</tr>
-<tr>
-<td>13</td>
-<td>MMDAccessControlRegister</td>
-<td>扩展寄存器</td>
-</tr>
-<tr>
-<td>14</td>
-<td>MMDAccessAddressDataRegister</td>
-<td>扩展寄存器</td>
-</tr>
-<tr>
-<td>15</td>
-<td>ExtendedStatus</td>
-<td>千兆以太网中，register15用作扩展的状态寄存器；百兆以太网中，保留未使用。</td>
-</tr>
-<tr>
-<td>16~31</td>
-<td>VendorSpecific</td>
-<td>由PHY厂商自定义。这也意味着，这些寄存器需要参考芯片手册才能了解具体的含义。</td>
-</tr>
-</tbody></table>
-<h3 id="mdio管理寄存器列表"><a href="#mdio管理寄存器列表" class="headerlink" title="mdio管理寄存器列表"></a>mdio管理寄存器列表</h3><p>在MDIO接口的定义中，PHY层被划分为多个MMD设备（MDIOManagableDevice），每个MMD内部的寄存器的地址分配和MII管理接口中的地址类似，不过寄存器的数量多出很多。</p>
-<p>IEEE802.3标准规定的MMD设备地址：</p>
-<table>
-<thead>
-<tr>
-<th>设备地址</th>
-<th>设备名称</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>0</td>
-<td>保留</td>
-</tr>
-<tr>
-<td>1</td>
-<td>PMA&#x2F;PMD设备10G以太网中，PMA和PMD通常集成在一起。</td>
-</tr>
-<tr>
-<td>2</td>
-<td>WIS</td>
-</tr>
-<tr>
-<td>3</td>
-<td>PCS</td>
-</tr>
-<tr>
-<td>4</td>
-<td>PHYXS</td>
-</tr>
-<tr>
-<td>5</td>
-<td>DTEXS</td>
-</tr>
-<tr>
-<td>6</td>
-<td>TC</td>
-</tr>
-<tr>
-<td>7</td>
-<td>Auto-Negotiation</td>
-</tr>
-<tr>
-<td>8</td>
-<td>SeparatedPMA(1)40G&#x2F;100G以太网中，PMA和PMD是分开的。</td>
-</tr>
-<tr>
-<td>9</td>
-<td>SeparatedPMA(2)</td>
-</tr>
-<tr>
-<td>10</td>
-<td>SeparatedPMA(3)</td>
-</tr>
-<tr>
-<td>11</td>
-<td>SeparatedPMA(4)</td>
-</tr>
-<tr>
-<td>12~28</td>
-<td>保留</td>
-</tr>
-<tr>
-<td>29</td>
-<td>Clause22扩展</td>
-</tr>
-<tr>
-<td>30</td>
-<td>VendorSpecific1。这意味着，device30的寄存器需要参考厂商的芯片手册才能了解具体的含义。</td>
-</tr>
-<tr>
-<td>31</td>
-<td>VendorSpecific2</td>
-</tr>
-</tbody></table>
-
+        
       
 
       
@@ -1429,89 +1196,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2024/10/10/phy/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-  
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-  
-    <article id="post-c内存管理以及链接脚本" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2024/01/05/c%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%BB%A5%E5%8F%8A%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AC/">c内存管理以及链接脚本</a>
-    </h1>
-  
-
-        
-        <a href="/2024/01/05/c%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%BB%A5%E5%8F%8A%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AC/" class="archive-article-date">
-  	<time datetime="2024-01-05T07:35:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-05</time>
-</a>
-        
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="关于对c代码内存的一些理解"><a href="#关于对c代码内存的一些理解" class="headerlink" title="关于对c代码内存的一些理解"></a>关于对c代码内存的一些理解</h2><p>起因是在观看裸机开发教程中在汇编中引入了一个链接文件，教程中并未对其做出过多的解释，所以我就自己查看资料对c的内存管理有了进一步的理解，链接文件如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">SECTIONS&#123;</span><br><span class="line">	. = 0X87800000;</span><br><span class="line">	.text :</span><br><span class="line">	&#123;</span><br><span class="line">		start.o</span><br><span class="line">		main.o</span><br><span class="line">		*(.text)</span><br><span class="line">	&#125;</span><br><span class="line">	.rodata ALIGN(4) : &#123;*(.rodata*)&#125;</span><br><span class="line">	.data ALIGN(4) : &#123; *(.data) &#125;</span><br><span class="line"> __bss_start = .;</span><br><span class="line">	.bss ALIGN(4) : &#123; *(.bss) *(COMMON) &#125;</span><br><span class="line">	__bss_end = .;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在这个文件里我们看到了.text,.rodata,.data,.bss我一开始看到这个觉得一头雾水（因为本人c语言基础较弱），首先是不知道这些段是干嘛的，其次是不知道编写这个所谓链接文件的目的，所以我就去网上查看资料，终于有了一些收获</p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-        <div class="article-pop-out tagcloud">
-          <i class="icon-tuding"></i>
-          <a class="article-tag-list-link color3">置顶</a>
-        </div>
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2024/01/05/c%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%BB%A5%E5%8F%8A%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AC/">展开全文 >></a>
         </p>
       
 

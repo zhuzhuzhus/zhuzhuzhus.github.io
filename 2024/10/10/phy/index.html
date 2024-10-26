@@ -16,7 +16,7 @@
 <meta property="og:description" content="网卡phy学习MII接口网络的数据传输时靠MII，常用的MII mode如下：  MII接口：表中信号方向针对PHY芯片来说，I表示输入，O表示输出：     信号 方向 位宽 含义    RX_CLK O 1 发送时钟，PHY芯片产生，100Mbps时为25MHz，10Mbps时为 2.5MHz。   RX_DV O 1 高电平表示发送的数据有效。   RX_ER O 1 高电平表示发送数据的错">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-10-10T07:35:22.000Z">
-<meta property="article:modified_time" content="2024-10-20T05:16:57.313Z">
+<meta property="article:modified_time" content="2024-10-26T08:48:19.021Z">
 <meta property="article:author" content="ZHUJIALE">
 <meta property="article:tag" content="随笔">
 <meta name="twitter:card" content="summary">
@@ -184,7 +184,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id=""><a href="#" class="headerlink" title=""></a></h2><h1 id="网卡phy学习"><a href="#网卡phy学习" class="headerlink" title="网卡phy学习"></a>网卡phy学习</h1><h2 id="MII接口"><a href="#MII接口" class="headerlink" title="MII接口"></a>MII接口</h2><p>网络的数据传输时靠MII，常用的MII mode如下：</p>
+        <h1 id="网卡phy学习"><a href="#网卡phy学习" class="headerlink" title="网卡phy学习"></a>网卡phy学习</h1><h2 id="MII接口"><a href="#MII接口" class="headerlink" title="MII接口"></a>MII接口</h2><p>网络的数据传输时靠MII，常用的MII mode如下：</p>
 <ol>
 <li><p>MII接口：<br>表中信号方向针对PHY芯片来说，I表示输入，O表示输出：</p>
 <ul>
@@ -260,6 +260,7 @@
 </tbody></table>
 <strong>MII接口只能实现100Mbps、10Mbps速率的数据传输，不能实现1000Mbps。</strong> 发送、接收的数据线均为4位，则每个<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=%E6%97%B6%E9%92%9F%E5%91%A8%E6%9C%9F&zhida_source=entity">时钟周期</a>发送或接收4位数据。<strong>如果要实现100Mbps<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=%E9%80%9A%E4%BF%A1%E9%80%9F%E7%8E%87&zhida_source=entity">通信速率</a>，那么时钟频率就应该是25MHz。如果要实现10Mbps通信速率，那么<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=2&q=%E6%97%B6%E9%92%9F%E9%A2%91%E7%8E%87&zhida_source=entity">时钟频率</a>就应该是2.5MHz。</strong></li>
 </ul>
+<span id="more"></span>
 </li>
 <li><p>RMII接口：</p>
 <ul>
@@ -766,6 +767,15 @@
   
 <nav id="article-nav">
   
+    <a href="/2024/10/21/page/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          arm页表学习
+        
+      </div>
+    </a>
+  
   
     <a href="/2024/09/21/lwip/" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title">LWIP网络协议栈学习</div>
@@ -795,7 +805,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text"></span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BD%91%E5%8D%A1phy%E5%AD%A6%E4%B9%A0"><span class="toc-number"></span> <span class="toc-text">网卡phy学习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#MII%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.</span> <span class="toc-text">MII接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mdio"><span class="toc-number">2.</span> <span class="toc-text">mdio</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#C22"><span class="toc-number">2.1.</span> <span class="toc-text">C22</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C45"><span class="toc-number">2.2.</span> <span class="toc-text">C45</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%A1%E7%90%86%E6%8E%A5%E5%8F%A3%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">3.</span> <span class="toc-text">管理接口寄存器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MII-%E7%AE%A1%E7%90%86%E6%8E%A5%E5%8F%A3%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">3.1.</span> <span class="toc-text">MII 管理接口寄存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mdio%E7%AE%A1%E7%90%86%E5%AF%84%E5%AD%98%E5%99%A8%E5%88%97%E8%A1%A8"><span class="toc-number">3.2.</span> <span class="toc-text">mdio管理寄存器列表</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BD%91%E5%8D%A1phy%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.</span> <span class="toc-text">网卡phy学习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#MII%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.1.</span> <span class="toc-text">MII接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mdio"><span class="toc-number">1.2.</span> <span class="toc-text">mdio</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#C22"><span class="toc-number">1.2.1.</span> <span class="toc-text">C22</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C45"><span class="toc-number">1.2.2.</span> <span class="toc-text">C45</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%A1%E7%90%86%E6%8E%A5%E5%8F%A3%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">1.3.</span> <span class="toc-text">管理接口寄存器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MII-%E7%AE%A1%E7%90%86%E6%8E%A5%E5%8F%A3%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">1.3.1.</span> <span class="toc-text">MII 管理接口寄存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mdio%E7%AE%A1%E7%90%86%E5%AF%84%E5%AD%98%E5%99%A8%E5%88%97%E8%A1%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">mdio管理寄存器列表</span></a></li></ol></li></ol></li></ol>
                     </div>
                 </span>
             </div>

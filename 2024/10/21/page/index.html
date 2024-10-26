@@ -6,15 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2024/7 | zhuzhuzhu&#39;s blog</title>
+  <title>arm页表学习 | zhuzhuzhu&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="zhuzhuzhu&#39;s blog">
-<meta property="og:url" content="http://example.com/archives/2024/07/index.html">
+  <meta name="description" content="ARMv8(aarch64)页表建立过程详细分析_aarch64 页表-CSDN博客 【原创】（一）ARMv8 MMU及Linux页表映射 - LoyenWang - 博客园 arm页表ARMv8架构可以支持48位虚拟地址，并配置成4级页表（4K页），或者3级页表（64K页）。而本Linux系统只使用39位虚拟地址（512G内核，512G用户），配置成3级页表（4K页）或者2级页表（64K页） 用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="arm页表学习">
+<meta property="og:url" content="http://example.com/2024/10/21/page/index.html">
 <meta property="og:site_name" content="zhuzhuzhu&#39;s blog">
+<meta property="og:description" content="ARMv8(aarch64)页表建立过程详细分析_aarch64 页表-CSDN博客 【原创】（一）ARMv8 MMU及Linux页表映射 - LoyenWang - 博客园 arm页表ARMv8架构可以支持48位虚拟地址，并配置成4级页表（4K页），或者3级页表（64K页）。而本Linux系统只使用39位虚拟地址（512G内核，512G用户），配置成3级页表（4K页）或者2级页表（64K页） 用">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202410212138481.jpeg">
+<meta property="og:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202410212138692.jpeg">
+<meta property="article:published_time" content="2024-10-21T07:35:22.000Z">
+<meta property="article:modified_time" content="2024-10-21T14:02:24.051Z">
 <meta property="article:author" content="ZHUJIALE">
+<meta property="article:tag" content="随笔">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202410212138481.jpeg">
   
     <link rel="alternative" href="/atom.xml" title="zhuzhuzhu&#39;s blog" type="application/atom+xml">
   
@@ -152,43 +160,276 @@
           </div>
           <div id="js-content" class="content-ll">
             
+    <i class="fa fa-thumb-tack"></i>
+    <font color=7D26CD>置顶</font>
+    <span class="post-meta-divider">|</span>
+    
+    
+    
+<article id="post-page" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      arm页表学习
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2024" class="archive-year">2024</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2024/07/03/linux_kernel/" class="archive-article-date">
-  	<time datetime="2024-07-03T08:27:11.631Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-07-03</time>
+
+        
+        <a href="/2024/10/21/page/" class="archive-article-date">
+  	<time datetime="2024-10-21T07:35:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-10-21</time>
 </a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
+        
+      </header>
+      
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qianlong4526888/article/details/9058221">ARMv8(aarch64)页表建立过程详细分析_aarch64 页表-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/LoyenWang/p/11406693.html">【原创】（一）ARMv8 MMU及Linux页表映射 - LoyenWang - 博客园</a></p>
+<h1 id="arm页表"><a href="#arm页表" class="headerlink" title="arm页表"></a>arm页表</h1><p>ARMv8架构可以支持48位虚拟地址，并配置成4级页表（4K页），或者3级页表（64K页）。而本Linux系统只使用39位虚拟地址（512G内核，512G用户），配置成3级页表（4K页）或者2级页表（64K页）</p>
+<p>用户空间的地址63:39位都置零，内核空间地址63:39都置一，虚拟地址的第63位可以用来选择TTBRx</p>
+<p>AArch64Linux内存布局：</p>
+<table>
+<thead>
+<tr>
+<th align="center">地址范围开始</th>
+<th align="center">地址范围结束</th>
+<th align="center">大小</th>
+<th align="center">用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0000000000000000</td>
+<td align="center">0000007fffffffff</td>
+<td align="center">512GB</td>
+<td align="center">用户空间</td>
+</tr>
+<tr>
+<td align="center">ffffff8000000000</td>
+<td align="center">ffffffbbfffcffff</td>
+<td align="center">~240GB</td>
+<td align="center">vmalloc区域</td>
+</tr>
+<tr>
+<td align="center">ffffffbbfffd0000</td>
+<td align="center">ffffffbcfffdffff</td>
+<td align="center">64KB</td>
+<td align="center">守护页</td>
+</tr>
+<tr>
+<td align="center">ffffffbbfffe0000</td>
+<td align="center">ffffffbcfffeffff</td>
+<td align="center">64KB</td>
+<td align="center">PCI I&#x2F;O空间</td>
+</tr>
+<tr>
+<td align="center">ffffffbbffff0000</td>
+<td align="center">ffffffbcffffffff</td>
+<td align="center">64KB</td>
+<td align="center">守护页</td>
+</tr>
+<tr>
+<td align="center">ffffffbc00000000</td>
+<td align="center">ffffffbdffffffff</td>
+<td align="center">8GB</td>
+<td align="center">vmemmap区域</td>
+</tr>
+<tr>
+<td align="center">ffffffbe00000000</td>
+<td align="center">ffffffbffbffffff</td>
+<td align="center">~8GB</td>
+<td align="center">守护页和未来vmemmap区域</td>
+</tr>
+<tr>
+<td align="center">ffffffbffc000000</td>
+<td align="center">ffffffbfffffffff</td>
+<td align="center">64MB</td>
+<td align="center">模块区域</td>
+</tr>
+<tr>
+<td align="center">ffffffc000000000</td>
+<td align="center">ffffffffffffffff</td>
+<td align="center">256GB</td>
+<td align="center">内存（保留或未分配）</td>
+</tr>
+</tbody></table>
+<h2 id="aarch64虚拟地址"><a href="#aarch64虚拟地址" class="headerlink" title="aarch64虚拟地址"></a>aarch64虚拟地址</h2><p>4K页时的虚拟地址</p>
+<p> <img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202410212138481.jpeg" alt="img"></p>
+<p>64K页时的虚拟地址</p>
+<p><img src="https://zhujialetypora.oss-cn-beijing.aliyuncs.com/typora/202410212138692.jpeg" alt="img"></p>
+<ul>
+<li>PGD全局页表字典</li>
+<li>PTE页表项</li>
+<li>PMD 中间页表字典</li>
+</ul>
+<p>TLB</p>
+<p>  Translation lookaside buffer,即旁路转换缓冲，或称为页表缓冲；里面存放的是一些页表文件（<strong>虚拟地址到物理地址的转换表）。又称为快表技术</strong>。如果匹配到逻辑地址就可以迅速找到页框号（页框号可以理解为页表项），通过页框号与逻辑地址的后12位的偏移自合得到最终的物理地址。如果没在TLB中匹配到逻辑地址，就出现TLB不命中（TLB Misss），需要通过常规的页表查询。如果TLB足够大，那么这个转换就会变得迅速。但是事实是TLB的容量非常小，一般都是几十项到几百项不等。<br>    在有些的处理器架构中，为了提供效率，还将TLB进行分组，以X86架构为例，一般都分为以下四个组：<br>    第一组：缓存一般页表（4KB页面）的指令页表缓存（Instruction-TLB）<br>    第二组：缓存一般页表（4KB页面）的数据页表缓存（Data-TLB）<br>    第三组：缓存大尺寸页表（2MB&#x2F;4M页B面）的指令页表缓存（Instruction-TLB）<br>    第四组：缓存大尺寸页表（2MB&#x2F;4MB页面）的数据页表缓存（Data-TLB）<br>    举一个例子：假设一个应用程序需要使用8KB的物理内存，如果使用常规页（4KB）并且使TLB总能命中，那么至少需要在TLB表中存放两个表项，在这种情况下，只要寻址的内容都在该内容页内，那么只要两个表项就足够了。如果该应用程序需要使用512个内容页也就是2MB大小，那么需要512个页表表项才能保证不会出现TLB不命中的情况。但是TLB容量有限，随着程序的变大或者使用内存的增加，那么势必会增加TLB的使用项，最后导致TLB出现不命中的情况。此时，大页的优势就显示出来了，如果使用2MB作为分页的基本单位，那么只需要一个页表项就可以保证不出现TLB不命中的情况；对于消耗内存以GB（2^30）为单位的大型程序，可以采用1GB为单位作为分页的基本单位，减少TLB不命中的情况。</p>
+<h2 id="页表建立过程"><a href="#页表建立过程" class="headerlink" title="页表建立过程"></a>页表建立过程</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line"></span><br><span class="line"> * Setup the initial page tables. We only setup the barest amount which is</span><br><span class="line"></span><br><span class="line"> * required to get the kernel running. The following sections are required:</span><br><span class="line"></span><br><span class="line"> *   -identity mapping to enable the MMU (low address, TTBR0)</span><br><span class="line"></span><br><span class="line"> *   -first few MB of the kernel linear mapping to jump to once the MMU has</span><br><span class="line"></span><br><span class="line"> *    been enabled, including the FDT blob (TTBR1)</span><br><span class="line"></span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">__create_page_tables:</span><br><span class="line"></span><br><span class="line">          pgtbl     x25, x26,x24                         //idmap_pg_dir and swapper_pg_dir addresses</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">          /*</span><br><span class="line"></span><br><span class="line">           * 清空新建的两个页表TTBR0，TTBR1</span><br><span class="line"></span><br><span class="line">           */</span><br><span class="line"></span><br><span class="line">          mov       x0,x25</span><br><span class="line"></span><br><span class="line">          add       x6,x26, #SWAPPER_DIR_SIZE</span><br><span class="line"></span><br><span class="line">1:        stp       xzr,xzr, [x0], #16</span><br><span class="line"></span><br><span class="line">          stp       xzr,xzr, [x0], #16</span><br><span class="line"></span><br><span class="line">          stp       xzr,xzr, [x0], #16</span><br><span class="line"></span><br><span class="line">          stp       xzr,xzr, [x0], #16</span><br><span class="line"></span><br><span class="line">          cmp       x0,x6</span><br><span class="line"></span><br><span class="line">          b.lo      1b</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">          ldr       x7,=MM_MMUFLAGS</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">          /*</span><br><span class="line"></span><br><span class="line">           * Create the identity mapping.</span><br><span class="line"></span><br><span class="line">           */</span><br><span class="line"></span><br><span class="line">          add       x0, x25,#PAGE_SIZE                   // sectiontable address</span><br><span class="line"></span><br><span class="line">          adr       x3, __turn_mmu_on            // virtual/physical address</span><br><span class="line"></span><br><span class="line">          create_pgd_entry x25, x0, x3, x5, x6  //展开见1.1.3</span><br><span class="line"></span><br><span class="line">          create_block_map x0, x7, x3, x5, x5, idmap=1</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">          /*</span><br><span class="line"></span><br><span class="line">           * Map the kernel image (starting withPHYS_OFFSET).</span><br><span class="line"></span><br><span class="line">           */</span><br><span class="line"></span><br><span class="line">          add       x0,x26, #PAGE_SIZE                   //section table address</span><br><span class="line"></span><br><span class="line">          mov       x5,#PAGE_OFFSET</span><br><span class="line"></span><br><span class="line">          create_pgd_entry x26, x0, x5, x3, x6</span><br><span class="line"></span><br><span class="line">          ldr       x6,=KERNEL_END - 1</span><br><span class="line"></span><br><span class="line">          mov       x3,x24                               // physoffset</span><br><span class="line"></span><br><span class="line">          create_block_map x0, x7, x3, x5, x6</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">          /*</span><br><span class="line"></span><br><span class="line">           * Map the FDT blob (maximum 2MB; must bewithin 512MB of</span><br><span class="line"></span><br><span class="line">           * PHYS_OFFSET).</span><br><span class="line"></span><br><span class="line">           */</span><br><span class="line"></span><br><span class="line">          mov       x3,x21                               // FDTphys address</span><br><span class="line"></span><br><span class="line">          and       x3,x3, #~((1 &lt;&lt; 21) - 1)    // 2MBaligned</span><br><span class="line"></span><br><span class="line">          mov       x6,#PAGE_OFFSET</span><br><span class="line"></span><br><span class="line">          sub       x5,x3, x24                           //subtract PHYS_OFFSET</span><br><span class="line"></span><br><span class="line">          tst       x5,#~((1 &lt;&lt; 29) - 1)                 //within 512MB?</span><br><span class="line"></span><br><span class="line">          csel      x21,xzr, x21, ne            // zero the FDTpointer</span><br><span class="line"></span><br><span class="line">          b.ne      1f</span><br><span class="line"></span><br><span class="line">          add       x5,x5, x6                            // __va(FDTblob)</span><br><span class="line"></span><br><span class="line">          add       x6,x5, #1 &lt;&lt; 21             // 2MB forthe FDT blob</span><br><span class="line"></span><br><span class="line">          sub       x6,x6, #1                            //inclusive range</span><br><span class="line"></span><br><span class="line">          create_block_map x0, x7, x3, x5, x6</span><br><span class="line"></span><br><span class="line">1:</span><br><span class="line"></span><br><span class="line">          ret</span><br><span class="line"></span><br><span class="line">ENDPROC(__create_page_tables)</span><br></pre></td></tr></table></figure>
 
+
+
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+        <div class="article-pop-out tagcloud">
+          <i class="icon-tuding"></i>
+          <a class="article-tag-list-link color3">置顶</a>
+        </div>
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/10/21/page/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+  
+</article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2024/10/10/phy/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">网卡phy学习</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#arm%E9%A1%B5%E8%A1%A8"><span class="toc-number">1.</span> <span class="toc-text">arm页表</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#aarch64%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80"><span class="toc-number">1.1.</span> <span class="toc-text">aarch64虚拟地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B5%E8%A1%A8%E5%BB%BA%E7%AB%8B%E8%BF%87%E7%A8%8B"><span class="toc-number">1.2.</span> <span class="toc-text">页表建立过程</span></a></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
+  
+
+  
+
+  
+
+  
 
           </div>
         </div>
@@ -226,8 +467,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
