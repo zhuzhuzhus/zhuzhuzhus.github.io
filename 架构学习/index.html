@@ -6,19 +6,16 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>网卡phy学习 | zhuzhuzhu&#39;s blog</title>
+  <title>架构学习 | zhuzhuzhu&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="网卡phy学习MII接口网络的数据传输时靠MII，常用的MII mode如下：  MII接口：表中信号方向针对PHY芯片来说，I表示输入，O表示输出：     信号 方向 位宽 含义    RX_CLK O 1 发送时钟，PHY芯片产生，100Mbps时为25MHz，10Mbps时为 2.5MHz。   RX_DV O 1 高电平表示发送的数据有效。   RX_ER O 1 高电平表示发送数据的错">
-<meta property="og:type" content="article">
-<meta property="og:title" content="网卡phy学习">
-<meta property="og:url" content="http://example.com/2024/10/10/phy/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="架构学习">
+<meta property="og:url" content="http://example.com/%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0/index.html">
 <meta property="og:site_name" content="zhuzhuzhu&#39;s blog">
-<meta property="og:description" content="网卡phy学习MII接口网络的数据传输时靠MII，常用的MII mode如下：  MII接口：表中信号方向针对PHY芯片来说，I表示输入，O表示输出：     信号 方向 位宽 含义    RX_CLK O 1 发送时钟，PHY芯片产生，100Mbps时为25MHz，10Mbps时为 2.5MHz。   RX_DV O 1 高电平表示发送的数据有效。   RX_ER O 1 高电平表示发送数据的错">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2024-10-10T07:35:22.000Z">
-<meta property="article:modified_time" content="2024-10-27T07:37:48.326Z">
+<meta property="article:published_time" content="2024-10-27T07:41:30.000Z">
+<meta property="article:modified_time" content="2024-10-27T07:41:30.257Z">
 <meta property="article:author" content="ZHUJIALE">
-<meta property="article:tag" content="随笔">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="zhuzhuzhu&#39;s blog" type="application/atom+xml">
@@ -156,27 +153,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-    <i class="fa fa-thumb-tack"></i>
-    <font color=7D26CD>置顶</font>
-    <span class="post-meta-divider">|</span>
-    
-    
-    
-<article id="post-phy" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="page-" class="article article-type-page " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      网卡phy学习
+      架构学习
     </h1>
   
 
         
-        <a href="/2024/10/10/phy/" class="archive-article-date">
-  	<time datetime="2024-10-10T07:35:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-10-10</time>
+        <a href="/%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0/index.html" class="archive-article-date">
+  	<time datetime="2024-10-27T07:41:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-10-27</time>
 </a>
         
 
@@ -186,7 +176,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-keyboard-o"></i>
       <span class="post-meta-item-text">  字数统计: </span>
-      <span class="post-count">2.3k字</span>
+      <span class="post-count">0字</span>
     </span>
   </span>
 
@@ -195,7 +185,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-hourglass-half"></i>
       <span class="post-meta-item-text">  阅读时长: </span>
-      <span class="post-count">8分</span>
+      <span class="post-count">1分</span>
     </span>
   </span>
 </div>
@@ -214,480 +204,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="网卡phy学习"><a href="#网卡phy学习" class="headerlink" title="网卡phy学习"></a>网卡phy学习</h1><h2 id="MII接口"><a href="#MII接口" class="headerlink" title="MII接口"></a>MII接口</h2><p>网络的数据传输时靠MII，常用的MII mode如下：</p>
-<ol>
-<li><p>MII接口：<br>表中信号方向针对PHY芯片来说，I表示输入，O表示输出：</p>
-<ul>
-<li><table>
-<thead>
-<tr>
-<th>信号</th>
-<th>方向</th>
-<th>位宽</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>RX_CLK</td>
-<td>O</td>
-<td>1</td>
-<td>发送时钟，PHY芯片产生，100Mbps时为25MHz，10Mbps时为 2.5MHz。</td>
-</tr>
-<tr>
-<td>RX_DV</td>
-<td>O</td>
-<td>1</td>
-<td>高电平表示发送的数据有效。</td>
-</tr>
-<tr>
-<td>RX_ER</td>
-<td>O</td>
-<td>1</td>
-<td>高电平表示发送数据的错误，接收端不接受该数据。</td>
-</tr>
-<tr>
-<td>RX_D</td>
-<td>O</td>
-<td>4</td>
-<td>发送数据总线。</td>
-</tr>
-<tr>
-<td>TX_CLK</td>
-<td>O</td>
-<td>1</td>
-<td>接收时钟，PHY芯片产生，频率与RX_CLK一致。</td>
-</tr>
-<tr>
-<td>TX_EN</td>
-<td>I</td>
-<td>1</td>
-<td>高电平表示接收的数据有效。</td>
-</tr>
-<tr>
-<td>TX_ER</td>
-<td>I</td>
-<td>1</td>
-<td>高电平表示接收的数据包有误，丢弃该数据包。</td>
-</tr>
-<tr>
-<td>TX_D</td>
-<td>I</td>
-<td>4</td>
-<td>接收数据总线。</td>
-</tr>
-<tr>
-<td>CRS</td>
-<td>O</td>
-<td>1</td>
-<td>载波侦测信号，不需要同步于参考时钟，有数据传输，CRS就有效，仅PHY在半双工模式下有效。</td>
-</tr>
-<tr>
-<td>COL</td>
-<td>O</td>
-<td>1</td>
-<td><a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=%E5%86%B2%E7%AA%81%E6%A3%80%E6%B5%8B&zhida_source=entity">冲突检测</a>信号，不需要同步于参考时钟，仅PHY在半双工模式下有效。</td>
-</tr>
-</tbody></table>
-<strong>MII接口只能实现100Mbps、10Mbps速率的数据传输，不能实现1000Mbps。</strong> 发送、接收的数据线均为4位，则每个<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=%E6%97%B6%E9%92%9F%E5%91%A8%E6%9C%9F&zhida_source=entity">时钟周期</a>发送或接收4位数据。<strong>如果要实现100Mbps<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=%E9%80%9A%E4%BF%A1%E9%80%9F%E7%8E%87&zhida_source=entity">通信速率</a>，那么时钟频率就应该是25MHz。如果要实现10Mbps通信速率，那么<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=2&q=%E6%97%B6%E9%92%9F%E9%A2%91%E7%8E%87&zhida_source=entity">时钟频率</a>就应该是2.5MHz。</strong></li>
-</ul>
-<span id="more"></span>
-</li>
-<li><p>RMII接口：</p>
-<ul>
-<li><p>RMII（Reduced Media Independent Interface）接口其实就是MII接口的简化版本，<strong>将TX_CLK和RX_CLK合并为双向时钟线REF_CLK，由外部的<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=%E6%99%B6%E6%8C%AF&zhida_source=entity">晶振</a>同时给PHY芯片和MAC主控芯片提供<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=2&q=%E6%97%B6%E9%92%9F%E4%BF%A1%E5%8F%B7&zhida_source=entity">时钟信号</a>。</strong>将4位的数据线简化为2位。</p>
-</li>
-<li><table>
-<thead>
-<tr>
-<th>信号</th>
-<th>方向</th>
-<th>位宽</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>REF_CLK</td>
-<td>I</td>
-<td>1</td>
-<td>参考时钟，外部晶振产生，100Mbps时为50MHz，10Mbps时为5MHz。</td>
-</tr>
-<tr>
-<td>CRS_DV</td>
-<td>O</td>
-<td>1</td>
-<td>高电平表示发送的数据有效。</td>
-</tr>
-<tr>
-<td>RX_ER</td>
-<td>O</td>
-<td>1</td>
-<td>高电平表示发送数据的错误，接收端不接受该数据。</td>
-</tr>
-<tr>
-<td>RX_D</td>
-<td>O</td>
-<td>2</td>
-<td>发送数据总线。</td>
-</tr>
-<tr>
-<td>TX_EN</td>
-<td>I</td>
-<td>1</td>
-<td>高电平表示接收的数据有效。</td>
-</tr>
-<tr>
-<td>TX_D</td>
-<td>I</td>
-<td>2</td>
-<td>接收数据总线。</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>RMII将发送时钟、接收时钟合并为参考时钟信号，把4位的数据线简化为2位数据线，可以简化PCB布局布线。RMII同样只能实现100Mbps和10Mbps，当以<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=1&q=100Mbps%E9%80%9F%E7%8E%87&zhida_source=entity">100Mbps速率</a>传输数据时，每个时钟传输2位数据，此时参考时钟应该设置为50MHz。当以<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=237707732&content_type=Article&match_order=2&q=10Mbps%E9%80%9F%E7%8E%87&zhida_source=entity">10Mbps速率</a>传输数据时，参考时钟应设置为5MHz。</p>
-</li>
-</ul>
-</li>
-<li><p>GMII接口：</p>
-<ul>
-<li>GMII（Gigabit Media Independent Interface）接口是比较常见的千兆网接口</li>
-<li>接口信号的含义与MII接口一致，此处就不在赘述，注意MII的接收时钟和发送时钟均由PHY芯片输出，而GMII的TX_CLK是由MAC输出给PHY芯片的。此外就是数据位宽由MII的4位变为了8位。</li>
-</ul>
-</li>
-<li><p>RGMII接口：</p>
-<ul>
-<li>RGMII（Reduced Gigabit Media Independent Interface）接口就是把GMII接口的数据线做简化处理，也能够实现千兆网</li>
-<li>相比GMII接口，RGMII接口的数据线由8位缩减到4位，RX_DV与RX_ER信号合成为RX_CTL信号。该接口实现1000Mbps传输速率时，时钟依旧是125MHz</li>
-</ul>
-</li>
-</ol>
-<h2 id="mdio"><a href="#mdio" class="headerlink" title="mdio"></a>mdio</h2><p><a target="_blank" rel="noopener" href="https://www.ieee802.org/3/efm/public/nov02/oam/pannell_oam_1_1102.pdf">参考文献</a></p>
-<p>&#x3D;&#x3D;mac访问phy的一些配置通过mdio bus访问，MDIO的作用仅仅只是用来查看一些状态和功能，还有简单的控制。而网络的数据传输时靠MII不是靠MDIO&#x3D;&#x3D;</p>
-<p>mdio的读写有两种协议 C22和 C45：</p>
-<h3 id="C22"><a href="#C22" class="headerlink" title="C22"></a>C22</h3><table>
-<thead>
-<tr>
-<th>Frame</th>
-<th>Preamble (32bits)</th>
-<th>Start (2bits）</th>
-<th>OP Code (2bits)</th>
-<th>PHYAD (5bits)</th>
-<th>REGAD (5bits)</th>
-<th>Turn Around (2bits)</th>
-<th>Data (16bits)</th>
-<th>Idle</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Read</td>
-<td>1…….1</td>
-<td>01</td>
-<td>10</td>
-<td>A4…A0</td>
-<td>R4…R0</td>
-<td>Z0</td>
-<td>D15…….D0</td>
-<td>Z*</td>
-</tr>
-<tr>
-<td>Write</td>
-<td>1…….1</td>
-<td>01</td>
-<td>01</td>
-<td>A4…A0</td>
-<td>R4…R0</td>
-<td>10</td>
-<td>D15…….D0</td>
-<td>Z*</td>
-</tr>
-</tbody></table>
-<p>上图中*表示高阻态，这时MDIO的状态由一个外部的1.5KΩ电阻决定。</p>
-<ul>
-<li>Preamble+Start： 32bits的前导码以及2bit的开始位。</li>
-<li>OP Code： 2bits的操作码，10表示读，01表示写。</li>
-<li>PHYAD： 5bits的PHY地址，一般PHY地址从0开始顺序编号，例如6口switch中PHY地址为0-5。</li>
-<li>REGAD： 5bits的寄存器地址，即要读或写的寄存器。</li>
-<li>Turn Around： 2bits的TA，在读命令中，MDIO在此时由MAC驱动改为PHY驱动，并等待一个时钟周期准备发送数据。在写命令中，不需要MDIO方向发生变化，则只是等待两个时钟周期准备写入数据。</li>
-<li>Data： 16bits数据，在读命令中，PHY芯片将读到的对应PHYAD的REGAD寄存器的数据写到Data中，在写命令中，MAC将要写入对应PHYAD的REGAD寄存器的值写入Data中。</li>
-<li>Idle： 空闲状态，此时MDIO无源驱动，处高阻状态，但一般用上拉电阻使其处在高电平。</li>
-</ul>
-<h3 id="C45"><a href="#C45" class="headerlink" title="C45"></a>C45</h3><table>
-<thead>
-<tr>
-<th>Frame</th>
-<th>Preamble (32bits)</th>
-<th>Start (2bits）</th>
-<th>OP Code (2bits)</th>
-<th>PHYAD (5bits)</th>
-<th>DEVAD (5bits)</th>
-<th>Turn Around (2bits)</th>
-<th>Data (16bits)</th>
-<th>Idle</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Address</td>
-<td>1…….1</td>
-<td>00</td>
-<td>00</td>
-<td>PPPPP</td>
-<td>EEEEE</td>
-<td>10</td>
-<td>A15…….A0</td>
-<td>Z*</td>
-</tr>
-<tr>
-<td>Write</td>
-<td>1…….1</td>
-<td>00</td>
-<td>01</td>
-<td>PPPPP</td>
-<td>EEEEE</td>
-<td>10</td>
-<td>D15…….D0</td>
-<td>Z*</td>
-</tr>
-<tr>
-<td>Read</td>
-<td>1…….1</td>
-<td>00</td>
-<td>11</td>
-<td>PPPPP</td>
-<td>EEEEE</td>
-<td>z0</td>
-<td>D15…….D0</td>
-<td>Z*</td>
-</tr>
-<tr>
-<td>Read Inc.</td>
-<td>1…….1</td>
-<td>00</td>
-<td>10</td>
-<td>PPPPP</td>
-<td>EEEEE</td>
-<td>Z0</td>
-<td>D15…….D0</td>
-<td>Z*</td>
-</tr>
-</tbody></table>
-<ul>
-<li><p>Preamble+Start： 32bits的前导码以及2bit的开始位。帧开始标志， 为了区别CL22，Clause45 的开始标志为比特“00”。</p>
-</li>
-<li><p>OP Code： 操作码，Clause45有4种操作码，比特“00”表示设置当前寄存器地址，比特“01”表示写当前寄存器。比特“10”表示读当前寄存器，比特“11”表示读当前寄存器读完后把当前寄存器的值加1，用于顺序读。</p>
-</li>
-<li><p>PRTAD： Port Address，端口地址， 也称物理地址。</p>
-</li>
-<li><p>DEVAD：器件地址，CL45新增概念，各值与器件对应如下。</p>
-</li>
-<li><table>
-<thead>
-<tr>
-<th>Value</th>
-<th>Device</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>00000</td>
-<td>Reserved</td>
-</tr>
-<tr>
-<td>00001</td>
-<td>PMD&#x2F;PMA</td>
-</tr>
-<tr>
-<td>00010</td>
-<td>WIS</td>
-</tr>
-<tr>
-<td>00011</td>
-<td>PCS</td>
-</tr>
-<tr>
-<td>00100</td>
-<td>PHY XS</td>
-</tr>
-<tr>
-<td>00101</td>
-<td>DTE XS</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>REGAD： 用来选MMD的65536个寄存器中的某个寄存器的地址。</p>
-</li>
-<li><p>Turn Around： 2bits的TA，在读命令中，MDIO在此时由MAC驱动改为PHY驱动，并等待一个时钟周期准备发送数据。在写命令中，不需要MDIO方向发生变化，则只是等待两个时钟周期准备写入数据。</p>
-</li>
-<li><p>Data： 帧的寄存器的数据域，16bits，若为读操作，则为MMD送到STA的数据，若为写操作，则为STA送到MMD数据。</p>
-</li>
-<li><p>Idle： 空闲状态，此时MDIO无源驱动，处高阻状态，但一般用上拉电阻使其处在高电平。</p>
-</li>
-</ul>
-<p>第45号条款的主要变化是如何访问寄存器。在第22中，一个单独的帧指定要读或写的地址和数据，同时完成了这些工作。45号中改变这种范式，第一个地址帧发送到指定的MMD和寄存器，然后发送第二帧来执行读或写。</p>
-<p>添加这个依次循环访问的好处是45条款是向后兼容22条款的，允许设备的互操作。其次，通过创建一个框架的登记地址，地址空间从5位增加到16位，这使得STA访问65536个不同的寄存器。</p>
-<h2 id="管理接口寄存器"><a href="#管理接口寄存器" class="headerlink" title="管理接口寄存器"></a>管理接口寄存器</h2><p>以太网传输速率从10兆发展到今天的100G，MAC层和PHY层之间的硬件接口发生了很大的变化，但是其中用来管理PHY的物理引脚始终只有2个，即MDC和MDIO引脚。随着PHY层变得越来越复杂，PHY寄存器的组织方式和寻址方式发生了变化，PHY管理接口的名称也从“MII管理接口”变为“MDIO接口”。千兆以太网之前，PHY管理接口称为“MII管理接口”；从10G以太网开始使用“MDIO接口”。有的千兆和百兆PHY支持一些扩展功能，也需要使用MDIO接口进行管理。</p>
-<h3 id="MII-管理接口寄存器"><a href="#MII-管理接口寄存器" class="headerlink" title="MII 管理接口寄存器"></a>MII 管理接口寄存器</h3><p>MII管理接口的寄存器列表：</p>
-<table>
-<thead>
-<tr>
-<th>地址</th>
-<th>寄存器名称</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>0</td>
-<td>Control</td>
-<td>基本寄存器</td>
-</tr>
-<tr>
-<td>1</td>
-<td>Status</td>
-<td>基本寄存器</td>
-</tr>
-<tr>
-<td>2,3</td>
-<td>PHYIdentifier</td>
-<td>扩展寄存器，2用于存放phyid的高16位，3用于存放低16位</td>
-</tr>
-<tr>
-<td>4</td>
-<td>Auto-NegotiationAdvertisement</td>
-<td>扩展寄存器</td>
-</tr>
-<tr>
-<td>5</td>
-<td>Auto-NegotiationLinkPartnerBasePageAbility</td>
-<td>扩展寄存器，用于自协商功能</td>
-</tr>
-<tr>
-<td>6</td>
-<td>Auto-NegotiationExpansion</td>
-<td>扩展寄存器，用于自协商功能</td>
-</tr>
-<tr>
-<td>7</td>
-<td>Auto-NegotiationNextPageTransmit</td>
-<td>扩展寄存器，用于自协商功能</td>
-</tr>
-<tr>
-<td>8</td>
-<td>Auto-NegotiationLinkPartnerReceivedNextPage</td>
-<td>扩展寄存器，用于自协商功能</td>
-</tr>
-<tr>
-<td>9</td>
-<td>MASTER-SLAVEControlRegister</td>
-<td>扩展寄存器，用于自协商功能</td>
-</tr>
-<tr>
-<td>10</td>
-<td>MASTER-SLAVEStatusRegister</td>
-<td>扩展寄存器，用于自协商功能</td>
-</tr>
-<tr>
-<td>11</td>
-<td>PSEControlregister</td>
-<td>扩展寄存器</td>
-</tr>
-<tr>
-<td>12</td>
-<td>PSEStatusregister</td>
-<td>扩展寄存器</td>
-</tr>
-<tr>
-<td>13</td>
-<td>MMDAccessControlRegister</td>
-<td>扩展寄存器</td>
-</tr>
-<tr>
-<td>14</td>
-<td>MMDAccessAddressDataRegister</td>
-<td>扩展寄存器</td>
-</tr>
-<tr>
-<td>15</td>
-<td>ExtendedStatus</td>
-<td>千兆以太网中，register15用作扩展的状态寄存器；百兆以太网中，保留未使用。</td>
-</tr>
-<tr>
-<td>16~31</td>
-<td>VendorSpecific</td>
-<td>由PHY厂商自定义。这也意味着，这些寄存器需要参考芯片手册才能了解具体的含义。</td>
-</tr>
-</tbody></table>
-<h3 id="mdio管理寄存器列表"><a href="#mdio管理寄存器列表" class="headerlink" title="mdio管理寄存器列表"></a>mdio管理寄存器列表</h3><p>在MDIO接口的定义中，PHY层被划分为多个MMD设备（MDIOManagableDevice），每个MMD内部的寄存器的地址分配和MII管理接口中的地址类似，不过寄存器的数量多出很多。</p>
-<p>IEEE802.3标准规定的MMD设备地址：</p>
-<table>
-<thead>
-<tr>
-<th>设备地址</th>
-<th>设备名称</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>0</td>
-<td>保留</td>
-</tr>
-<tr>
-<td>1</td>
-<td>PMA&#x2F;PMD设备10G以太网中，PMA和PMD通常集成在一起。</td>
-</tr>
-<tr>
-<td>2</td>
-<td>WIS</td>
-</tr>
-<tr>
-<td>3</td>
-<td>PCS</td>
-</tr>
-<tr>
-<td>4</td>
-<td>PHYXS</td>
-</tr>
-<tr>
-<td>5</td>
-<td>DTEXS</td>
-</tr>
-<tr>
-<td>6</td>
-<td>TC</td>
-</tr>
-<tr>
-<td>7</td>
-<td>Auto-Negotiation</td>
-</tr>
-<tr>
-<td>8</td>
-<td>SeparatedPMA(1)40G&#x2F;100G以太网中，PMA和PMD是分开的。</td>
-</tr>
-<tr>
-<td>9</td>
-<td>SeparatedPMA(2)</td>
-</tr>
-<tr>
-<td>10</td>
-<td>SeparatedPMA(3)</td>
-</tr>
-<tr>
-<td>11</td>
-<td>SeparatedPMA(4)</td>
-</tr>
-<tr>
-<td>12~28</td>
-<td>保留</td>
-</tr>
-<tr>
-<td>29</td>
-<td>Clause22扩展</td>
-</tr>
-<tr>
-<td>30</td>
-<td>VendorSpecific1。这意味着，device30的寄存器需要参考厂商的芯片手册才能了解具体的含义。</td>
-</tr>
-<tr>
-<td>31</td>
-<td>VendorSpecific2</td>
-</tr>
-</tbody></table>
-
+        
       
 
       
@@ -725,23 +242,7 @@
     </div>
     <div class="article-info article-info-index">
       
-        <div class="article-pop-out tagcloud">
-          <i class="icon-tuding"></i>
-          <a class="article-tag-list-link color3">置顶</a>
-        </div>
       
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
       
 
       
@@ -792,7 +293,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/10/10/phy/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -805,25 +306,6 @@
 </article>
 
   
-<nav id="article-nav">
-  
-    <a href="/2024/10/21/page/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          arm页表学习
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2024/09/21/lwip/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">LWIP网络协议栈学习</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -845,7 +327,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BD%91%E5%8D%A1phy%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.</span> <span class="toc-text">网卡phy学习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#MII%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.1.</span> <span class="toc-text">MII接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mdio"><span class="toc-number">1.2.</span> <span class="toc-text">mdio</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#C22"><span class="toc-number">1.2.1.</span> <span class="toc-text">C22</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C45"><span class="toc-number">1.2.2.</span> <span class="toc-text">C45</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%A1%E7%90%86%E6%8E%A5%E5%8F%A3%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">1.3.</span> <span class="toc-text">管理接口寄存器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MII-%E7%AE%A1%E7%90%86%E6%8E%A5%E5%8F%A3%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">1.3.1.</span> <span class="toc-text">MII 管理接口寄存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mdio%E7%AE%A1%E7%90%86%E5%AF%84%E5%AD%98%E5%99%A8%E5%88%97%E8%A1%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">mdio管理寄存器列表</span></a></li></ol></li></ol></li></ol>
+                    目录，不存在的…
                     </div>
                 </span>
             </div>
@@ -859,7 +341,7 @@
   
   <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="phy" data-title="网卡phy学习" data-url="http://example.com/2024/10/10/phy/"></div>
+	<div class="ds-thread" data-thread-key="" data-title="架构学习" data-url="http://example.com/%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0/index.html"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
@@ -882,8 +364,8 @@
   <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
 <script>
   var cloudTieConfig = {
-    url: "http://example.com/2024/10/10/phy/", 
-    sourceId: "phy",
+    url: "http://example.com/%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0/index.html", 
+    sourceId: "",
     productKey: "true",
     target: "cloud-tie-wrapper"
   };
@@ -925,7 +407,7 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
+		isPost: false,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
