@@ -6,15 +6,24 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Category: c | zhuzhuzhu&#39;s blog</title>
+  <title>显示驱动学习记录 | zhuzhuzhu&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="zhuzhuzhu&#39;s blog">
-<meta property="og:url" content="http://example.com/categories/c/index.html">
+  <meta name="description" content="显示驱动像素点Rgb 三原色组成每个像素点，而分辨率就是像素点的个数，而argb则是增加了透明通道， 时间参数和时序 vsync：垂直同步信号，该信号的产生表示一帧新的信号产生 会产生一个开始信号，持续时间vspw vsync完成后需要持续一段时间，vbp vbp信号结束以后就是要显示的行数，显示完所有的行 显示完所有的行以后会有一段vfp延时   hsync：水平同步信号，该信号的产生表示一行新">
+<meta property="og:type" content="article">
+<meta property="og:title" content="显示驱动学习记录">
+<meta property="og:url" content="http://example.com/2024/01/05/%E6%98%BE%E7%A4%BA/index.html">
 <meta property="og:site_name" content="zhuzhuzhu&#39;s blog">
+<meta property="og:description" content="显示驱动像素点Rgb 三原色组成每个像素点，而分辨率就是像素点的个数，而argb则是增加了透明通道， 时间参数和时序 vsync：垂直同步信号，该信号的产生表示一帧新的信号产生 会产生一个开始信号，持续时间vspw vsync完成后需要持续一段时间，vbp vbp信号结束以后就是要显示的行数，显示完所有的行 显示完所有的行以后会有一段vfp延时   hsync：水平同步信号，该信号的产生表示一行新">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/assets/image-20250813214548995.png">
+<meta property="og:image" content="http://example.com/assets/webp-5180346.">
+<meta property="og:image" content="http://example.com/assets/image-20250814222843239.png">
+<meta property="article:published_time" content="2024-01-04T16:30:01.000Z">
+<meta property="article:modified_time" content="2025-08-30T14:26:56.341Z">
 <meta property="article:author" content="ZHUJIALE">
+<meta property="article:tag" content="驱动">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/assets/image-20250813214548995.png">
   
     <link rel="alternative" href="/atom.xml" title="zhuzhuzhu&#39;s blog" type="application/atom+xml">
   
@@ -164,71 +173,539 @@
           </div>
           <div id="js-content" class="content-ll">
             
-  
-  
+    <i class="fa fa-thumb-tack"></i>
+    <font color=7D26CD>置顶</font>
+    <span class="post-meta-divider">|</span>
     
     
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2024" class="archive-year">2024</a>
-        </div>
-        <div class="archives">
     
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2024/01/05/c%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%BB%A5%E5%8F%8A%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AC/" class="archive-article-date">
-  	<time datetime="2024-01-05T07:35:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-05</time>
-</a>
-        </div>
-    	 
+<article id="post-显示" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2024/01/05/c%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%BB%A5%E5%8F%8A%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AC/">c内存管理以及链接脚本</a>
+    <h1 class="article-title" itemprop="name">
+      显示驱动学习记录
     </h1>
   
 
-        <div class="article-info info-on-right">
+        
+        <a href="/2024/01/05/%E6%98%BE%E7%A4%BA/" class="archive-article-date">
+  	<time datetime="2024-01-04T16:30:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-05</time>
+</a>
+        
+
+        
+          <div style="margin-top:10px;">
+  <span class="post-time">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-keyboard-o"></i>
+      <span class="post-meta-item-text">  字数统计: </span>
+      <span class="post-count">4.1k字</span>
+    </span>
+  </span>
+
+  <span class="post-time">
+    &nbsp; | &nbsp;
+    <span class="post-meta-item-icon">
+      <i class="fa fa-hourglass-half"></i>
+      <span class="post-meta-item-text">  阅读时长: </span>
+      <span class="post-count">18分</span>
+    </span>
+  </span>
+</div>
+
           
+        
+        
+          <span class="archive-article-date">
+              阅读量 <span id="busuanzi_value_page_pv"></span>
+          </span>
+      
+        
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="显示驱动"><a href="#显示驱动" class="headerlink" title="显示驱动"></a>显示驱动</h1><h2 id="像素点"><a href="#像素点" class="headerlink" title="像素点"></a>像素点</h2><p>Rgb 三原色组成每个像素点，而分辨率就是像素点的个数，而argb则是增加了透明通道，</p>
+<h2 id="时间参数和时序"><a href="#时间参数和时序" class="headerlink" title="时间参数和时序"></a>时间参数和时序</h2><ol>
+<li>vsync：垂直同步信号，该信号的产生表示一帧新的信号产生<ol>
+<li>会产生一个开始信号，持续时间vspw</li>
+<li>vsync完成后需要持续一段时间，vbp</li>
+<li>vbp信号结束以后就是要显示的行数，显示完所有的行</li>
+<li>显示完所有的行以后会有一段vfp延时</li>
+</ol>
+</li>
+<li>hsync：水平同步信号，该信号的产生表示一行新的数据开始显示<ol>
+<li>会产生一个开始信号，维持时间被叫做hspw</li>
+<li>hsync信号完成后需要一段时间延时，这段时间叫hbp</li>
+<li>接着就是一行像素显示</li>
+<li>一行像素显示完成以后到hsync下一行信号的产生之间的延时叫做hfp</li>
+<li>真正显示一行所需的时间就是hspw+hbp+width+hfp</li>
+</ol>
+</li>
+</ol>
+<p>所以视频视频显示的逻辑是先发vspw开始信号-&gt;一段vbp延时（稳定需要？)-&gt; n*（hspw行开始信号-&gt;hb屏信号-&gt;行像素显示信号-&gt;hfp作为到下一行开始信号的延时）-&gt;vfp作为到下一帧的信号延时。然后这些信号发送给ser 再通过des解码给屏幕</p>
+<h3 id="lp-display"><a href="#lp-display" class="headerlink" title="lp display"></a>lp display</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;vidoeTiming&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">                <span class="attr">&quot;visWidth&quot;</span><span class="punctuation">:</span><span class="number">2560</span><span class="punctuation">,</span>  <span class="comment">//一行2560个像素点 </span></span><br><span class="line">                <span class="attr">&quot;hsyncFrontPorch&quot;</span><span class="punctuation">:</span><span class="number">88</span><span class="punctuation">,</span> <span class="comment">//水平同步信号的前肩时间 hfp</span></span><br><span class="line">                <span class="attr">&quot;hsyncWidth&quot;</span><span class="punctuation">:</span><span class="number">60</span><span class="punctuation">,</span> <span class="comment">//水平同步脉冲宽度，触发行扫描的起始信号（要注意上拉还是下拉？） hspw</span></span><br><span class="line">                <span class="attr">&quot;hsyncBackPorch&quot;</span><span class="punctuation">:</span><span class="number">60</span><span class="punctuation">,</span> <span class="comment">//水平同步信号后肩时间，完成行切换后的稳定时间 hbp</span></span><br><span class="line">                <span class="attr">&quot;visHeight&quot;</span><span class="punctuation">:</span><span class="number">1440</span><span class="punctuation">,</span> <span class="comment">//一列1440个像素点</span></span><br><span class="line">                <span class="attr">&quot;vsyncFrontPorch&quot;</span><span class="punctuation">:</span><span class="number">32</span><span class="punctuation">,</span> <span class="comment">//垂直同步前肩时间，帧缓冲切换前的空白时间 vfp</span></span><br><span class="line">                <span class="attr">&quot;vsyncWidth&quot;</span><span class="punctuation">:</span><span class="number">2</span><span class="punctuation">,</span> <span class="comment">//垂直同步脉冲宽度，触发帧扫描的起始信号 vspw</span></span><br><span class="line">                <span class="attr">&quot;vsyncBackPorch&quot;</span><span class="punctuation">:</span><span class="number">20</span><span class="punctuation">,</span> <span class="comment">//垂直同步信号后肩时间，完成帧切换后的稳定时间 vbp</span></span><br><span class="line">                <span class="attr">&quot;pixelFreqInHz&quot;</span><span class="punctuation">:</span><span class="number">248123520</span> <span class="comment">//像素时钟频率，决定每秒传输的像素总数</span></span><br><span class="line">            <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="TODO-显存学习"><a href="#TODO-显存学习" class="headerlink" title="TODO:显存学习"></a>TODO:显存学习</h3><h1 id="serdes"><a href="#serdes" class="headerlink" title="serdes"></a>serdes</h1><p>串行器连接在外设中，将并行信号转换为串行信号，解串器将串行信号再解析为并行信号</p>
+<h3 id="个人理解"><a href="#个人理解" class="headerlink" title="个人理解"></a>个人理解</h3><p>串行解串器的控制是同一个芯片控制还是串行器一个芯片，解串一个芯片，两个分别作为iic的子设备进行控制，主要有几个场景，比如：</p>
+<ol>
+<li>cpu需要将画面显示到屏幕，就把数据发到串行器上，通过解串器输出到屏幕上（我们json中的应该是cpu-serdes-scr链路？？</li>
+<li>摄像头等画面直接通过serdes把画面输出到屏幕上，所以json里面有很多des？？</li>
+</ol>
+<h3 id="并行数据到串行数据的转换"><a href="#并行数据到串行数据的转换" class="headerlink" title="并行数据到串行数据的转换"></a>并行数据到串行数据的转换</h3><ol>
+<li><p>时钟数据恢复：将并行的像素数据流与时钟信号合并，并用一种叫做 <strong>时钟-数据恢复（CDR）</strong> 的机制生成同步的时钟信号，用于后续的串行数据传输。</p>
+</li>
+<li><p>编码：将并行的数据进行编码转换。通常，为了提高信号的传输效率和抗干扰能力，会使用像 <strong>8b&#x2F;10b 编码</strong> 或 <strong>10b&#x2F;12b 编码</strong> 等方法。</p>
+<ul>
+<li><strong>8b&#x2F;10b 编码</strong>：这是一种常见的编码方案，能够将每 8 位数据转换为 10 位符号，增加冗余位以减少误码率。</li>
+</ul>
+<ul>
+<li><strong>10b&#x2F;12b 编码</strong>：这是一种用于高带宽数据传输的编码技术，将 10 位数据映射为 12 位编码，进一步提高信号的可靠性。</li>
+</ul>
+</li>
+<li><p>串行化：将并行的数据进行串行化，TI 935 会把多个并行数据通道（例如 8 位、10 位或 12 位并行数据）按特定的时序顺序串联成一个单一的 <strong>串行数据流</strong>。这个串行数据流会通过 <strong>高速差分信号对（如 FPD-Link 3 协议中的差分对）</strong> 进行传输。具体地，TI 935 使用 <strong>FPD-Link 3 协议</strong> 中的高速串行链路来将这些并行数据转化为串行数据。FPD-Link 3 协议支持非常高的传输速率，能够有效传输 4.5 Gbps 或更高的速率。</p>
+</li>
+<li><p>数据打包与封装：将编码后的串行数据通过一对或多对 <strong>差分信号对</strong> 传输到接收端（通常是解串器 TI 960）。FPD-Link 3 使用的差分信号对（如 <strong>LVDS 信号对</strong>）能够提供高速、低功耗的长距离传输，支持最大 15 米的传输距离（具体距离取决于数据速率和电缆质量）。</p>
+</li>
+<li><p>时钟恢复与同步：不仅要将数据串行化，还需要通过 <strong>时钟数据恢复（CDR）</strong> 技术来保持数据和时钟的同步。这是因为，在串行化数据时，时钟信号被嵌入到数据流中，并通过差分信号传输。在接收端（解串器 TI 960）会从串行信号中恢复出时钟信号，并重新同步数据流。</p>
+</li>
+</ol>
+<h1 id="传输协议"><a href="#传输协议" class="headerlink" title="传输协议"></a>传输协议</h1><h2 id="DSI"><a href="#DSI" class="headerlink" title="DSI"></a>DSI</h2><h3 id="mipi-dsi-controller"><a href="#mipi-dsi-controller" class="headerlink" title="mipi dsi controller"></a>mipi dsi controller</h3><p><img src="/./assets/image-20250813214548995.png" alt="image-20250813214548995"></p>
+<p>The APB-to-Generic block bridges the APB operations into FIFOs holding the Generic commands. The block interfaces with the following FIFO: Command FIFO, Write payload FIFO, Read payload FIFO.</p>
+<p>上面的架构无非就是体现两件事：</p>
+<ol>
+<li>dsi命令通过apb interface发出</li>
+<li>视频数据通过dpi interface发出</li>
+</ol>
+<p>Generic interface packets are always transported using one of the DSI transmission modes; Video mode or Command mode. If neither of these mode are selected, the packets are not transmitted through the link and the released FIFOs eventually get overflowed.</p>
+<p>通用接口数据包总是使用DSI传输模式之一进行传输；视频模式或命令模式。如果不选择这两种模式，则数据包不会通过链路传输，并且释放的fifo最终会溢出。</p>
+<h4 id="dpi-interface"><a href="#dpi-interface" class="headerlink" title="dpi interface"></a>dpi interface</h4><p>The DPI interface follows the MIPI DPI specification with pixel data bus width up to 24 bits. It is used to transmit the information in Video mode in which the transfers from the host processor to the peripheral take the form of a real-time pixel stream. This interface allows sending ShutDown (SD) and ColorMode (CM) commands, which are triggered directly by writing to the register of VO_CON[9:8] in the GRF Module. To transfer additional commands(for example, to initialize the display), use another interface such as APB Slave Generic Interface to complement the DPI interface.</p>
+<p>The DPI interface can be configured to increase flexibility and promote correct usage of this interface for several systems. These configuration options are as follows:Polarity control: All the control signals are programmable to change the polarity depending on system requirements. </p>
+<p>&#x3D;&#x3D;After the MIPI DSI HOST Controller reset, DPI waits for the first VSYNC active transition to start signal sampling, including pixel data, and preventing image transmission in the middle of a frame.&#x3D;&#x3D;</p>
+<p>If interface pixel color coding is 18 bits and the 18-bit loosely packed stream is disabled, the number of lines programmed in the pixels per lines configuration is a multiple of four. This means that in this mode, the two LSBs in the configuration are always inferred as zero. The specification states that in this mode, the pixel line size should be a multiple of four.</p>
+<p>DPl接口遵循MIPI DPI规范，像素数据总线宽度高达24位。它用于以视频方式传输信息，其中从主机处理器到外设的传输采用实时像素流的形式。该接口允许发送ShutDown （SD）和ColorMode （CM）命令，这些命令通过写入GRF模块中的VO_CON[9:8]寄存器直接触发。要传输额外的命令（例如，初始化显示），可以使用其他接口（如APB Slave Generic interface）来补充DPI接口。可以配置DPI接口以增加灵活性，并促进多个系统正确使用该接口。极性控制：所有的控制信号都是可编程的，可以根据系统设备改变极性。在MIPI DSI主机控制器复位后，DPI等待第一个VSYNC主动转换到一个帧。</p>
+<p>&#x3D;&#x3D;如果接口像素颜色编码为18位，并且禁用了18位松散打包流，则在每行像素配置中编程的行数是4的倍数。这意味着在这种模式下，配置中的两个lsb总是被推断为零。规格规定，在此模式下，像素线尺寸应为4的倍数。&#x3D;&#x3D;</p>
+<h5 id="DPI-功能说明"><a href="#DPI-功能说明" class="headerlink" title="DPI 功能说明"></a><strong>DPI 功能说明</strong></h5><blockquote>
+<p><em>“The DPI interface follows the MIPI DPI specification with pixel data bus width up to 24 bits.<br> It is used to transmit the information in Video mode in which the transfers from the host processor to the peripheral take the form of a real-time pixel stream. This interface allows sending ShutDown (SD) and ColorMode (CM) commands, which are triggered directly by writing to the register of VO_CON[9:8] in the GRF Module. To transfer additional commands(for example, to initialize the display), use another interface such as APB Slave Generic Interface to complement the DPI interface.”</em></p>
+</blockquote>
+<p><strong>总结</strong>：</p>
+<ul>
+<li>DPI 遵循 MIPI DPI 规范，总线宽度可达 24bit。</li>
+<li>主要用于 <strong>Video Mode</strong> 下的实时像素流传输。</li>
+<li>支持少量命令（SD&#x2F;CM），通过 GRF VO_CON[9:8] 触发。</li>
+<li>初始化或更多命令需通过 <strong>APB Slave Generic Interface</strong>。</li>
+</ul>
+<hr>
+<h5 id="原文引用-2：DPI-信号与像素编码"><a href="#原文引用-2：DPI-信号与像素编码" class="headerlink" title="原文引用 2：DPI 信号与像素编码"></a><strong>原文引用 2：DPI 信号与像素编码</strong></h5><blockquote>
+<p><em>“The DPI interface captures the data and control signals and conveys them to the FIFO interfaces that transmit them to the DSI link. Two different streams of data are presented at the interface; video control signals and pixel data. Depending on the interface color coding, the pixel data is disposed differently throughout the dpipixdata bus. The following table shows the Interface pixel color coding.”</em></p>
+</blockquote>
+<p><strong>总结</strong>：</p>
+<ul>
+<li>DPI 捕获两类信号：<strong>视频控制信号</strong> 和 <strong>像素数据</strong>。</li>
+<li>像素数据在总线上的排列取决于 <strong>Interface Pixel Color Coding</strong> 配置。</li>
+<li>文档提供了 16&#x2F;18&#x2F;24bit 不同配置下的 R&#x2F;G&#x2F;B 位映射表。</li>
+</ul>
+<hr>
+<h5 id="原文引用-3：18-bit-loosely-packed-限制"><a href="#原文引用-3：18-bit-loosely-packed-限制" class="headerlink" title="原文引用 3：18-bit loosely packed 限制"></a><strong>原文引用 3：18-bit loosely packed 限制</strong></h5><blockquote>
+<p><em>“If interface pixel color coding is 18 bits and the 18-bit loosely packed stream is disabled, the number of lines programmed in the pixels per lines configuration is a multiple of four. This means that in this mode, the two LSBs in the configuration are always inferred as zero.”</em></p>
+</blockquote>
+<p><strong>总结</strong>：</p>
+<ul>
+<li>当 <strong>18-bit loosely packed 禁用</strong>时：<ol>
+<li>“pixels per line” 必须是 <strong>4 的倍数</strong>。</li>
+<li>配置中的 <strong>两位最低有效位被自动置为 0</strong>。</li>
+</ol>
+</li>
+<li>目的是保证像素数据对齐，避免总线或 PHY 传输错误。</li>
+</ul>
+<hr>
+<h5 id="原文引用-4：DPI-配置选项"><a href="#原文引用-4：DPI-配置选项" class="headerlink" title="原文引用 4：DPI 配置选项"></a><strong>原文引用 4：DPI 配置选项</strong></h5><blockquote>
+<p><em>“These configuration options are as follows: Polarity control: All the control signals are programmable to change the polarity depending on system requirements. After the MIPI DSI HOST Controller reset, DPI waits for the first VSYNC active transition to start signal sampling, including pixel data, and preventing image transmission in the middle of a frame.”</em></p>
+</blockquote>
+<p><strong>总结</strong>：</p>
+<ul>
+<li><strong>Polarity control</strong>：控制信号极性可编程。</li>
+<li><strong>VSYNC 对齐</strong>：DPI 等待第一个 VSYNC 激活信号再开始采样像素，避免中途传输导致画面错位。</li>
+</ul>
+<hr>
+<p>💡 <strong>整体理解</strong>：</p>
+<ol>
+<li>DPI 接口主要处理 <strong>Video Mode 的像素传输</strong> + 少量 SD&#x2F;CM 命令。</li>
+<li>初始化或其他控制命令需要 <strong>通过 APB Generic Interface</strong>。</li>
+<li>像素数据编码和行数必须遵循规范，保证数据总线和 PHY 传输正确。</li>
+<li>控制信号极性可调，VSYNC 保证帧同步。</li>
+</ol>
+<h4 id="APB-Slave-Generic-Interface"><a href="#APB-Slave-Generic-Interface" class="headerlink" title="APB Slave Generic Interface"></a><strong>APB Slave Generic Interface</strong></h4><p>The MIPI DSI HOST Controller supports the transmission or write and read command mode packets as described in the DSI specification. These packets are built using the APB register access. The GEN_PLD_DATA register has two distinct functions based on the operation. Writing to this register sends the data as payload when sending a Command mode packet. Reading this register returns the payload of a read back operation. The GEN_HDR register contains the Command mode packet header type and header data. Writing to this register triggers the transmission of the packet implying that for a long Command mode packet, the packet’s payload needs to be written in advance in the GEN_PLD_DATA register.</p>
+<h5 id="APB-Slave-Interface-与-Command-Mode"><a href="#APB-Slave-Interface-与-Command-Mode" class="headerlink" title="APB Slave Interface 与 Command Mode"></a><strong>APB Slave Interface 与 Command Mode</strong></h5><blockquote>
+<p>The APB Slave interface allows the transmission of generic information in Command mode, and follows the proprietary register interface. Commands sent through this interface are not constrained to comply with the DCS specification, and can include generic commands described in the DSI specification as manufacturer-specific.</p>
+</blockquote>
+<ul>
+<li><strong>APB Slave 接口</strong>：用于通过寄存器访问发送 <strong>Generic packet</strong>（通用命令）或 DCS 命令。</li>
+<li><strong>Command Mode</strong>：通过这个接口发送的数据是按需发送，不是持续的视频流。</li>
+<li><strong>Generic Packet</strong>：不必符合 DCS 标准，可以是厂商自定义的命令。</li>
+<li><strong>用途</strong>：用来发送控制屏幕的命令，比如初始化、参数设置或者写内存。</li>
+</ul>
+<hr>
+<h5 id="2️⃣-GEN-HDR-与-GEN-PLD-DATA"><a href="#2️⃣-GEN-HDR-与-GEN-PLD-DATA" class="headerlink" title="2️⃣ GEN_HDR 与 GEN_PLD_DATA"></a><strong>2️⃣ GEN_HDR 与 GEN_PLD_DATA</strong></h5><blockquote>
+<p>The GEN_PLD_DATA register has two distinct functions based on the operation. Writing to this register sends the data as payload when sending a Command mode packet. Reading this register returns the payload of a read back operation. The GEN_HDR register contains the Command mode packet header type and header data. Writing to this register triggers the transmission of the packet implying that for a long Command mode packet, the packet’s payload needs to be written in advance in the GEN_PLD_DATA register.</p>
+</blockquote>
+<ul>
+<li><strong>GEN_PLD_DATA（Payload Data）</strong><ul>
+<li>写入：作为 Command Mode 包的 payload</li>
+<li>读取：返回读回操作的 payload</li>
+</ul>
+</li>
+<li><strong>GEN_HDR（Header）</strong><ul>
+<li>写入 header 会触发命令包发送</li>
+<li>对于 <strong>长命令包（Long Packet）</strong>：payload 必须先写入 GEN_PLD_DATA，然后再写 header 发出包</li>
+</ul>
+</li>
+</ul>
+<p><strong>总结</strong>：</p>
+<ol>
+<li>写 payload → 写 header → 控制器开始发送</li>
+<li>FIFO 机制：payload FIFO + command FIFO</li>
+</ol>
+<hr>
+<h5 id="3️⃣-支持的包类型"><a href="#3️⃣-支持的包类型" class="headerlink" title="3️⃣ 支持的包类型"></a><strong>3️⃣ 支持的包类型</strong></h5><p>文档列出了很多可通过 Generic Interface 发送的包，包括：</p>
+<ul>
+<li><strong>Generic Write Short &#x2F; Long Packet</strong>（0-2 参数）</li>
+<li><strong>DCS Write Short &#x2F; Long Packet</strong></li>
+<li><strong>Read Packet 配置</strong></li>
+</ul>
+<p><strong>理解</strong>：</p>
+<ul>
+<li>Short Packet 用于简单命令（如设置寄存器）</li>
+<li>Long Packet 用于数据量大的命令（如写显存、Write Memory Start &#x2F; Continue）</li>
+</ul>
+<hr>
+<h5 id="4️⃣-Transmission-Mode-的关系"><a href="#4️⃣-Transmission-Mode-的关系" class="headerlink" title="4️⃣ Transmission Mode 的关系"></a><strong>4️⃣ Transmission Mode 的关系</strong></h5><blockquote>
+<p>Generic interface packets are always transported using one of the DSI transmission modes; Video mode or Command mode. If neither of these mode are selected, the packets are not transmitted through the link and the released FIFOs eventually get overflowed.</p>
+</blockquote>
+<ul>
+<li><strong>任何 Generic 包都必须通过 DSI 传输模式发送</strong></li>
+<li>Video Mode &#x2F; Command Mode 都可以发送 Generic 包</li>
+<li>如果都没选：FIFO 写入的数据不会被发送 → FIFO 最终溢出</li>
+</ul>
+<p><strong>结论</strong>：MODE_CFG 决定控制器整体传输方式，但命令包本身不需要每条切换模式。</p>
+<hr>
+<h5 id="5️⃣-APB-接口速率限制"><a href="#5️⃣-APB-接口速率限制" class="headerlink" title="5️⃣ APB 接口速率限制"></a><strong>5️⃣ APB 接口速率限制</strong></h5><blockquote>
+<p>The transfer of packets through the APB bus is based on the following conditions:<br> The APB protocol defines that the write and read procedure takes two clock cycles each to be executed. This means that the maximum input data rate through the APB interfaces is always half the speed of the APB clock.</p>
+</blockquote>
+<ul>
+<li><strong>APB 写&#x2F;读需要 2 个时钟周期</strong> → 最大输入速率 &#x3D; APB 时钟的一半</li>
+<li><strong>总线宽度</strong>：32 bit → payload 数据以 32bit 总线写入</li>
+</ul>
+<blockquote>
+<p>The DSI link bit rate when using solely APB is equal to (APB clock frequency) *16 Mbps.</p>
+</blockquote>
+<ul>
+<li>如果只通过 APB 发送命令包，DSI link 速率 &#x3D; APB 时钟 * 16 Mbps</li>
+<li><strong>带宽与 APB 时钟频率成正比</strong></li>
+</ul>
+<hr>
+<h5 id="6️⃣-高带宽命令模式"><a href="#6️⃣-高带宽命令模式" class="headerlink" title="6️⃣ 高带宽命令模式"></a><strong>6️⃣ 高带宽命令模式</strong></h5><blockquote>
+<p>To drive the APB interface to achieve high bandwidth Command mode traffic transported by the DSI link, the MIPI DSI HOST Controller should operate in the Command mode only and the APB interface should be the only data source that is currently in use.</p>
+</blockquote>
+<ul>
+<li><strong>如果要让 Command Mode 最大化带宽</strong>：<ol>
+<li>控制器保持 <strong>Command Mode</strong>（不输出视频）</li>
+<li>APB 接口是唯一数据源</li>
+</ol>
+</li>
+<li>这样 APB 拥有整个 DSI link 带宽，不与 Video Mode 或其他输入共享</li>
+</ul>
+<hr>
+<h5 id="7️⃣-写内存命令（Memory-Write-Commands）"><a href="#7️⃣-写内存命令（Memory-Write-Commands）" class="headerlink" title="7️⃣ 写内存命令（Memory Write Commands）"></a><strong>7️⃣ 写内存命令（Memory Write Commands）</strong></h5><blockquote>
+<p>The memory write commands require maximum throughput from the APB interface, because they contain the most amount of data conveyed by the DSI link. While writing the packet information, first write the payload of a given packet into the payload FIFO using the GEN_PLD_DATA register. When the payload data is for the command parameters, place the first byte to be transmitted in the least significant byte position of the APB data bus. After writing the payload, write the packet header into the command FIFO.</p>
+</blockquote>
+<ul>
+<li><strong>Memory Write Commands（长数据命令）</strong>：payload 很大，需要 APB 最大带宽</li>
+<li>写包顺序：<ol>
+<li>先写 payload 到 GEN_PLD_DATA FIFO</li>
+<li>再写 header 到 GEN_HDR → 触发发送</li>
+</ol>
+</li>
+<li><strong>字节顺序</strong>：第一个要发的字节写在 APB 总线 LSB</li>
+</ul>
+<blockquote>
+<p>The DCS long packets are encapsulated in a DSI packet. The DSI included in the diagrams.In the follow figures, the Write Memory Command can be replaced by the DCS command Write Memory Start and Write Memory Continue.</p>
+</blockquote>
+<ul>
+<li>DCS 长包会被封装成 DSI 包</li>
+<li>Write Memory Start &#x2F; Continue 是典型长包命令，用于写显存 &#x2F; Framebuffer</li>
+</ul>
+<hr>
+<h5 id="✅-总结核心要点"><a href="#✅-总结核心要点" class="headerlink" title="✅ 总结核心要点"></a>✅ <strong>总结核心要点</strong></h5><ol>
+<li><strong>APB Interface</strong><ul>
+<li>用于 Command Mode &#x2F; Generic Packet</li>
+<li>写 GEN_PLD_DATA → 写 GEN_HDR → 发送</li>
+<li>支持短包 &#x2F; 长包 &#x2F; DCS &#x2F; Generic</li>
+</ul>
+</li>
+<li><strong>模式选择（MODE_CFG）</strong><ul>
+<li>Video Mode：连续像素流 + 少量包</li>
+<li>Command Mode：仅发送命令包，带宽最大</li>
+</ul>
+</li>
+<li><strong>高带宽 Command Mode</strong><ul>
+<li>控制器保持 Command Mode</li>
+<li>APB 接口独占 → 最大化发送速率</li>
+</ul>
+</li>
+<li><strong>内存写 &#x2F; 长包命令</strong><ul>
+<li>payload FIFO 先写数据</li>
+<li>header 写入触发发送</li>
+<li>注意字节顺序（LSB → 总线）</li>
+</ul>
+</li>
+</ol>
+<h4 id="Transmission-of-Commands-in-Video-Mode"><a href="#Transmission-of-Commands-in-Video-Mode" class="headerlink" title="Transmission of Commands in Video Mode"></a><strong>Transmission of Commands in Video Mode</strong></h4><p><img src="/./assets/webp-5180346." alt="img"></p>
+<ol>
+<li><p>垂直方向（帧级）</p>
+<p>在一帧里，垂直方向的时序顺序是：</p>
+</li>
+</ol>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">VSS（Vertical Sync Start / VSA开始）  </span><br><span class="line">   ↓</span><br><span class="line">VSA（Vertical Sync Active / VSYNC脉冲持续时间）</span><br><span class="line">   ↓</span><br><span class="line">VBP（Vertical Back Porch / 垂直后沿）  </span><br><span class="line">   ↓</span><br><span class="line">Active Lines（有效显示行，即每行有 HSS/HSE + Pixel Data）  </span><br><span class="line">   ↓</span><br><span class="line">VFP（Vertical Front Porch / 垂直前沿）  </span><br><span class="line">   ↓</span><br><span class="line">下一帧 VSS</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>VSS</strong>：帧开始标记，协议短包</li>
+<li><strong>VSA</strong>：VSYNC脉冲持续的行数。 – vspw</li>
+<li><strong>VBP</strong>：VSYNC结束到有效显示区域开始的空闲行数</li>
+<li><strong>Active Lines</strong>：真正显示内容的行</li>
+<li><strong>VFP</strong>：有效显示行结束到下一帧 VSS 的空闲行数</li>
+</ul>
+<ol start="2">
+<li><p>水平方向（行级）</p>
+<p>每一行的水平时序是：</p>
+</li>
+</ol>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">  HSS（Horizontal Sync Start / HSA开始）  </span><br><span class="line">   ↓</span><br><span class="line">HSA（水平同步脉冲宽度，对应HSPW）  </span><br><span class="line">   ↓</span><br><span class="line">HBP（水平后沿 / 后沿空闲周期）  </span><br><span class="line">   ↓</span><br><span class="line">Active Pixels（有效像素数据）  </span><br><span class="line">   ↓</span><br><span class="line">HFP（水平前沿 / 前沿空闲周期）  </span><br><span class="line">下一行 HSS</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>HSS</strong>：行开始短包</li>
+<li><strong>HSA</strong>：水平同步脉冲对应的时间段  – hspw</li>
+<li><strong>HBP</strong>：脉冲结束到有效像素开始的延时</li>
+<li><strong>Active Pixels</strong>：真正显示的像素</li>
+<li><strong>HFP</strong>：有效像素结束到下一行 HSS 的间隔</li>
+</ul>
+<p><img src="/./assets/image-20250814222843239.png" alt="image-20250814222843239"></p>
+<h3 id="dsi屏端配置"><a href="#dsi屏端配置" class="headerlink" title="dsi屏端配置"></a>dsi屏端配置</h3>
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="\img\zhifu.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="\img\weixin.jpg">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+        <div class="article-pop-out tagcloud">
+          <i class="icon-tuding"></i>
+          <a class="article-tag-list-link color3">置顶</a>
+        </div>
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">驱动</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/c//" class="article-tag-list-link color2">c</a>
-        		</li>
-      		
-		</ul>
-	</div>
+      
 
+      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
   </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/01/05/%E6%98%BE%E7%A4%BA/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+  
 </article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2024/01/05/linux%E4%B8%8B%E5%A4%9A%E6%A0%B8%E9%80%9A%E8%AE%AF/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          linux下多核通讯
+        
+      </div>
+    </a>
   
   
-    </div></section>
+    <a href="/2023/09/11/ARM%E8%A3%B8%E6%9C%BA%E5%BC%80%E5%8F%91/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">ARM裸机开发</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%98%BE%E7%A4%BA%E9%A9%B1%E5%8A%A8"><span class="toc-number">1.</span> <span class="toc-text">显示驱动</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%83%8F%E7%B4%A0%E7%82%B9"><span class="toc-number">1.1.</span> <span class="toc-text">像素点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E5%8F%82%E6%95%B0%E5%92%8C%E6%97%B6%E5%BA%8F"><span class="toc-number">1.2.</span> <span class="toc-text">时间参数和时序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#lp-display"><span class="toc-number">1.2.1.</span> <span class="toc-text">lp display</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TODO-%E6%98%BE%E5%AD%98%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.2.2.</span> <span class="toc-text">TODO:显存学习</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#serdes"><span class="toc-number">2.</span> <span class="toc-text">serdes</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%AA%E4%BA%BA%E7%90%86%E8%A7%A3"><span class="toc-number">2.0.1.</span> <span class="toc-text">个人理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E8%A1%8C%E6%95%B0%E6%8D%AE%E5%88%B0%E4%B8%B2%E8%A1%8C%E6%95%B0%E6%8D%AE%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="toc-number">2.0.2.</span> <span class="toc-text">并行数据到串行数据的转换</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE"><span class="toc-number">3.</span> <span class="toc-text">传输协议</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#DSI"><span class="toc-number">3.1.</span> <span class="toc-text">DSI</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#mipi-dsi-controller"><span class="toc-number">3.1.1.</span> <span class="toc-text">mipi dsi controller</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#dpi-interface"><span class="toc-number">3.1.1.1.</span> <span class="toc-text">dpi interface</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#DPI-%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E"><span class="toc-number">3.1.1.1.1.</span> <span class="toc-text">DPI 功能说明</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8E%9F%E6%96%87%E5%BC%95%E7%94%A8-2%EF%BC%9ADPI-%E4%BF%A1%E5%8F%B7%E4%B8%8E%E5%83%8F%E7%B4%A0%E7%BC%96%E7%A0%81"><span class="toc-number">3.1.1.1.2.</span> <span class="toc-text">原文引用 2：DPI 信号与像素编码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8E%9F%E6%96%87%E5%BC%95%E7%94%A8-3%EF%BC%9A18-bit-loosely-packed-%E9%99%90%E5%88%B6"><span class="toc-number">3.1.1.1.3.</span> <span class="toc-text">原文引用 3：18-bit loosely packed 限制</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8E%9F%E6%96%87%E5%BC%95%E7%94%A8-4%EF%BC%9ADPI-%E9%85%8D%E7%BD%AE%E9%80%89%E9%A1%B9"><span class="toc-number">3.1.1.1.4.</span> <span class="toc-text">原文引用 4：DPI 配置选项</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#APB-Slave-Generic-Interface"><span class="toc-number">3.1.1.2.</span> <span class="toc-text">APB Slave Generic Interface</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#APB-Slave-Interface-%E4%B8%8E-Command-Mode"><span class="toc-number">3.1.1.2.1.</span> <span class="toc-text">APB Slave Interface 与 Command Mode</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%EF%B8%8F%E2%83%A3-GEN-HDR-%E4%B8%8E-GEN-PLD-DATA"><span class="toc-number">3.1.1.2.2.</span> <span class="toc-text">2️⃣ GEN_HDR 与 GEN_PLD_DATA</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3%EF%B8%8F%E2%83%A3-%E6%94%AF%E6%8C%81%E7%9A%84%E5%8C%85%E7%B1%BB%E5%9E%8B"><span class="toc-number">3.1.1.2.3.</span> <span class="toc-text">3️⃣ 支持的包类型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4%EF%B8%8F%E2%83%A3-Transmission-Mode-%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">3.1.1.2.4.</span> <span class="toc-text">4️⃣ Transmission Mode 的关系</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5%EF%B8%8F%E2%83%A3-APB-%E6%8E%A5%E5%8F%A3%E9%80%9F%E7%8E%87%E9%99%90%E5%88%B6"><span class="toc-number">3.1.1.2.5.</span> <span class="toc-text">5️⃣ APB 接口速率限制</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6%EF%B8%8F%E2%83%A3-%E9%AB%98%E5%B8%A6%E5%AE%BD%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F"><span class="toc-number">3.1.1.2.6.</span> <span class="toc-text">6️⃣ 高带宽命令模式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7%EF%B8%8F%E2%83%A3-%E5%86%99%E5%86%85%E5%AD%98%E5%91%BD%E4%BB%A4%EF%BC%88Memory-Write-Commands%EF%BC%89"><span class="toc-number">3.1.1.2.7.</span> <span class="toc-text">7️⃣ 写内存命令（Memory Write Commands）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E2%9C%85-%E6%80%BB%E7%BB%93%E6%A0%B8%E5%BF%83%E8%A6%81%E7%82%B9"><span class="toc-number">3.1.1.2.8.</span> <span class="toc-text">✅ 总结核心要点</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Transmission-of-Commands-in-Video-Mode"><span class="toc-number">3.1.1.3.</span> <span class="toc-text">Transmission of Commands in Video Mode</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dsi%E5%B1%8F%E7%AB%AF%E9%85%8D%E7%BD%AE"><span class="toc-number">3.1.2.</span> <span class="toc-text">dsi屏端配置</span></a></li></ol></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="显示" data-title="显示驱动学习记录" data-url="http://example.com/2024/01/05/%E6%98%BE%E7%A4%BA/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+  
+  
+  
+  <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+<script>
+  var cloudTieConfig = {
+    url: "http://example.com/2024/01/05/%E6%98%BE%E7%A4%BA/", 
+    sourceId: "显示",
+    productKey: "true",
+    target: "cloud-tie-wrapper"
+  };
+</script>
+<script src="//img1.cache.netease.com/f2e/tie/yun/sdk/loader.js"></script>
   
 
-    
+  
 
+  
+
+  
 
           </div>
         </div>
@@ -258,10 +735,10 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
-		isCategory: true,
+		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
 		root: "/",

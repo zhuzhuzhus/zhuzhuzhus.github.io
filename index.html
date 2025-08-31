@@ -1136,6 +1136,619 @@
 
 
   
+    <article id="post-linux下多核通讯" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2024/01/05/linux%E4%B8%8B%E5%A4%9A%E6%A0%B8%E9%80%9A%E8%AE%AF/">linux下多核通讯</a>
+    </h1>
+  
+
+        
+        <a href="/2024/01/05/linux%E4%B8%8B%E5%A4%9A%E6%A0%B8%E9%80%9A%E8%AE%AF/" class="archive-article-date">
+  	<time datetime="2024-01-04T16:30:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-05</time>
+</a>
+        
+
+        
+          <div style="margin-top:10px;">
+  <span class="post-time">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-keyboard-o"></i>
+      <span class="post-meta-item-text">  字数统计: </span>
+      <span class="post-count">2.4k字</span>
+    </span>
+  </span>
+
+  <span class="post-time">
+    &nbsp; | &nbsp;
+    <span class="post-meta-item-icon">
+      <i class="fa fa-hourglass-half"></i>
+      <span class="post-meta-item-text">  阅读时长: </span>
+      <span class="post-count">10分</span>
+    </span>
+  </span>
+</div>
+
+          
+        
+        
+        
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>在现代多核处理器系统中，处理器核心的组织方式和任务分配策略直接影响系统的软件设计与通信方式。按照核心间的共享程度，多核系统通常可以分为 <strong>对称多处理（SMP, Symmetric Multi-Processing）</strong> 和 <strong>非对称多处理（AMP, Asymmetric Multi-Processing）</strong> 两类。</p>
+<h2 id="SMP-架构"><a href="#SMP-架构" class="headerlink" title="SMP 架构"></a>SMP 架构</h2><p>SMP 系统中的所有核心平等地共享同一份内存和 I&#x2F;O 资源。每个核心运行相同的操作系统实例，一个核通过_start初始化以后，唤醒其他的核做secondary_start_kernel，可以执行任意任务，并通过统一的调度器协调任务执行。</p>
+<h2 id="AMP-架构"><a href="#AMP-架构" class="headerlink" title="AMP 架构"></a>AMP 架构</h2><p>AMP 系统中，各个核心独立运行自己的操作系统实例或裸机程序，它们之间可能不共享内存，甚至运行不同类型的操作系统。典型应用包括 <strong>异构多核 SoC</strong>，如 Cortex-A 与 Cortex-M 核组合，或者 CPU 与 DSP 的混合系统。</p>
+<h2 id="SMP-与-AMP-的主要区别"><a href="#SMP-与-AMP-的主要区别" class="headerlink" title="SMP 与 AMP 的主要区别"></a>SMP 与 AMP 的主要区别</h2><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>SMP</th>
+<th>AMP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>核心对等性</td>
+<td>所有核心对等</td>
+<td>核心独立</td>
+</tr>
+<tr>
+<td>操作系统</td>
+<td>单实例，多核心共享</td>
+<td>每核心独立操作系统</td>
+</tr>
+<tr>
+<td>内存访问</td>
+<td>全部共享</td>
+<td>部分共享或不共享</td>
+</tr>
+<tr>
+<td>通信方式</td>
+<td>共享内存 + IPI 中断</td>
+<td>消息通道（RPMsg &#x2F; Mailbox）</td>
+</tr>
+<tr>
+<td>通信目标</td>
+<td>任务同步、调度、资源管理</td>
+<td>命令下发、事件通知、数据传输</td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="SMP多对称处理器间的通讯"><a href="#SMP多对称处理器间的通讯" class="headerlink" title="SMP多对称处理器间的通讯"></a>SMP多对称处理器间的通讯</h1><h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><ol>
+<li><p>调度应用</p>
+<ul>
+<li><p><strong>场景</strong>：当一个 CPU 修改了任务优先级 &#x2F; 唤醒了一个任务，但该任务更适合在另一个 CPU 上执行时。</p>
+</li>
+<li><p><strong>做法</strong>：当前 CPU 向目标 CPU 发送 IPI，目标 CPU 立即触发调度器，切换到这个任务</p>
+</li>
+</ul>
+</li>
+<li><p>跨核函数调用（smp_call_function）</p>
+<ul>
+<li><p><strong>场景</strong>：某个内核子系统需要在所有 CPU 上执行一段代码，比如linux下的fiq-debugger机制：当某个核卡死的时候依然可以通过smp_call_function让该卡死的核执行传入的回调函数，在调试的时候非常好用，比如我的代码导致了某一个核卡死了，可以通过smp_call_function的机制让卡死的核dump一些信息</p>
+</li>
+<li><p><strong>做法</strong>：一个 CPU 发 IPI 给其他 CPU，让它们都执行一个回调函数。</p>
+</li>
+</ul>
+</li>
+<li><p>核间通知 &#x2F; 快速消息传递</p>
+<ul>
+<li><strong>场景</strong>：一个 CPU 发现了全局事件（如中断、数据更新），需要立即通知其他 CPU。</li>
+<li><strong>做法</strong>：通过 IPI 发送“消息”或触发事件处理函数。</li>
+</ul>
+</li>
+</ol>
+<p>在linux下多个a核间的通讯相对来说比较简单，主要是通过向需要通讯的核发一个ipi中断来实现，ipi中断以及中断处理函数在初始化的时候进行注册</p>
+<p>IPI 的全称是 <strong>Inter-Processor Interrupt</strong>，中文一般叫 <strong>处理器间中断</strong> 或 <strong>核间中断</strong>。</p>
+<p> 它的作用就是在 <strong>多核处理器 (SMP&#x2F;AMP)</strong> 系统里，让一个 CPU 主动“打断”另一个 CPU，从而实现 <strong>跨核通信与协作</strong>。</p>
+<h2 id="初始化前瞻"><a href="#初始化前瞻" class="headerlink" title="初始化前瞻"></a>初始化前瞻</h2><p>以我曾经在某os上想实现一个fiq-debugger为例，在做收集所有 CPU 的寄存器和任务状态发现该os并没有适合的接口，就去查看了一下linux源码，先看一下linux下是如何实现的：</p>
+<p>先看一些定义： linux内核支持的ipi调用</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">ipi_msg_type</span> &#123;</span></span><br><span class="line">	IPI_WAKEUP,</span><br><span class="line">	IPI_TIMER,</span><br><span class="line">	IPI_RESCHEDULE,</span><br><span class="line">	IPI_CALL_FUNC,</span><br><span class="line">	IPI_CPU_STOP,</span><br><span class="line">	IPI_IRQ_WORK,</span><br><span class="line">	IPI_COMPLETION,</span><br><span class="line">	NR_IPI,</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * CPU_BACKTRACE is special and not included in NR_IPI</span></span><br><span class="line"><span class="comment">	 * or tracable with trace_ipi_*</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	IPI_CPU_BACKTRACE = NR_IPI,</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * SGI8-15 can be reserved by secure firmware, and thus may</span></span><br><span class="line"><span class="comment">	 * not be usable by the kernel. Please keep the above limited</span></span><br><span class="line"><span class="comment">	 * to at most 8 entries.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	MAX_IPI</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<ol>
+<li><p>为每个核注册ipi中断（也就是gic控制器的SGI中断–注册为软件中断）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> __init <span class="title function_">set_smp_ipi_range</span><span class="params">(<span class="type">int</span> ipi_base, <span class="type">int</span> n)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line"></span><br><span class="line">	WARN_ON(n &lt; MAX_IPI);</span><br><span class="line">	nr_ipi = min(n, MAX_IPI);</span><br><span class="line">  <span class="comment">//遍历所有支持的sgi中断号</span></span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; nr_ipi; i++) &#123;</span><br><span class="line">		<span class="type">int</span> err;</span><br><span class="line">		<span class="comment">//为每个cpu注册相同的中断处理函数</span></span><br><span class="line">		err = request_percpu_irq(ipi_base + i, ipi_handler,</span><br><span class="line">					 <span class="string">&quot;IPI&quot;</span>, &amp;irq_stat);</span><br><span class="line">		WARN_ON(err);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//把中断描述符存在本地静态变量中</span></span><br><span class="line">		ipi_desc[i] = irq_to_desc(ipi_base + i);</span><br><span class="line">		irq_set_status_flags(ipi_base + i, IRQ_HIDDEN);</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* The recheduling IPI is special... */</span></span><br><span class="line">		<span class="keyword">if</span> (i == IPI_RESCHEDULE)</span><br><span class="line">			__irq_modify_status(ipi_base + i, <span class="number">0</span>, IRQ_RAW, ~<span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ipi_irq_base = ipi_base;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Setup the boot CPU immediately */</span></span><br><span class="line">	ipi_setup(smp_processor_id());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>看一下ipi的处理函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//看一下都支持哪些中断处理</span></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">do_handle_IPI</span><span class="params">(<span class="type">int</span> ipinr)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> cpu = smp_processor_id();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> ((<span class="type">unsigned</span>)ipinr &lt; NR_IPI)</span><br><span class="line">		trace_ipi_entry_rcuidle(ipi_types[ipinr]);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">switch</span> (ipinr) &#123;</span><br><span class="line">	<span class="keyword">case</span> IPI_WAKEUP:</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_GENERIC_CLOCKEVENTS_BROADCAST</span></span><br><span class="line">	<span class="keyword">case</span> IPI_TIMER:</span><br><span class="line">    	<span class="comment">//看起来是时钟相关的</span></span><br><span class="line">		tick_receive_broadcast();</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">case</span> IPI_RESCHEDULE:</span><br><span class="line">    	<span class="comment">//执行调度</span></span><br><span class="line">		scheduler_ipi();</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">case</span> IPI_CALL_FUNC:</span><br><span class="line">    	<span class="comment">//执行某个函数回调</span></span><br><span class="line">		generic_smp_call_function_interrupt();</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">case</span> IPI_CPU_STOP:</span><br><span class="line">    	<span class="comment">//暂停cpu</span></span><br><span class="line">		ipi_cpu_stop(cpu);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_IRQ_WORK</span></span><br><span class="line">	<span class="keyword">case</span> IPI_IRQ_WORK:</span><br><span class="line">    	<span class="comment">//执行延迟的 irq_work 任务</span></span><br><span class="line">		irq_work_run();</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">case</span> IPI_COMPLETION:</span><br><span class="line">    	<span class="comment">//通知ipi发起者某个操作完成了</span></span><br><span class="line">		ipi_complete(cpu);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">case</span> IPI_CPU_BACKTRACE:</span><br><span class="line">    	<span class="comment">//打印backtrace</span></span><br><span class="line">		printk_nmi_enter();</span><br><span class="line">		nmi_cpu_backtrace(get_irq_regs());</span><br><span class="line">		printk_nmi_exit();</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		pr_crit(<span class="string">&quot;CPU%u: Unknown IPI message 0x%x\n&quot;</span>,</span><br><span class="line">		        cpu, ipinr);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> ((<span class="type">unsigned</span>)ipinr &lt; NR_IPI)</span><br><span class="line">		trace_ipi_exit_rcuidle(ipi_types[ipinr]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">irqreturn_t</span> <span class="title function_">ipi_handler</span><span class="params">(<span class="type">int</span> irq, <span class="type">void</span> *data)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//通过传入相对的中断号码</span></span><br><span class="line">	do_handle_IPI(irq - ipi_irq_base);</span><br><span class="line">	<span class="keyword">return</span> IRQ_HANDLED;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="案例分析"><a href="#案例分析" class="headerlink" title="案例分析"></a>案例分析</h2><p>这里拿IPI_CALL_FUNC来举例，场景是我们需要唤醒某个cpu执行一个函数（比如dump当前的reg）：ps – 为了方便理解整体的链路，代码部分我进行了一定的删减，因此与实际上的linux的代码有差异，感兴趣可移步至源码kernel&#x2F;smp.c与arch&#x2F;arm&#x2F;kernel&#x2F;smp.c中阅读</p>
+<p>处理部分主要分为两个链路，一个是发ipi的链路，一个是处理ipi的链路，先看发ipi中断的链路：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//这里其实就是处理所有发送ipi中断请求的接口，属于芯片架构层（这里会调用不同中断处理器的架构注册的回调函数）</span></span><br><span class="line"><span class="type">int</span> __ipi_send_mask(<span class="keyword">struct</span> irq_desc *desc, <span class="type">const</span> <span class="keyword">struct</span> cpumask *dest)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">irq_data</span> *<span class="title">data</span> =</span> irq_desc_get_irq_data(desc);</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">irq_chip</span> *<span class="title">chip</span> =</span> irq_data_get_irq_chip(data);</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> cpu;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//如果该中断处理器已经注册了直接处理对应掩码的函数直接调用</span></span><br><span class="line">    <span class="keyword">if</span> (chip-&gt;ipi_send_mask) &#123;</span><br><span class="line">    	chip-&gt;ipi_send_mask(data, dest);</span><br><span class="line">    	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//开始发送</span></span><br><span class="line">    for_each_cpu(cpu, dest)</span><br><span class="line">		chip-&gt;ipi_send_single(data, cpu);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">smp_cross_call</span><span class="params">(<span class="type">const</span> <span class="keyword">struct</span> cpumask *target, <span class="type">unsigned</span> <span class="type">int</span> ipinr)</span></span><br><span class="line">&#123;</span><br><span class="line">    trace_ipi_raise_rcuidle(target, ipi_types[ipinr]);</span><br><span class="line">    __ipi_send_mask(ipi_desc[ipinr], target);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">arch_send_call_function_single_ipi</span><span class="params">(<span class="type">int</span> cpu)</span></span><br><span class="line">&#123;</span><br><span class="line">  	smp_cross_call(cpumask_of(cpu), IPI_CALL_FUNC);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">send_call_function_single_ipi</span><span class="params">(<span class="type">int</span> cpu)</span></span><br><span class="line">&#123;</span><br><span class="line">    arch_send_call_function_single_ipi(cpu);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> __smp_call_single_queue(<span class="type">int</span> cpu, <span class="keyword">struct</span> llist_node *node)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//把回调的结构体加入对应cpu的链表中 -- 该例子中传入的是0 也就是代表将该事件加入到cpu0的执行list中</span></span><br><span class="line">    <span class="keyword">if</span> (llist_add(node, &amp;per_cpu(call_single_queue, cpu)))</span><br><span class="line">    	send_call_function_single_ipi(cpu);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">generic_exec_single</span><span class="params">(<span class="type">int</span> cpu, <span class="keyword">struct</span> __call_single_data *csd)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//如果是本cpu就直接执行传入的函数</span></span><br><span class="line">    <span class="keyword">if</span> (cpu == smp_processor_id()) &#123;</span><br><span class="line">        <span class="type">smp_call_func_t</span> func = csd-&gt;func;</span><br><span class="line">        <span class="type">void</span> *info = csd-&gt;info;</span><br><span class="line">        <span class="type">unsigned</span> <span class="type">long</span> flags;</span><br><span class="line"></span><br><span class="line">        csd_lock_record(csd);</span><br><span class="line">        csd_unlock(csd);</span><br><span class="line">        local_irq_save(flags);</span><br><span class="line">        func(info);</span><br><span class="line">        csd_lock_record(<span class="literal">NULL</span>);</span><br><span class="line">        local_irq_restore(flags);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//发ipi到其他cpu</span></span><br><span class="line">    __smp_call_single_queue(cpu, &amp;csd-&gt;llist);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//参数： cpu：要执行回调的cpuid func：回调函数指针 info：私有指针，供回调函数使用 wait：是否等待其他cpu执行完再退出</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">smp_call_function_single</span><span class="params">(<span class="type">int</span> cpu, <span class="type">smp_call_func_t</span> func, <span class="type">void</span> *info,</span></span><br><span class="line"><span class="params">                             <span class="type">int</span> wait)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">call_single_data_t</span> *csd;</span><br><span class="line">    <span class="type">call_single_data_t</span> csd_stack = &#123;</span><br><span class="line">    	.flags = CSD_FLAG_LOCK | CSD_TYPE_SYNC,</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="type">int</span> this_cpu;</span><br><span class="line">    <span class="type">int</span> err;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//防止当前线程被调度到其他 CPU</span></span><br><span class="line">    this_cpu = get_cpu();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//确保这里不是在中断的上下文中调用的</span></span><br><span class="line">    WARN_ON_ONCE(!in_task());</span><br><span class="line"></span><br><span class="line">    csd = &amp;csd_stack;</span><br><span class="line">    <span class="comment">//如果这里不等其他cpu执行完再退出的话就需要用全局变量作为参数防止该函数退出后导致访问空指针</span></span><br><span class="line">    <span class="keyword">if</span> (!wait) &#123;</span><br><span class="line">        csd = this_cpu_ptr(&amp;csd_data);</span><br><span class="line">        csd_lock(csd);</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">//设置函数指针和信息</span></span><br><span class="line">    csd-&gt;func = func;</span><br><span class="line">    csd-&gt;info = info;</span><br><span class="line">	<span class="comment">//发送ipi</span></span><br><span class="line">    err = generic_exec_single(cpu, csd);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (wait)</span><br><span class="line">    	csd_lock_wait(csd);</span><br><span class="line"></span><br><span class="line">    put_cpu();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> err;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>既然中断已经发送过去了就需要看一下对应的中断处理函数，也就是generic_smp_call_function_interrupt：代码依旧只保留了关键逻辑</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">flush_smp_call_function_queue</span><span class="params">(<span class="type">bool</span> warn_cpu_offline)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">call_single_data_t</span> *csd, *csd_next;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">llist_node</span> *<span class="title">entry</span>, *<span class="title">prev</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">llist_head</span> *<span class="title">head</span>;</span></span><br><span class="line">    <span class="type">static</span> <span class="type">bool</span> warned;</span><br><span class="line"></span><br><span class="line">    lockdep_assert_irqs_disabled();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取当前CPU的回调队列</span></span><br><span class="line">    head = this_cpu_ptr(&amp;call_single_queue);</span><br><span class="line">    entry = llist_del_all(head);</span><br><span class="line">    entry = llist_reverse_order(entry);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理 SYNC 类型回调（同步等待的回调）</span></span><br><span class="line">    prev = <span class="literal">NULL</span>;</span><br><span class="line">    llist_for_each_entry_safe(csd, csd_next, entry, llist) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (CSD_TYPE(csd) == CSD_TYPE_SYNC) &#123;</span><br><span class="line">            <span class="type">smp_call_func_t</span> func = csd-&gt;func;</span><br><span class="line">            <span class="type">void</span> *info = csd-&gt;info;</span><br><span class="line">			</span><br><span class="line">            <span class="keyword">if</span> (prev) &#123;</span><br><span class="line">                prev-&gt;next = &amp;csd_next-&gt;llist;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                entry = &amp;csd_next-&gt;llist;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            csd_lock_record(csd);</span><br><span class="line">          	<span class="comment">//关键就是从链表中取出该该任务执行对应的回调</span></span><br><span class="line">            func(info);</span><br><span class="line">            csd_unlock(csd);</span><br><span class="line">            csd_lock_record(<span class="literal">NULL</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            prev = &amp;csd-&gt;llist;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!entry)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">if</span> (entry)</span><br><span class="line">        sched_ttwu_pending(entry);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">generic_smp_call_function_single_interrupt</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	flush_smp_call_function_queue(<span class="literal">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>所以总的来说，linux下的smp间的通信就是基于下发ipi中断来实现的，整体的流程也非常的简单：</p>
+<ol>
+<li><p>初始化阶段</p>
+<ul>
+<li><p>内核启动时，会调用 <code>set_smp_ipi_range()</code></p>
+</li>
+<li><p>为 <strong>每个 CPU</strong> 注册好所有支持的 IPI 中断号（SGI → 对应 <code>ipi_handler</code>）</p>
+</li>
+<li><p>所有 IPI 的入口统一落到 <code>ipi_handler()</code> → <code>do_handle_IPI(ipinr)</code></p>
+</li>
+</ul>
+</li>
+<li><p>通信阶段</p>
+<ul>
+<li><p>某个 CPU 需要和别的 CPU 通讯时 → 调用 <code>smp_cross_call(cpumask, ipi_nr)</code></p>
+</li>
+<li><p>本质就是往目标 CPU 发一个 <strong>IPI 中断</strong>（SGI）</p>
+</li>
+</ul>
+</li>
+<li><p>处理阶段</p>
+<ul>
+<li><p>目标 CPU 收到 IPI → 进入统一的 <code>ipi_handler()</code></p>
+</li>
+<li><p>根据 <strong>IPI 类型</strong> 分发到不同的处理逻辑：</p>
+<ul>
+<li><code>IPI_CALL_FUNC</code> → 执行 <code>generic_smp_call_function_interrupt()</code>，在目标 CPU 上调用函数<ul>
+<li><code>IPI_RESCHEDULE</code> → 执行 <code>scheduler_ipi()</code> → 触发一次 <code>schedule()</code> 调度</li>
+<li><code>IPI_CPU_STOP</code> → 停止 CPU</li>
+<li><code>IPI_IRQ_WORK</code> → 执行 irq_work</li>
+<li><code>IPI_CPU_BACKTRACE</code> → 打印 backtrace</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>举一反三（线程切换例子）<br>如果我们想让某个 CPU 立刻执行一次线程切换：</p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 发一个 IPI_RESCHEDULE 到目标 CPU -- 可能会封装好api，但是最终都会走到这里</span><br><span class="line">smp_cross_call(cpumask_of(cpu), IPI_RESCHEDULE);</span><br></pre></td></tr></table></figure>
+
+<p>​	在目标 CPU 上最终执行的就是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">case IPI_RESCHEDULE:</span><br><span class="line">    scheduler_ipi();   // -&gt; 最终进入 schedule()</span><br><span class="line">    break;</span><br></pre></td></tr></table></figure>
+
+<p>​	所以完全可以推断：**IPI_RESCHEDULE 的处理函数就是触发 schedule()**。</p>
+<h1 id="AMP非对称多核的通讯"><a href="#AMP非对称多核的通讯" class="headerlink" title="AMP非对称多核的通讯"></a>AMP非对称多核的通讯</h1><p>linux下有一个rgmsg的机制，让用户态可以通过访问设备的方式实现a核和m核间的通信，源码位于 driver&#x2F;rpmsg下</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+        <div class="article-pop-out tagcloud">
+          <i class="icon-tuding"></i>
+          <a class="article-tag-list-link color3">置顶</a>
+        </div>
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">驱动</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2024/01/05/linux%E4%B8%8B%E5%A4%9A%E6%A0%B8%E9%80%9A%E8%AE%AF/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+  
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+    <article id="post-显示" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2024/01/05/%E6%98%BE%E7%A4%BA/">显示驱动学习记录</a>
+    </h1>
+  
+
+        
+        <a href="/2024/01/05/%E6%98%BE%E7%A4%BA/" class="archive-article-date">
+  	<time datetime="2024-01-04T16:30:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-05</time>
+</a>
+        
+
+        
+          <div style="margin-top:10px;">
+  <span class="post-time">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-keyboard-o"></i>
+      <span class="post-meta-item-text">  字数统计: </span>
+      <span class="post-count">4.1k字</span>
+    </span>
+  </span>
+
+  <span class="post-time">
+    &nbsp; | &nbsp;
+    <span class="post-meta-item-icon">
+      <i class="fa fa-hourglass-half"></i>
+      <span class="post-meta-item-text">  阅读时长: </span>
+      <span class="post-count">18分</span>
+    </span>
+  </span>
+</div>
+
+          
+        
+        
+        
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="显示驱动"><a href="#显示驱动" class="headerlink" title="显示驱动"></a>显示驱动</h1><h2 id="像素点"><a href="#像素点" class="headerlink" title="像素点"></a>像素点</h2><p>Rgb 三原色组成每个像素点，而分辨率就是像素点的个数，而argb则是增加了透明通道，</p>
+<h2 id="时间参数和时序"><a href="#时间参数和时序" class="headerlink" title="时间参数和时序"></a>时间参数和时序</h2><ol>
+<li>vsync：垂直同步信号，该信号的产生表示一帧新的信号产生<ol>
+<li>会产生一个开始信号，持续时间vspw</li>
+<li>vsync完成后需要持续一段时间，vbp</li>
+<li>vbp信号结束以后就是要显示的行数，显示完所有的行</li>
+<li>显示完所有的行以后会有一段vfp延时</li>
+</ol>
+</li>
+<li>hsync：水平同步信号，该信号的产生表示一行新的数据开始显示<ol>
+<li>会产生一个开始信号，维持时间被叫做hspw</li>
+<li>hsync信号完成后需要一段时间延时，这段时间叫hbp</li>
+<li>接着就是一行像素显示</li>
+<li>一行像素显示完成以后到hsync下一行信号的产生之间的延时叫做hfp</li>
+<li>真正显示一行所需的时间就是hspw+hbp+width+hfp</li>
+</ol>
+</li>
+</ol>
+<p>所以视频视频显示的逻辑是先发vspw开始信号-&gt;一段vbp延时（稳定需要？)-&gt; n*（hspw行开始信号-&gt;hb屏信号-&gt;行像素显示信号-&gt;hfp作为到下一行开始信号的延时）-&gt;vfp作为到下一帧的信号延时。然后这些信号发送给ser 再通过des解码给屏幕</p>
+<h3 id="lp-display"><a href="#lp-display" class="headerlink" title="lp display"></a>lp display</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;vidoeTiming&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">                <span class="attr">&quot;visWidth&quot;</span><span class="punctuation">:</span><span class="number">2560</span><span class="punctuation">,</span>  <span class="comment">//一行2560个像素点 </span></span><br><span class="line">                <span class="attr">&quot;hsyncFrontPorch&quot;</span><span class="punctuation">:</span><span class="number">88</span><span class="punctuation">,</span> <span class="comment">//水平同步信号的前肩时间 hfp</span></span><br><span class="line">                <span class="attr">&quot;hsyncWidth&quot;</span><span class="punctuation">:</span><span class="number">60</span><span class="punctuation">,</span> <span class="comment">//水平同步脉冲宽度，触发行扫描的起始信号（要注意上拉还是下拉？） hspw</span></span><br><span class="line">                <span class="attr">&quot;hsyncBackPorch&quot;</span><span class="punctuation">:</span><span class="number">60</span><span class="punctuation">,</span> <span class="comment">//水平同步信号后肩时间，完成行切换后的稳定时间 hbp</span></span><br><span class="line">                <span class="attr">&quot;visHeight&quot;</span><span class="punctuation">:</span><span class="number">1440</span><span class="punctuation">,</span> <span class="comment">//一列1440个像素点</span></span><br><span class="line">                <span class="attr">&quot;vsyncFrontPorch&quot;</span><span class="punctuation">:</span><span class="number">32</span><span class="punctuation">,</span> <span class="comment">//垂直同步前肩时间，帧缓冲切换前的空白时间 vfp</span></span><br><span class="line">                <span class="attr">&quot;vsyncWidth&quot;</span><span class="punctuation">:</span><span class="number">2</span><span class="punctuation">,</span> <span class="comment">//垂直同步脉冲宽度，触发帧扫描的起始信号 vspw</span></span><br><span class="line">                <span class="attr">&quot;vsyncBackPorch&quot;</span><span class="punctuation">:</span><span class="number">20</span><span class="punctuation">,</span> <span class="comment">//垂直同步信号后肩时间，完成帧切换后的稳定时间 vbp</span></span><br><span class="line">                <span class="attr">&quot;pixelFreqInHz&quot;</span><span class="punctuation">:</span><span class="number">248123520</span> <span class="comment">//像素时钟频率，决定每秒传输的像素总数</span></span><br><span class="line">            <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="TODO-显存学习"><a href="#TODO-显存学习" class="headerlink" title="TODO:显存学习"></a>TODO:显存学习</h3><h1 id="serdes"><a href="#serdes" class="headerlink" title="serdes"></a>serdes</h1><p>串行器连接在外设中，将并行信号转换为串行信号，解串器将串行信号再解析为并行信号</p>
+<h3 id="个人理解"><a href="#个人理解" class="headerlink" title="个人理解"></a>个人理解</h3><p>串行解串器的控制是同一个芯片控制还是串行器一个芯片，解串一个芯片，两个分别作为iic的子设备进行控制，主要有几个场景，比如：</p>
+<ol>
+<li>cpu需要将画面显示到屏幕，就把数据发到串行器上，通过解串器输出到屏幕上（我们json中的应该是cpu-serdes-scr链路？？</li>
+<li>摄像头等画面直接通过serdes把画面输出到屏幕上，所以json里面有很多des？？</li>
+</ol>
+<h3 id="并行数据到串行数据的转换"><a href="#并行数据到串行数据的转换" class="headerlink" title="并行数据到串行数据的转换"></a>并行数据到串行数据的转换</h3><ol>
+<li><p>时钟数据恢复：将并行的像素数据流与时钟信号合并，并用一种叫做 <strong>时钟-数据恢复（CDR）</strong> 的机制生成同步的时钟信号，用于后续的串行数据传输。</p>
+</li>
+<li><p>编码：将并行的数据进行编码转换。通常，为了提高信号的传输效率和抗干扰能力，会使用像 <strong>8b&#x2F;10b 编码</strong> 或 <strong>10b&#x2F;12b 编码</strong> 等方法。</p>
+<ul>
+<li><strong>8b&#x2F;10b 编码</strong>：这是一种常见的编码方案，能够将每 8 位数据转换为 10 位符号，增加冗余位以减少误码率。</li>
+</ul>
+<ul>
+<li><strong>10b&#x2F;12b 编码</strong>：这是一种用于高带宽数据传输的编码技术，将 10 位数据映射为 12 位编码，进一步提高信号的可靠性。</li>
+</ul>
+</li>
+<li><p>串行化：将并行的数据进行串行化，TI 935 会把多个并行数据通道（例如 8 位、10 位或 12 位并行数据）按特定的时序顺序串联成一个单一的 <strong>串行数据流</strong>。这个串行数据流会通过 <strong>高速差分信号对（如 FPD-Link 3 协议中的差分对）</strong> 进行传输。具体地，TI 935 使用 <strong>FPD-Link 3 协议</strong> 中的高速串行链路来将这些并行数据转化为串行数据。FPD-Link 3 协议支持非常高的传输速率，能够有效传输 4.5 Gbps 或更高的速率。</p>
+</li>
+<li><p>数据打包与封装：将编码后的串行数据通过一对或多对 <strong>差分信号对</strong> 传输到接收端（通常是解串器 TI 960）。FPD-Link 3 使用的差分信号对（如 <strong>LVDS 信号对</strong>）能够提供高速、低功耗的长距离传输，支持最大 15 米的传输距离（具体距离取决于数据速率和电缆质量）。</p>
+</li>
+<li><p>时钟恢复与同步：不仅要将数据串行化，还需要通过 <strong>时钟数据恢复（CDR）</strong> 技术来保持数据和时钟的同步。这是因为，在串行化数据时，时钟信号被嵌入到数据流中，并通过差分信号传输。在接收端（解串器 TI 960）会从串行信号中恢复出时钟信号，并重新同步数据流。</p>
+</li>
+</ol>
+<h1 id="传输协议"><a href="#传输协议" class="headerlink" title="传输协议"></a>传输协议</h1><h2 id="DSI"><a href="#DSI" class="headerlink" title="DSI"></a>DSI</h2><h3 id="mipi-dsi-controller"><a href="#mipi-dsi-controller" class="headerlink" title="mipi dsi controller"></a>mipi dsi controller</h3><p><img src="/./assets/image-20250813214548995.png" alt="image-20250813214548995"></p>
+<p>The APB-to-Generic block bridges the APB operations into FIFOs holding the Generic commands. The block interfaces with the following FIFO: Command FIFO, Write payload FIFO, Read payload FIFO.</p>
+<p>上面的架构无非就是体现两件事：</p>
+<ol>
+<li>dsi命令通过apb interface发出</li>
+<li>视频数据通过dpi interface发出</li>
+</ol>
+<p>Generic interface packets are always transported using one of the DSI transmission modes; Video mode or Command mode. If neither of these mode are selected, the packets are not transmitted through the link and the released FIFOs eventually get overflowed.</p>
+<p>通用接口数据包总是使用DSI传输模式之一进行传输；视频模式或命令模式。如果不选择这两种模式，则数据包不会通过链路传输，并且释放的fifo最终会溢出。</p>
+<h4 id="dpi-interface"><a href="#dpi-interface" class="headerlink" title="dpi interface"></a>dpi interface</h4><p>The DPI interface follows the MIPI DPI specification with pixel data bus width up to 24 bits. It is used to transmit the information in Video mode in which the transfers from the host processor to the peripheral take the form of a real-time pixel stream. This interface allows sending ShutDown (SD) and ColorMode (CM) commands, which are triggered directly by writing to the register of VO_CON[9:8] in the GRF Module. To transfer additional commands(for example, to initialize the display), use another interface such as APB Slave Generic Interface to complement the DPI interface.</p>
+<p>The DPI interface can be configured to increase flexibility and promote correct usage of this interface for several systems. These configuration options are as follows:Polarity control: All the control signals are programmable to change the polarity depending on system requirements. </p>
+<p>&#x3D;&#x3D;After the MIPI DSI HOST Controller reset, DPI waits for the first VSYNC active transition to start signal sampling, including pixel data, and preventing image transmission in the middle of a frame.&#x3D;&#x3D;</p>
+<p>If interface pixel color coding is 18 bits and the 18-bit loosely packed stream is disabled, the number of lines programmed in the pixels per lines configuration is a multiple of four. This means that in this mode, the two LSBs in the configuration are always inferred as zero. The specification states that in this mode, the pixel line size should be a multiple of four.</p>
+<p>DPl接口遵循MIPI DPI规范，像素数据总线宽度高达24位。它用于以视频方式传输信息，其中从主机处理器到外设的传输采用实时像素流的形式。该接口允许发送ShutDown （SD）和ColorMode （CM）命令，这些命令通过写入GRF模块中的VO_CON[9:8]寄存器直接触发。要传输额外的命令（例如，初始化显示），可以使用其他接口（如APB Slave Generic interface）来补充DPI接口。可以配置DPI接口以增加灵活性，并促进多个系统正确使用该接口。极性控制：所有的控制信号都是可编程的，可以根据系统设备改变极性。在MIPI DSI主机控制器复位后，DPI等待第一个VSYNC主动转换到一个帧。</p>
+<p>&#x3D;&#x3D;如果接口像素颜色编码为18位，并且禁用了18位松散打包流，则在每行像素配置中编程的行数是4的倍数。这意味着在这种模式下，配置中的两个lsb总是被推断为零。规格规定，在此模式下，像素线尺寸应为4的倍数。&#x3D;&#x3D;</p>
+<h5 id="DPI-功能说明"><a href="#DPI-功能说明" class="headerlink" title="DPI 功能说明"></a><strong>DPI 功能说明</strong></h5><blockquote>
+<p><em>“The DPI interface follows the MIPI DPI specification with pixel data bus width up to 24 bits.<br> It is used to transmit the information in Video mode in which the transfers from the host processor to the peripheral take the form of a real-time pixel stream. This interface allows sending ShutDown (SD) and ColorMode (CM) commands, which are triggered directly by writing to the register of VO_CON[9:8] in the GRF Module. To transfer additional commands(for example, to initialize the display), use another interface such as APB Slave Generic Interface to complement the DPI interface.”</em></p>
+</blockquote>
+<p><strong>总结</strong>：</p>
+<ul>
+<li>DPI 遵循 MIPI DPI 规范，总线宽度可达 24bit。</li>
+<li>主要用于 <strong>Video Mode</strong> 下的实时像素流传输。</li>
+<li>支持少量命令（SD&#x2F;CM），通过 GRF VO_CON[9:8] 触发。</li>
+<li>初始化或更多命令需通过 <strong>APB Slave Generic Interface</strong>。</li>
+</ul>
+<hr>
+<h5 id="原文引用-2：DPI-信号与像素编码"><a href="#原文引用-2：DPI-信号与像素编码" class="headerlink" title="原文引用 2：DPI 信号与像素编码"></a><strong>原文引用 2：DPI 信号与像素编码</strong></h5><blockquote>
+<p><em>“The DPI interface captures the data and control signals and conveys them to the FIFO interfaces that transmit them to the DSI link. Two different streams of data are presented at the interface; video control signals and pixel data. Depending on the interface color coding, the pixel data is disposed differently throughout the dpipixdata bus. The following table shows the Interface pixel color coding.”</em></p>
+</blockquote>
+<p><strong>总结</strong>：</p>
+<ul>
+<li>DPI 捕获两类信号：<strong>视频控制信号</strong> 和 <strong>像素数据</strong>。</li>
+<li>像素数据在总线上的排列取决于 <strong>Interface Pixel Color Coding</strong> 配置。</li>
+<li>文档提供了 16&#x2F;18&#x2F;24bit 不同配置下的 R&#x2F;G&#x2F;B 位映射表。</li>
+</ul>
+<hr>
+<h5 id="原文引用-3：18-bit-loosely-packed-限制"><a href="#原文引用-3：18-bit-loosely-packed-限制" class="headerlink" title="原文引用 3：18-bit loosely packed 限制"></a><strong>原文引用 3：18-bit loosely packed 限制</strong></h5><blockquote>
+<p><em>“If interface pixel color coding is 18 bits and the 18-bit loosely packed stream is disabled, the number of lines programmed in the pixels per lines configuration is a multiple of four. This means that in this mode, the two LSBs in the configuration are always inferred as zero.”</em></p>
+</blockquote>
+<p><strong>总结</strong>：</p>
+<ul>
+<li>当 <strong>18-bit loosely packed 禁用</strong>时：<ol>
+<li>“pixels per line” 必须是 <strong>4 的倍数</strong>。</li>
+<li>配置中的 <strong>两位最低有效位被自动置为 0</strong>。</li>
+</ol>
+</li>
+<li>目的是保证像素数据对齐，避免总线或 PHY 传输错误。</li>
+</ul>
+<hr>
+<h5 id="原文引用-4：DPI-配置选项"><a href="#原文引用-4：DPI-配置选项" class="headerlink" title="原文引用 4：DPI 配置选项"></a><strong>原文引用 4：DPI 配置选项</strong></h5><blockquote>
+<p><em>“These configuration options are as follows: Polarity control: All the control signals are programmable to change the polarity depending on system requirements. After the MIPI DSI HOST Controller reset, DPI waits for the first VSYNC active transition to start signal sampling, including pixel data, and preventing image transmission in the middle of a frame.”</em></p>
+</blockquote>
+<p><strong>总结</strong>：</p>
+<ul>
+<li><strong>Polarity control</strong>：控制信号极性可编程。</li>
+<li><strong>VSYNC 对齐</strong>：DPI 等待第一个 VSYNC 激活信号再开始采样像素，避免中途传输导致画面错位。</li>
+</ul>
+<hr>
+<p>💡 <strong>整体理解</strong>：</p>
+<ol>
+<li>DPI 接口主要处理 <strong>Video Mode 的像素传输</strong> + 少量 SD&#x2F;CM 命令。</li>
+<li>初始化或其他控制命令需要 <strong>通过 APB Generic Interface</strong>。</li>
+<li>像素数据编码和行数必须遵循规范，保证数据总线和 PHY 传输正确。</li>
+<li>控制信号极性可调，VSYNC 保证帧同步。</li>
+</ol>
+<h4 id="APB-Slave-Generic-Interface"><a href="#APB-Slave-Generic-Interface" class="headerlink" title="APB Slave Generic Interface"></a><strong>APB Slave Generic Interface</strong></h4><p>The MIPI DSI HOST Controller supports the transmission or write and read command mode packets as described in the DSI specification. These packets are built using the APB register access. The GEN_PLD_DATA register has two distinct functions based on the operation. Writing to this register sends the data as payload when sending a Command mode packet. Reading this register returns the payload of a read back operation. The GEN_HDR register contains the Command mode packet header type and header data. Writing to this register triggers the transmission of the packet implying that for a long Command mode packet, the packet’s payload needs to be written in advance in the GEN_PLD_DATA register.</p>
+<h5 id="APB-Slave-Interface-与-Command-Mode"><a href="#APB-Slave-Interface-与-Command-Mode" class="headerlink" title="APB Slave Interface 与 Command Mode"></a><strong>APB Slave Interface 与 Command Mode</strong></h5><blockquote>
+<p>The APB Slave interface allows the transmission of generic information in Command mode, and follows the proprietary register interface. Commands sent through this interface are not constrained to comply with the DCS specification, and can include generic commands described in the DSI specification as manufacturer-specific.</p>
+</blockquote>
+<ul>
+<li><strong>APB Slave 接口</strong>：用于通过寄存器访问发送 <strong>Generic packet</strong>（通用命令）或 DCS 命令。</li>
+<li><strong>Command Mode</strong>：通过这个接口发送的数据是按需发送，不是持续的视频流。</li>
+<li><strong>Generic Packet</strong>：不必符合 DCS 标准，可以是厂商自定义的命令。</li>
+<li><strong>用途</strong>：用来发送控制屏幕的命令，比如初始化、参数设置或者写内存。</li>
+</ul>
+<hr>
+<h5 id="2️⃣-GEN-HDR-与-GEN-PLD-DATA"><a href="#2️⃣-GEN-HDR-与-GEN-PLD-DATA" class="headerlink" title="2️⃣ GEN_HDR 与 GEN_PLD_DATA"></a><strong>2️⃣ GEN_HDR 与 GEN_PLD_DATA</strong></h5><blockquote>
+<p>The GEN_PLD_DATA register has two distinct functions based on the operation. Writing to this register sends the data as payload when sending a Command mode packet. Reading this register returns the payload of a read back operation. The GEN_HDR register contains the Command mode packet header type and header data. Writing to this register triggers the transmission of the packet implying that for a long Command mode packet, the packet’s payload needs to be written in advance in the GEN_PLD_DATA register.</p>
+</blockquote>
+<ul>
+<li><strong>GEN_PLD_DATA（Payload Data）</strong><ul>
+<li>写入：作为 Command Mode 包的 payload</li>
+<li>读取：返回读回操作的 payload</li>
+</ul>
+</li>
+<li><strong>GEN_HDR（Header）</strong><ul>
+<li>写入 header 会触发命令包发送</li>
+<li>对于 <strong>长命令包（Long Packet）</strong>：payload 必须先写入 GEN_PLD_DATA，然后再写 header 发出包</li>
+</ul>
+</li>
+</ul>
+<p><strong>总结</strong>：</p>
+<ol>
+<li>写 payload → 写 header → 控制器开始发送</li>
+<li>FIFO 机制：payload FIFO + command FIFO</li>
+</ol>
+<hr>
+<h5 id="3️⃣-支持的包类型"><a href="#3️⃣-支持的包类型" class="headerlink" title="3️⃣ 支持的包类型"></a><strong>3️⃣ 支持的包类型</strong></h5><p>文档列出了很多可通过 Generic Interface 发送的包，包括：</p>
+<ul>
+<li><strong>Generic Write Short &#x2F; Long Packet</strong>（0-2 参数）</li>
+<li><strong>DCS Write Short &#x2F; Long Packet</strong></li>
+<li><strong>Read Packet 配置</strong></li>
+</ul>
+<p><strong>理解</strong>：</p>
+<ul>
+<li>Short Packet 用于简单命令（如设置寄存器）</li>
+<li>Long Packet 用于数据量大的命令（如写显存、Write Memory Start &#x2F; Continue）</li>
+</ul>
+<hr>
+<h5 id="4️⃣-Transmission-Mode-的关系"><a href="#4️⃣-Transmission-Mode-的关系" class="headerlink" title="4️⃣ Transmission Mode 的关系"></a><strong>4️⃣ Transmission Mode 的关系</strong></h5><blockquote>
+<p>Generic interface packets are always transported using one of the DSI transmission modes; Video mode or Command mode. If neither of these mode are selected, the packets are not transmitted through the link and the released FIFOs eventually get overflowed.</p>
+</blockquote>
+<ul>
+<li><strong>任何 Generic 包都必须通过 DSI 传输模式发送</strong></li>
+<li>Video Mode &#x2F; Command Mode 都可以发送 Generic 包</li>
+<li>如果都没选：FIFO 写入的数据不会被发送 → FIFO 最终溢出</li>
+</ul>
+<p><strong>结论</strong>：MODE_CFG 决定控制器整体传输方式，但命令包本身不需要每条切换模式。</p>
+<hr>
+<h5 id="5️⃣-APB-接口速率限制"><a href="#5️⃣-APB-接口速率限制" class="headerlink" title="5️⃣ APB 接口速率限制"></a><strong>5️⃣ APB 接口速率限制</strong></h5><blockquote>
+<p>The transfer of packets through the APB bus is based on the following conditions:<br> The APB protocol defines that the write and read procedure takes two clock cycles each to be executed. This means that the maximum input data rate through the APB interfaces is always half the speed of the APB clock.</p>
+</blockquote>
+<ul>
+<li><strong>APB 写&#x2F;读需要 2 个时钟周期</strong> → 最大输入速率 &#x3D; APB 时钟的一半</li>
+<li><strong>总线宽度</strong>：32 bit → payload 数据以 32bit 总线写入</li>
+</ul>
+<blockquote>
+<p>The DSI link bit rate when using solely APB is equal to (APB clock frequency) *16 Mbps.</p>
+</blockquote>
+<ul>
+<li>如果只通过 APB 发送命令包，DSI link 速率 &#x3D; APB 时钟 * 16 Mbps</li>
+<li><strong>带宽与 APB 时钟频率成正比</strong></li>
+</ul>
+<hr>
+<h5 id="6️⃣-高带宽命令模式"><a href="#6️⃣-高带宽命令模式" class="headerlink" title="6️⃣ 高带宽命令模式"></a><strong>6️⃣ 高带宽命令模式</strong></h5><blockquote>
+<p>To drive the APB interface to achieve high bandwidth Command mode traffic transported by the DSI link, the MIPI DSI HOST Controller should operate in the Command mode only and the APB interface should be the only data source that is currently in use.</p>
+</blockquote>
+<ul>
+<li><strong>如果要让 Command Mode 最大化带宽</strong>：<ol>
+<li>控制器保持 <strong>Command Mode</strong>（不输出视频）</li>
+<li>APB 接口是唯一数据源</li>
+</ol>
+</li>
+<li>这样 APB 拥有整个 DSI link 带宽，不与 Video Mode 或其他输入共享</li>
+</ul>
+<hr>
+<h5 id="7️⃣-写内存命令（Memory-Write-Commands）"><a href="#7️⃣-写内存命令（Memory-Write-Commands）" class="headerlink" title="7️⃣ 写内存命令（Memory Write Commands）"></a><strong>7️⃣ 写内存命令（Memory Write Commands）</strong></h5><blockquote>
+<p>The memory write commands require maximum throughput from the APB interface, because they contain the most amount of data conveyed by the DSI link. While writing the packet information, first write the payload of a given packet into the payload FIFO using the GEN_PLD_DATA register. When the payload data is for the command parameters, place the first byte to be transmitted in the least significant byte position of the APB data bus. After writing the payload, write the packet header into the command FIFO.</p>
+</blockquote>
+<ul>
+<li><strong>Memory Write Commands（长数据命令）</strong>：payload 很大，需要 APB 最大带宽</li>
+<li>写包顺序：<ol>
+<li>先写 payload 到 GEN_PLD_DATA FIFO</li>
+<li>再写 header 到 GEN_HDR → 触发发送</li>
+</ol>
+</li>
+<li><strong>字节顺序</strong>：第一个要发的字节写在 APB 总线 LSB</li>
+</ul>
+<blockquote>
+<p>The DCS long packets are encapsulated in a DSI packet. The DSI included in the diagrams.In the follow figures, the Write Memory Command can be replaced by the DCS command Write Memory Start and Write Memory Continue.</p>
+</blockquote>
+<ul>
+<li>DCS 长包会被封装成 DSI 包</li>
+<li>Write Memory Start &#x2F; Continue 是典型长包命令，用于写显存 &#x2F; Framebuffer</li>
+</ul>
+<hr>
+<h5 id="✅-总结核心要点"><a href="#✅-总结核心要点" class="headerlink" title="✅ 总结核心要点"></a>✅ <strong>总结核心要点</strong></h5><ol>
+<li><strong>APB Interface</strong><ul>
+<li>用于 Command Mode &#x2F; Generic Packet</li>
+<li>写 GEN_PLD_DATA → 写 GEN_HDR → 发送</li>
+<li>支持短包 &#x2F; 长包 &#x2F; DCS &#x2F; Generic</li>
+</ul>
+</li>
+<li><strong>模式选择（MODE_CFG）</strong><ul>
+<li>Video Mode：连续像素流 + 少量包</li>
+<li>Command Mode：仅发送命令包，带宽最大</li>
+</ul>
+</li>
+<li><strong>高带宽 Command Mode</strong><ul>
+<li>控制器保持 Command Mode</li>
+<li>APB 接口独占 → 最大化发送速率</li>
+</ul>
+</li>
+<li><strong>内存写 &#x2F; 长包命令</strong><ul>
+<li>payload FIFO 先写数据</li>
+<li>header 写入触发发送</li>
+<li>注意字节顺序（LSB → 总线）</li>
+</ul>
+</li>
+</ol>
+<h4 id="Transmission-of-Commands-in-Video-Mode"><a href="#Transmission-of-Commands-in-Video-Mode" class="headerlink" title="Transmission of Commands in Video Mode"></a><strong>Transmission of Commands in Video Mode</strong></h4><p><img src="/./assets/webp-5180346." alt="img"></p>
+<ol>
+<li><p>垂直方向（帧级）</p>
+<p>在一帧里，垂直方向的时序顺序是：</p>
+</li>
+</ol>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">VSS（Vertical Sync Start / VSA开始）  </span><br><span class="line">   ↓</span><br><span class="line">VSA（Vertical Sync Active / VSYNC脉冲持续时间）</span><br><span class="line">   ↓</span><br><span class="line">VBP（Vertical Back Porch / 垂直后沿）  </span><br><span class="line">   ↓</span><br><span class="line">Active Lines（有效显示行，即每行有 HSS/HSE + Pixel Data）  </span><br><span class="line">   ↓</span><br><span class="line">VFP（Vertical Front Porch / 垂直前沿）  </span><br><span class="line">   ↓</span><br><span class="line">下一帧 VSS</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>VSS</strong>：帧开始标记，协议短包</li>
+<li><strong>VSA</strong>：VSYNC脉冲持续的行数。 – vspw</li>
+<li><strong>VBP</strong>：VSYNC结束到有效显示区域开始的空闲行数</li>
+<li><strong>Active Lines</strong>：真正显示内容的行</li>
+<li><strong>VFP</strong>：有效显示行结束到下一帧 VSS 的空闲行数</li>
+</ul>
+<ol start="2">
+<li><p>水平方向（行级）</p>
+<p>每一行的水平时序是：</p>
+</li>
+</ol>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">  HSS（Horizontal Sync Start / HSA开始）  </span><br><span class="line">   ↓</span><br><span class="line">HSA（水平同步脉冲宽度，对应HSPW）  </span><br><span class="line">   ↓</span><br><span class="line">HBP（水平后沿 / 后沿空闲周期）  </span><br><span class="line">   ↓</span><br><span class="line">Active Pixels（有效像素数据）  </span><br><span class="line">   ↓</span><br><span class="line">HFP（水平前沿 / 前沿空闲周期）  </span><br><span class="line">下一行 HSS</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>HSS</strong>：行开始短包</li>
+<li><strong>HSA</strong>：水平同步脉冲对应的时间段  – hspw</li>
+<li><strong>HBP</strong>：脉冲结束到有效像素开始的延时</li>
+<li><strong>Active Pixels</strong>：真正显示的像素</li>
+<li><strong>HFP</strong>：有效像素结束到下一行 HSS 的间隔</li>
+</ul>
+<p><img src="/./assets/image-20250814222843239.png" alt="image-20250814222843239"></p>
+<h3 id="dsi屏端配置"><a href="#dsi屏端配置" class="headerlink" title="dsi屏端配置"></a>dsi屏端配置</h3>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+        <div class="article-pop-out tagcloud">
+          <i class="icon-tuding"></i>
+          <a class="article-tag-list-link color3">置顶</a>
+        </div>
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">驱动</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2024/01/05/%E6%98%BE%E7%A4%BA/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+  
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
     <article id="post-ARM裸机开发" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1239,331 +1852,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2023/09/11/ARM%E8%A3%B8%E6%9C%BA%E5%BC%80%E5%8F%91/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-  
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-  
-    <article id="post-Ubuntu-操作入门" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/04/05/Ubuntu-%E6%93%8D%E4%BD%9C%E5%85%A5%E9%97%A8/">Ubuntu 操作入门</a>
-    </h1>
-  
-
-        
-        <a href="/2023/04/05/Ubuntu-%E6%93%8D%E4%BD%9C%E5%85%A5%E9%97%A8/" class="archive-article-date">
-  	<time datetime="2023-04-05T03:13:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-04-05</time>
-</a>
-        
-
-        
-          <div style="margin-top:10px;">
-  <span class="post-time">
-    <span class="post-meta-item-icon">
-      <i class="fa fa-keyboard-o"></i>
-      <span class="post-meta-item-text">  字数统计: </span>
-      <span class="post-count">3.1k字</span>
-    </span>
-  </span>
-
-  <span class="post-time">
-    &nbsp; | &nbsp;
-    <span class="post-meta-item-icon">
-      <i class="fa fa-hourglass-half"></i>
-      <span class="post-meta-item-text">  阅读时长: </span>
-      <span class="post-count">12分</span>
-    </span>
-  </span>
-</div>
-
-          
-        
-        
-        
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="ubuntu终端操作与shell命令"><a href="#ubuntu终端操作与shell命令" class="headerlink" title="ubuntu终端操作与shell命令"></a>ubuntu终端操作与shell命令</h2><ol>
-<li><p>目录信息查看命令 ls</p>
-<ul>
-<li>ls -a显示目录所有文件及文件夹，包括隐藏文件，比如以.开头的</li>
-</ul>
-</li>
-<li><p>目录切换命令 cd</p>
-</li>
-<li><p>当前路径显示命令 pwd</p>
-</li>
-<li><p>系统信息查看命令 uname</p>
-<ul>
-<li>uname -a查看全部信息</li>
-</ul>
-</li>
-<li><p>清除屏幕命令 clear</p>
-</li>
-<li><p>显示文件命令  cat</p>
-</li>
-<li><p>临时切换用户身份 sudo</p>
-</li>
-<li><p>切换用户命令 sudo su [用户名]</p>
-</li>
-<li><p>文件拷贝命令 cp</p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-        <div class="article-pop-out tagcloud">
-          <i class="icon-tuding"></i>
-          <a class="article-tag-list-link color3">置顶</a>
-        </div>
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/linux//" class="article-tag-list-link color1">linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/04/05/Ubuntu-%E6%93%8D%E4%BD%9C%E5%85%A5%E9%97%A8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-  
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-  
-    <article id="post-page" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2024/10/21/page/">arm页表学习</a>
-    </h1>
-  
-
-        
-        <a href="/2024/10/21/page/" class="archive-article-date">
-  	<time datetime="2024-10-21T07:35:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-10-21</time>
-</a>
-        
-
-        
-          <div style="margin-top:10px;">
-  <span class="post-time">
-    <span class="post-meta-item-icon">
-      <i class="fa fa-keyboard-o"></i>
-      <span class="post-meta-item-text">  字数统计: </span>
-      <span class="post-count">1.1k字</span>
-    </span>
-  </span>
-
-  <span class="post-time">
-    &nbsp; | &nbsp;
-    <span class="post-meta-item-icon">
-      <i class="fa fa-hourglass-half"></i>
-      <span class="post-meta-item-text">  阅读时长: </span>
-      <span class="post-count">4分</span>
-    </span>
-  </span>
-</div>
-
-          
-        
-        
-        
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qianlong4526888/article/details/9058221">ARMv8(aarch64)页表建立过程详细分析_aarch64 页表-CSDN博客</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/LoyenWang/p/11406693.html">【原创】（一）ARMv8 MMU及Linux页表映射 - LoyenWang - 博客园</a></p>
-<h1 id="arm页表"><a href="#arm页表" class="headerlink" title="arm页表"></a>arm页表</h1><p>ARMv8架构可以支持48位虚拟地址，并配置成4级页表（4K页），或者3级页表（64K页）。而本Linux系统只使用39位虚拟地址（512G内核，512G用户），配置成3级页表（4K页）或者2级页表（64K页）</p>
-<p>用户空间的地址63:39位都置零，内核空间地址63:39都置一，虚拟地址的第63位可以用来选择TTBRx</p>
-<p>AArch64Linux内存布局：</p>
-<table>
-<thead>
-<tr>
-<th align="center">地址范围开始</th>
-<th align="center">地址范围结束</th>
-<th align="center">大小</th>
-<th align="center">用途</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">0000000000000000</td>
-<td align="center">0000007fffffffff</td>
-<td align="center">512GB</td>
-<td align="center">用户空间</td>
-</tr>
-<tr>
-<td align="center">ffffff8000000000</td>
-<td align="center">ffffffbbfffcffff</td>
-<td align="center">~240GB</td>
-<td align="center">vmalloc区域</td>
-</tr>
-<tr>
-<td align="center">ffffffbbfffd0000</td>
-<td align="center">ffffffbcfffdffff</td>
-<td align="center">64KB</td>
-<td align="center">守护页</td>
-</tr>
-<tr>
-<td align="center">ffffffbbfffe0000</td>
-<td align="center">ffffffbcfffeffff</td>
-<td align="center">64KB</td>
-<td align="center">PCI I&#x2F;O空间</td>
-</tr>
-<tr>
-<td align="center">ffffffbbffff0000</td>
-<td align="center">ffffffbcffffffff</td>
-<td align="center">64KB</td>
-<td align="center">守护页</td>
-</tr>
-<tr>
-<td align="center">ffffffbc00000000</td>
-<td align="center">ffffffbdffffffff</td>
-<td align="center">8GB</td>
-<td align="center">vmemmap区域</td>
-</tr>
-<tr>
-<td align="center">ffffffbe00000000</td>
-<td align="center">ffffffbffbffffff</td>
-<td align="center">~8GB</td>
-<td align="center">守护页和未来vmemmap区域</td>
-</tr>
-<tr>
-<td align="center">ffffffbffc000000</td>
-<td align="center">ffffffbfffffffff</td>
-<td align="center">64MB</td>
-<td align="center">模块区域</td>
-</tr>
-<tr>
-<td align="center">ffffffc000000000</td>
-<td align="center">ffffffffffffffff</td>
-<td align="center">256GB</td>
-<td align="center">内存（保留或未分配）</td>
-</tr>
-</tbody></table>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-        <div class="article-pop-out tagcloud">
-          <i class="icon-tuding"></i>
-          <a class="article-tag-list-link color3">置顶</a>
-        </div>
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/linux，kernel//" class="article-tag-list-link color3">linux，kernel</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2024/10/21/page/">展开全文 >></a>
         </p>
       
 
@@ -1723,6 +2011,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">内核</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">驱动</a>
               </li>
             
             <div class="clearfix"></div>
